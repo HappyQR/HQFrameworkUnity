@@ -1,0 +1,16 @@
+{
+    "name": "HQFrameworkUnity",
+    "rootNamespace": "HQFrameworkUnity",
+    "references": [
+        "GUID:2021a6b20f7d74c87b706fe206d203a3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
