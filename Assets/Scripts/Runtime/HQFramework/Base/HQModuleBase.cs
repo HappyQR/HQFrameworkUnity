@@ -1,22 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace HQFramework
 {
-    public abstract class HQModuleBase
+    internal abstract class HQModuleBase
     {
-        protected internal virtual void OnInitialize()
+        public abstract byte Priority
+        { 
+            get; 
+        }
+
+        protected virtual void OnInitialize()
         {
 
         }
 
-        protected internal virtual void OnUpdate()
+        protected virtual void OnUpdate()
         {
 
         }
 
-        protected internal virtual void OnShutdown()
+        protected virtual void OnShutdown()
         {
 
         }

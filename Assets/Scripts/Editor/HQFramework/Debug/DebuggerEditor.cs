@@ -11,7 +11,7 @@ namespace HQFramework.Editor
         {
             get
             {
-                return ScriptingDefineSymbols.HasScriptingDefineSymbolAll(Debugger.ENABLE_LOG_SYMBOL);
+                return ScriptingDefineSymbols.HasScriptingDefineSymbolAll(HQDebugger.ENABLE_LOG_SYMBOL);
             }
         }
 
@@ -20,7 +20,7 @@ namespace HQFramework.Editor
         {
             if (!Log_Enable)
             {
-                ScriptingDefineSymbols.AddScriptingDefineSymbol(Debugger.ENABLE_LOG_SYMBOL);
+                ScriptingDefineSymbols.AddScriptingDefineSymbol(HQDebugger.ENABLE_LOG_SYMBOL);
             }
 
             Debug.Log("Log Enable : " + Log_Enable);
@@ -31,7 +31,7 @@ namespace HQFramework.Editor
         {
             if (Log_Enable)
             {
-                ScriptingDefineSymbols.RemoveScriptingDefineSymbol(Debugger.ENABLE_LOG_SYMBOL);
+                ScriptingDefineSymbols.RemoveScriptingDefineSymbol(HQDebugger.ENABLE_LOG_SYMBOL);
             }
 
             Debug.Log("Log Enable : " + Log_Enable);

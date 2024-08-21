@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HQFramework
 {
@@ -11,16 +8,17 @@ namespace HQFramework
     {
         private delegate void ModuleLifecycleMethod(HQModuleBase module);
 
-        private static HashSet<Type> registeredModuleTypeSet;
+        private static Dictionary<Type, HQModuleBase> registeredModuleDic;
         private static LinkedList<HQModuleBase> moduleList;
         private static ModuleLifecycleMethod moduleInitialize;
         private static ModuleLifecycleMethod moduleUpdate;
         private static ModuleLifecycleMethod moduleShutdown;
+        private static Assembly frameworkAssembly;
 
-        public static void Initialize()
+        private static void Initialize()
         {
             TimeManager.Initialize();
-            registeredModuleTypeSet = new HashSet<Type>();
+            registeredModuleDic = new Dictionary<Type, HQModuleBase>();
             moduleList = new LinkedList<HQModuleBase>();
 
             Type baseModuleType = typeof(HQModuleBase);
@@ -33,117 +31,88 @@ namespace HQFramework
             moduleUpdate = Delegate.CreateDelegate(methodType, updateMethod) as ModuleLifecycleMethod;
             moduleShutdown = Delegate.CreateDelegate(methodType, destroyMethod) as ModuleLifecycleMethod;
 
-            ProcessAutoRegisterModules();
+            frameworkAssembly = Assembly.GetExecutingAssembly();
         }
 
-        private static void ProcessAutoRegisterModules()
+        private static HQModuleBase RegisterModule(Type interfaceType)
         {
-            Assembly frameworkAssembly = Assembly.GetExecutingAssembly();
-            Type baseManagerType = typeof(HQModuleBase);
-            Type[] types = frameworkAssembly.GetTypes();
-            List<(AutoRegisterAttribute, Type)> managerOrderList = new List<(AutoRegisterAttribute, Type)>();
-            for (int j = 0; j < types.Length; j++)
-            {
-                Type type = types[j];
-                if (!type.IsAbstract && baseManagerType.IsAssignableFrom(type))
-                {
-                    AutoRegisterAttribute orderAttribute = type.GetCustomAttribute<AutoRegisterAttribute>();
-                    if (orderAttribute != null)
-                    {
-                        managerOrderList.Add((orderAttribute, type));
-                    }
-                }
-            }
-
-            managerOrderList.Sort((orderType1, orderType2) =>
-            {
-                if (orderType1.Item1.groupOrder < orderType2.Item1.groupOrder)
-                    return -1;
-                else if (orderType1.Item1.groupOrder == orderType2.Item1.groupOrder)
-                    return orderType1.Item1.internalOrder <= orderType2.Item1.internalOrder ? -1 : 1;
-                else
-                    return 1;
-            });
-
-            for (int n = 0; n < managerOrderList.Count; n++)
-            {
-                RegisterModule(managerOrderList[n].Item2);
-            }
-        }
-
-        public static HQModuleBase RegisterModule(Type type)
-        {
+            string typeName = interfaceType.Name.Substring(1); // IXXXManager => XXXManager
+            Type type = frameworkAssembly.GetType($"{interfaceType.Namespace}.{typeName}");
             if (!typeof(HQModuleBase).IsAssignableFrom(type))
             {
                 throw new ArgumentException($"{type} is not assignable from BaseModule.");
             }
-            else if (registeredModuleTypeSet.Contains(type))
-            {
-                throw new ArgumentException($"{type} has been registered, you can't do it again.");
-            }
             HQModuleBase module = Activator.CreateInstance(type) as HQModuleBase;
-            moduleList.AddLast(module);
-            registeredModuleTypeSet.Add(type);
+            LinkedListNode<HQModuleBase> current = moduleList.Last;
+            while (current != null)
+            {
+                if (current.Value.Priority <= module.Priority)
+                {
+                    break;
+                }
+                current = current.Next;
+            }
+            if (current == null)
+            {
+                moduleList.AddFirst(module);
+            }
+            else
+            {
+                moduleList.AddAfter(current, module);
+            }
+            registeredModuleDic.Add(interfaceType, module);
             moduleInitialize.Invoke(module);
             return module;
         }
 
-        public static T RegisterModule<T>() where T : HQModuleBase
+        internal static HQModuleBase GetModule(Type interfaceType)
         {
-            return (T)RegisterModule(typeof(T));
-        }
-
-        public static HQModuleBase GetModule(Type moduleType)
-        {
-            if (registeredModuleTypeSet.Contains(moduleType))
+            if (!interfaceType.IsInterface) // Interface segregation principle
             {
-                for (LinkedListNode<HQModuleBase> node = moduleList.First; node != null; node = node.Next)
-                {
-                    if (node.Value.GetType() == moduleType)
-                        return node.Value;
-                }
-                return null;
+                throw new ArgumentException($"{interfaceType} is not an interface type, you can only get module interface from HQFramework.");
+            }
+            if (registeredModuleDic.ContainsKey(interfaceType))
+            {
+                return registeredModuleDic[interfaceType];
             }
             else
             {
-                throw new KeyNotFoundException($"You have not registered the module : {moduleType}");
+                return RegisterModule(interfaceType);
             }
         }
 
-        public static T GetModule<T>() where T : HQModuleBase
+        /// <summary>
+        /// Get HQFramework Module
+        /// </summary>
+        /// <typeparam name="T">Module interface type</typeparam>
+        /// <returns>Module interface object</returns> 
+        /// <summary>
+        public static T GetModule<T>() where T : class
         {
             return GetModule(typeof(T)) as T;
         }
 
-        public static void UnregisterModule(Type type)
+        public static void UnregisterModule<T>() where T : class
         {
-            if (registeredModuleTypeSet.Contains(type))
+            Type interfaceType = typeof(T);
+            if (!interfaceType.IsInterface)
             {
-                HQModuleBase module = null;
-                for (LinkedListNode<HQModuleBase> node = moduleList.First; node != null; node = node.Next)
-                {
-                    if (node.Value.GetType() == type)
-                    {
-                        module = node.Value;
-                        moduleShutdown.Invoke(module);
-                        registeredModuleTypeSet.Remove(type);
-                        moduleList.Remove(node);
-                        break;
-                    }
-                }
+                throw new ArgumentException($"{interfaceType} is not an interface type, you can only get module interface from HQFramework.");
+            }
+            if (registeredModuleDic.ContainsKey(interfaceType))
+            {
+                HQModuleBase module = registeredModuleDic[interfaceType];
+                moduleShutdown.Invoke(module);
+                moduleList.Remove(module);
+                registeredModuleDic.Remove(interfaceType);
             }
             else
             {
-                throw new KeyNotFoundException($"You have not registered the module : {type}");
+                throw new KeyNotFoundException($"You have not registered the module : {interfaceType}");
             }
         }
 
-        public static void UnregisterModule<T>() where T : HQModuleBase
-        {
-            UnregisterModule(typeof(T));
-        }
-
-        public static void Update(float deltaTimeLogic, float deltaTimeRealtime)
+        private static void Update(float deltaTimeLogic, float deltaTimeRealtime)
         {
             TimeManager.OnUpdate(deltaTimeLogic, deltaTimeRealtime);
 
@@ -153,13 +122,13 @@ namespace HQFramework
             }
         }
 
-        public static void Shutdown()
+        private static void Shutdown()
         {
             for (LinkedListNode<HQModuleBase> node = moduleList.Last; node != null; node = node.Previous)
             {
                 moduleShutdown.Invoke(node.Value);
             }
-            registeredModuleTypeSet.Clear();
+            registeredModuleDic.Clear();
             moduleList.Clear();
 
             ReferencePool.ClearAll();

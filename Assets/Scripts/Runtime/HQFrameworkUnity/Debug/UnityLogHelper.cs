@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using HQFramework;
 using UnityEngine;
 
 namespace HQFramework.Unity
@@ -26,7 +22,7 @@ namespace HQFramework.Unity
             InitLogEvent();
         }
 
-        [Conditional(Debugger.ENABLE_LOG_SYMBOL)]
+        [Conditional(HQDebugger.ENABLE_LOG_SYMBOL)]
         private void InitLogEvent()
         {
             logMsgQueue = new ConcurrentQueue<string>();

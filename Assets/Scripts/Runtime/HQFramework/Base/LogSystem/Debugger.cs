@@ -2,7 +2,7 @@
 
 namespace HQFramework
 {
-    public static class Debugger
+    public static class HQDebugger
     {
         private static ILogHelper logHelper;
 

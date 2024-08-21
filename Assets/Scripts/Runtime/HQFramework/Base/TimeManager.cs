@@ -2,7 +2,7 @@ using System;
 
 namespace HQFramework
 {
-    public static class TimeManager
+    internal static class TimeManager
     {
         public static float startTime { get; private set; }
         public static float logicTimeSinceStart { get; private set; }
