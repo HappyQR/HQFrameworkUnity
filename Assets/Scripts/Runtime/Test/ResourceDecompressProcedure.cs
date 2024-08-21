@@ -20,4 +20,9 @@ public class ResourceDecompressProcedure : ProcedureBase
     {
         HQDebugger.Log("ResourceDecompressProcedure Exit");
     }
+
+    protected override void OnShutdown()
+    {
+        HQDebugger.Log("ResourceDecompressProcedure Shutdown");
+    }
 }

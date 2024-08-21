@@ -24,7 +24,7 @@ namespace HQFramework.Procedure
 
         }
 
-        protected internal virtual void OnDispose()
+        protected internal virtual void OnShutdown()
         {
 
         }

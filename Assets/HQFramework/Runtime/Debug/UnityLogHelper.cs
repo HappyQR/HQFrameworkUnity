@@ -27,7 +27,7 @@ namespace HQFramework.Unity
         {
             logMsgQueue = new ConcurrentQueue<string>();
             string logFileDir = Path.Combine(Application.persistentDataPath, "Log");
-            string fileName = DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss") + ".log";
+            string fileName = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
             if (!Directory.Exists(logFileDir))
             {
                 Directory.CreateDirectory(logFileDir);

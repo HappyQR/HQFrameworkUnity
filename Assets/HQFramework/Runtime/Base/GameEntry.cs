@@ -64,14 +64,13 @@ namespace HQFramework.Unity
         private void RegisterAllProcedures()
         {
             IProcedureManager procedureManager = HQFrameworkEngine.GetModule<IProcedureManager>();
-            Assembly currentAssembly = Assembly.GetExecutingAssembly();
             Type baseProcedureType = typeof(ProcedureBase);
-            Type entryProcedureType = currentAssembly.GetType(entryProcedure);
+            Type entryProcedureType = Utility.Assembly.GetType(entryProcedure);
             if (gameProcedures.Length > 0)
             {
                 for (int i = 0; i < gameProcedures.Length; i++)
                 {
-                    Type type = currentAssembly.GetType(gameProcedures[i]);
+                    Type type = Utility.Assembly.GetType(gameProcedures[i]);
                     if (!baseProcedureType.IsAssignableFrom(type))
                     {
                         Debug.LogError($"{type} is not a subclass of ProcedureBase.");
