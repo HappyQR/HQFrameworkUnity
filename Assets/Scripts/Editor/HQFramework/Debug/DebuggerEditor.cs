@@ -15,14 +15,21 @@ namespace HQFramework.Editor
             }
         }
 
-        [MenuItem("HQFramework/Debugger/Enable\\Disable Log")]
-        public static void SetLogEnbable()
+        [MenuItem("HQFramework/Debugger/Enable Log")]
+        public static void EnableLog()
         {
             if (!Log_Enable)
             {
                 ScriptingDefineSymbols.AddScriptingDefineSymbol(Debugger.ENABLE_LOG_SYMBOL);
             }
-            else
+
+            Debug.Log("Log Enable : " + Log_Enable);
+        }
+
+        [MenuItem("HQFramework/Debugger/Disable Log")]
+        public static void DisableLog()
+        {
+            if (Log_Enable)
             {
                 ScriptingDefineSymbols.RemoveScriptingDefineSymbol(Debugger.ENABLE_LOG_SYMBOL);
             }
