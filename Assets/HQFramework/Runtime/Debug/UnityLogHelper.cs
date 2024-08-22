@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-namespace HQFramework.Unity
+namespace HQFramework.Runtime
 {
     public class UnityLogHelper : ILogHelper, IDisposable
     {
@@ -37,6 +37,7 @@ namespace HQFramework.Unity
             logThreadAlive = true;
             resetEvent = new AutoResetEvent(false);
             Thread logThread = new Thread(WriteLogAsync);
+            logThread.IsBackground = true;
             logThread.Start();
             Application.logMessageReceivedThreaded += OnLogReceived;
             Application.quitting += OnApplicationQuit;

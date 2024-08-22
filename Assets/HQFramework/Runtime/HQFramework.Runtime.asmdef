@@ -1,6 +1,6 @@
 {
     "name": "HQFramework.Runtime",
-    "rootNamespace": "HQFramework.Unity",
+    "rootNamespace": "HQFramework.Runtime",
     "references": [
         "GUID:2021a6b20f7d74c87b706fe206d203a3"
     ],

@@ -22,7 +22,7 @@ namespace HQFramework.Editor
             {
                 ScriptingDefineSymbols.AddScriptingDefineSymbol(HQDebugger.ENABLE_LOG_SYMBOL);
             }
-
+            
             Debug.Log("Log Enable : " + Log_Enable);
         }
 

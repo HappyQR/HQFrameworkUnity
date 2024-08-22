@@ -3,7 +3,7 @@ using System.Reflection;
 using HQFramework.Procedure;
 using UnityEngine;
 
-namespace HQFramework.Unity
+namespace HQFramework.Runtime
 {
     public class GameEntry : MonoBehaviour
     {

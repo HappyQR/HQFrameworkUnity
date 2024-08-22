@@ -67,7 +67,7 @@ namespace HQFramework
 
         internal static HQModuleBase GetModule(Type interfaceType)
         {
-            if (!interfaceType.IsInterface) // Interface segregation principle
+            if (!interfaceType.IsInterface) // interface segregation principle
             {
                 throw new ArgumentException($"{interfaceType} is not an interface type, you can only get module interface from HQFramework.");
             }
