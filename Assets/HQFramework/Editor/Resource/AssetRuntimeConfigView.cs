@@ -5,23 +5,23 @@ using HQFramework.Runtime.Resource;
 
 namespace HQFramework.Editor
 {
-    public class AssetRuntimeSettingView : TabContentView
+    public class AssetRuntimeConfigView : TabContentView
     {
-        private AssetFrameworkConfig config;
+        private AssetRuntimeConfig config;
         private AssetBuildOption buildOption;
-        private static readonly string runtimeConfigPath = "Assets/Resources/AssetFrameworkConfig.asset";
+        private static readonly string runtimeConfigPath = "Assets/Resources/AssetRuntimeConfig.asset";
 
-        public AssetRuntimeSettingView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
+        public AssetRuntimeConfigView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
         {
         }
 
         public override void OnEnable()
         {
             buildOption = AssetBuildUtility.GetDefaultOption();
-            config = AssetDatabase.LoadAssetAtPath<AssetFrameworkConfig>(runtimeConfigPath);
+            config = AssetDatabase.LoadAssetAtPath<AssetRuntimeConfig>(runtimeConfigPath);
             if (config == null)
             {
-                config = ScriptableObject.CreateInstance<AssetFrameworkConfig>();
+                config = ScriptableObject.CreateInstance<AssetRuntimeConfig>();
                 AssetDatabase.CreateAsset(config, runtimeConfigPath);
             }
 

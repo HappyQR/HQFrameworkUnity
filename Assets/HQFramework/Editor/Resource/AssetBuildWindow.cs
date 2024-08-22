@@ -35,7 +35,7 @@ namespace HQFramework.Editor
                 new AssetModuleBuildView(this, btnBuildContent),
                 new AssetModuleHotfixView(this, btnHotfixContent),
                 new AssetBuildOptionView(this, btnConfigContent),
-                new AssetRuntimeSettingView(this, btnRuntimeContent),
+                new AssetRuntimeConfigView(this, btnRuntimeContent),
             };
         }
 
@@ -46,7 +46,7 @@ namespace HQFramework.Editor
 
             if (buildOption != null)
             {
-                GUILayout.Label($"Assets Generic Version : {buildOption.genericVersion}", "WhiteLargeCenterLabel");
+                GUILayout.Label($"Assets Generic Version : {buildOption.resourceVersion}", "WhiteLargeCenterLabel");
                 GUILayout.Space(20);
             }
         }

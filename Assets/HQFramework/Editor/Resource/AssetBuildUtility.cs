@@ -53,7 +53,7 @@ namespace HQFramework.Editor
             AssetBundleBuild[] builds = InitializeModuleBuild(module);
             AssetBuildOption buildOption = GetDefaultOption();
             string bundleOutputDir = Path.Combine(buildOption.bundleOutputDir,
-                                                  buildOption.genericVersion.ToString(),
+                                                  buildOption.resourceVersion.ToString(),
                                                   module.moduleName);
             if (!Directory.Exists(bundleOutputDir))
             {
@@ -72,7 +72,7 @@ namespace HQFramework.Editor
             AssetModuleInfo moduleInfo = new AssetModuleInfo();
             moduleInfo.id = module.id;
             moduleInfo.moduleName = module.moduleName;
-            moduleInfo.rootVersion = buildOption.genericVersion;
+            moduleInfo.rootVersion = buildOption.resourceVersion;
             moduleInfo.description = module.description;
             moduleInfo.isBuiltin = module.isBuiltin;
             switch (buildType)
@@ -522,7 +522,7 @@ namespace HQFramework.Editor
             List<AssetBuildOption> options = GetOptionList();
             for (int i = 0; i < options.Count; i++)
             {
-                options[i].genericVersion++;
+                options[i].resourceVersion++;
                 EditorUtility.SetDirty(options[i]);
                 AssetDatabase.SaveAssetIfDirty(options[i]);
             }

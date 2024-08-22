@@ -86,7 +86,7 @@ namespace HQFramework.Editor
             GUILayout.Space(5);
             buildOption.enableHotfix = GUILayout.Toggle(buildOption.enableHotfix, "");
             GUILayout.FlexibleSpace();
-            GUILayout.Label($"Assets Module Generic Version : {buildOption.genericVersion}", "AssetLabel");
+            GUILayout.Label($"Assets Module Generic Version : {buildOption.resourceVersion}", "AssetLabel");
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 

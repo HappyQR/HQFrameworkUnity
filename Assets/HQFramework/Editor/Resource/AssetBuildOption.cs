@@ -1,3 +1,4 @@
+using HQFramework.Resource;
 using UnityEngine;
 
 namespace HQFramework.Editor
@@ -6,32 +7,32 @@ namespace HQFramework.Editor
     public class AssetBuildOption : ScriptableObject
     {
         public string tag;
-        public bool enableHotfix;
+        public int resourceVersion;
+        public AssetHotfixMode hotfixMode;
         public string bundleOutputDir;
         public string manifestOutputDir;
         public string builtinDir;
         public string bundleUploadUrl;
         public string manifestUploadUrl;
-        public bool enableEncryption;
         public CompressOption compressOption;
         public BuildTargetPlatform platform;
 
-        // 资源大版本号，通常unity升级、工程框架重大变化、资源管理/加密方式变化等时才更新
-        public int genericVersion = 1;
+        // public bool enableEncryption;
     }
 
     public enum BuildTargetPlatform
     {
-        Android = 13,
-        iOS = 9,
-        StandaloneOSX = 2,
-        StandaloneWindows = 5
+        Android = UnityEditor.BuildTarget.Android,
+        iOS = UnityEditor.BuildTarget.iOS,
+        StandaloneOSX = UnityEditor.BuildTarget.StandaloneOSX,
+        StandaloneWindows = UnityEditor.BuildTarget.StandaloneWindows,
+        VisionOS = UnityEditor.BuildTarget.VisionOS,
+        WebGL = UnityEditor.BuildTarget.WebGL
     }
 
     public enum CompressOption
     {
-        LZ4 = 0x100,
-        LZMA = 0,
-        NoCompress = 1
+        LZ4 = UnityEditor.BuildAssetBundleOptions.ChunkBasedCompression,
+        NoCompress = UnityEditor.BuildAssetBundleOptions.UncompressedAssetBundle
     }
 }

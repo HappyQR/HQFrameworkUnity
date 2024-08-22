@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace HQFramework.Runtime.Resource
 {
-    [CreateAssetMenu(fileName = "AssetFrameworkConfig", menuName = "HQFramework/AssetFrameworkConfig", order = 0)]
-    public class AssetFrameworkConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "AssetRuntimeConfig", menuName = "HQFramework/AssetRuntimeConfig", order = 0)]
+    public class AssetRuntimeConfig : ScriptableObject
     {
         public bool enableHotfix;
         public string hotfixUrl;

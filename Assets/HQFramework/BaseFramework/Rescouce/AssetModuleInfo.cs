@@ -9,11 +9,7 @@ namespace HQFramework.Resource
         public int id;
         public string moduleName;
         public string description;
-        // 全量版本号
-        public int rootVersion;
-        // 增量补丁号
         public int currentPatchVersion;
-        // 最小支持补丁号
         public int minimalSupportedPatchVersion;
         public bool isBuiltin;
         public string releaseNote;

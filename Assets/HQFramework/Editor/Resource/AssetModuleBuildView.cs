@@ -130,7 +130,7 @@ namespace HQFramework.Editor
             {
                 if (moduleList.Count == 0)
                     return;
-                bool result = EditorUtility.DisplayDialog($"Upgrade Assets Generic Version: {buildOption.genericVersion}->{buildOption.genericVersion + 1}",
+                bool result = EditorUtility.DisplayDialog($"Upgrade Assets Generic Version: {buildOption.resourceVersion}->{buildOption.resourceVersion + 1}",
                                                 "This operation will rebuild all assets module, clear the hotfix version and overide AssetModuleManifest.\n\nAre you sure to continue?",
                                                 "Yes, Upgrade.",
                                                 "No, Cancel");
