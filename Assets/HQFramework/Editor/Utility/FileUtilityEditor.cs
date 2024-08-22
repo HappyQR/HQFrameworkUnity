@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace HQFramework.Editor
 {
-    public static class EditorFileUtility
+    public static class FileUtilityEditor
     {
         public static string GetPhysicalPath(string path)
         {

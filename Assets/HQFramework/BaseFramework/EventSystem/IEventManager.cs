@@ -1,4 +1,4 @@
-namespace HQFramework.Event
+namespace HQFramework.EventSystem
 {
     public interface IEventManager
     {
