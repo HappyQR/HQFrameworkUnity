@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using HQFramework.Runtime.Resource;
+using HQFramework.Resource;
 
 namespace HQFramework.Editor
 {
@@ -17,7 +18,11 @@ namespace HQFramework.Editor
 
         public override void OnEnable()
         {
-            buildOption = AssetBuildUtility.GetDefaultOption();
+            buildOption = AssetBuildOptionManager.GetDefaultOption();
+            if (buildOption == null)
+            {
+                return;
+            }
             config = AssetDatabase.LoadAssetAtPath<AssetRuntimeConfig>(runtimeConfigPath);
             if (config == null)
             {
@@ -25,7 +30,7 @@ namespace HQFramework.Editor
                 AssetDatabase.CreateAsset(config, runtimeConfigPath);
             }
 
-            config.enableHotfix = buildOption.enableHotfix;
+            config.hotfixMode = buildOption.hotfixMode;
             config.hotfixUrl = buildOption.bundleUploadUrl;
             config.hotfixManifestUrl = buildOption.manifestUploadUrl;
             if (!string.IsNullOrEmpty(buildOption.builtinDir))
@@ -45,10 +50,13 @@ namespace HQFramework.Editor
 
         public override void OnGUI()
         {
+            if (config == null)
+                return;
+            
             GUIStyle headerStyle = "AM HeaderStyle";
             GUILayout.BeginArea(new Rect(10, 10, viewRect.width - 20, viewRect.height - 20));
 
-            if (config.enableHotfix)
+            if (config.hotfixMode != AssetHotfixMode.NoHotfix)
             {
                 GUI.enabled = false;
                 GUILayout.Label("AssetBundle Hotfix URL:", headerStyle);
@@ -72,6 +80,7 @@ namespace HQFramework.Editor
             else
             {
                 GUILayout.Label("Hotfix Disable", headerStyle);
+                GUILayout.Space(30);
             }
 
             GUI.enabled = false;

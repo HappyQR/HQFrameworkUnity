@@ -21,7 +21,7 @@ namespace HQFramework.Editor
 
         public override void OnEnable()
         {
-            buildOption = AssetBuildUtility.GetDefaultOption();
+            buildOption = AssetBuildOptionManager.GetDefaultOption();
             btnUIContent = EditorGUIUtility.IconContent("SceneAsset Icon");
             btnAddContent = EditorGUIUtility.IconContent("CollabCreate Icon");
             btnAddContent.tooltip = "click to add a new module";
@@ -59,13 +59,18 @@ namespace HQFramework.Editor
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Android.Small");
                         break;
                     case BuildTargetPlatform.iOS:
+                    case BuildTargetPlatform.VisionOS:
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.iPhone.Small");
                         break;
                     case BuildTargetPlatform.StandaloneOSX:
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Standalone.Small");
                         break;
                     case BuildTargetPlatform.StandaloneWindows:
+                    case BuildTargetPlatform.StandaloneWindows64:
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Metro.Small");
+                        break;
+                    case BuildTargetPlatform.WebGL://BuildSettings.WebGL.Small
+                        btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.WebGL.Small");
                         break;
                 }
                 enableBuild = true;
@@ -249,7 +254,7 @@ namespace HQFramework.Editor
             });
             menu.AddItem(new GUIContent("Delete"), false, () =>
             {
-                if (AssetBuildUtility.DeleteAssetModule(module))
+                if (AssetModuleManager.DeleteAssetModule(module))
                 {
                     RefreshModuleList();
                 }
@@ -259,7 +264,7 @@ namespace HQFramework.Editor
 
         public void RefreshModuleList()
         {
-            moduleList = AssetBuildUtility.GetModuleList();
+            moduleList = AssetModuleManager.GetModuleList();
         }
     }
 }

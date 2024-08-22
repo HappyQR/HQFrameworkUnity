@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
+using HQFramework.Resource;
 
 namespace HQFramework.Editor
 {
@@ -21,8 +22,8 @@ namespace HQFramework.Editor
         public override void OnEnable()
         {
             previousSelectedOptionIndex = -1;
-            optionList = AssetBuildUtility.GetOptionList();
-            buildOption = AssetBuildUtility.GetDefaultOption();
+            optionList = AssetBuildOptionManager.GetOptionList();
+            buildOption = AssetBuildOptionManager.GetDefaultOption();
             optionTagList = new string[optionList.Count + 1];
             for (int i = 0; i < optionList.Count; i++)
             {
@@ -38,9 +39,6 @@ namespace HQFramework.Editor
 
         public override void OnGUI()
         {
-            GUIStyle headerStyle = "AM HeaderStyle";
-            GUILayout.BeginArea(new Rect(10, 10, viewRect.width - 20, viewRect.height - 20));
-
             if (buildOption == null && optionList.Count == 0)
             {
                 GUILayout.Space(viewRect.height / 2 - 30);
@@ -48,10 +46,11 @@ namespace HQFramework.Editor
                 {
                     PopupNewOption();
                 }
-                GUILayout.EndArea();
                 return;
             }
 
+            GUIStyle headerStyle = "AM HeaderStyle";
+            GUILayout.BeginArea(new Rect(10, 10, viewRect.width - 20, viewRect.height - 20));
             GUILayout.BeginHorizontal("PreBackground");
 
             GUILayout.Label("Option Tag: ", headerStyle);
@@ -64,7 +63,7 @@ namespace HQFramework.Editor
             else if (previousSelectedOptionIndex != selectedOptionIndex)
             {
                 buildOption = optionList[selectedOptionIndex];
-                AssetBuildUtility.SetDefaultOption(buildOption);
+                AssetBuildOptionManager.SetDefaultOption(buildOption);
                 previousSelectedOptionIndex = selectedOptionIndex;
             }
 
@@ -82,21 +81,21 @@ namespace HQFramework.Editor
             scrollPos.x = 0;
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Enable Hotfix:", headerStyle);
+            GUILayout.Label("Hotfix Mode:", headerStyle);
             GUILayout.Space(5);
-            buildOption.enableHotfix = GUILayout.Toggle(buildOption.enableHotfix, "");
+            buildOption.hotfixMode = (AssetHotfixMode)EditorGUILayout.EnumPopup(buildOption.hotfixMode);
             GUILayout.FlexibleSpace();
             GUILayout.Label($"Assets Module Generic Version : {buildOption.resourceVersion}", "AssetLabel");
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Enable Bundle Encryption:", headerStyle);
-            GUILayout.Space(5);
-            buildOption.enableEncryption = GUILayout.Toggle(buildOption.enableEncryption, "");
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            GUILayout.Space(10);
+            // GUILayout.BeginHorizontal();
+            // GUILayout.Label("Enable Bundle Encryption:", headerStyle);
+            // GUILayout.Space(5);
+            // buildOption.enableEncryption = GUILayout.Toggle(buildOption.enableEncryption, "");
+            // GUILayout.FlexibleSpace();
+            // GUILayout.EndHorizontal();
+            // GUILayout.Space(10);
 
             GUILayout.Label("AssetBundle Output Dir:", headerStyle);
             GUILayout.Space(5);
@@ -133,7 +132,7 @@ namespace HQFramework.Editor
 
             GUILayout.Space(10);
 
-            if (buildOption.enableHotfix)
+            if (buildOption.hotfixMode != AssetHotfixMode.NoHotfix)
             {
                 GUILayout.Label("AssetBundle Upload URL:", headerStyle);
                 GUILayout.Space(5);
@@ -168,7 +167,7 @@ namespace HQFramework.Editor
             btnCheckContent.text = " Check All Modules";
             if (GUILayout.Button(btnCheckContent, GUILayout.Height(45)))
             {
-                AssetBuildUtility.CheckAllModulesFormat();
+                
             }
 
             GUIContent btnUploadContent = EditorGUIUtility.IconContent("d_RotateTool On");
@@ -185,9 +184,9 @@ namespace HQFramework.Editor
         {
             CreateNewOptionWindow.Show((tag) =>
             {
-                buildOption = AssetBuildUtility.CreateNewOption(tag);
-                optionList = AssetBuildUtility.GetOptionList();
-                AssetBuildUtility.SetDefaultOption(buildOption);
+                buildOption = AssetBuildOptionManager.CreateNewOption(tag);
+                optionList = AssetBuildOptionManager.GetOptionList();
+                AssetBuildOptionManager.SetDefaultOption(buildOption);
                 optionTagList = new string[optionList.Count + 1];
                 for (int i = 0; i < optionList.Count; i++)
                 {
@@ -223,7 +222,7 @@ namespace HQFramework.Editor
             confirmCallback = callback;
             var window = GetWindow<CreateNewOptionWindow>();
             window.maxSize = new Vector2(250, 85);
-            window.ShowModalUtility();
+            window.Show();
         }
 
         void OnDestroy()

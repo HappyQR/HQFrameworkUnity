@@ -26,6 +26,7 @@ namespace HQFramework.Editor
         iOS = UnityEditor.BuildTarget.iOS,
         StandaloneOSX = UnityEditor.BuildTarget.StandaloneOSX,
         StandaloneWindows = UnityEditor.BuildTarget.StandaloneWindows,
+        StandaloneWindows64 = UnityEditor.BuildTarget.StandaloneWindows64,
         VisionOS = UnityEditor.BuildTarget.VisionOS,
         WebGL = UnityEditor.BuildTarget.WebGL
     }

@@ -6,8 +6,6 @@ namespace HQFramework.Editor
 {
     public class AssetBuildWindow : TabContentWindow
     {
-        private AssetBuildOption buildOption;
-
         [MenuItem("HQFramework/Build/Assets Build")]
         private static void ShowWindow()
         {
@@ -28,8 +26,6 @@ namespace HQFramework.Editor
             GUIContent btnRuntimeContent = EditorGUIUtility.IconContent("d_Profiler.Memory");
             btnRuntimeContent.text = " Runtime Settings";
 
-            buildOption = AssetBuildUtility.GetDefaultOption();
-
             contentList = new List<TabContentView>
             {
                 new AssetModuleBuildView(this, btnBuildContent),
@@ -43,12 +39,6 @@ namespace HQFramework.Editor
         {
             base.OnTabPanelGUI();
             GUILayout.FlexibleSpace();
-
-            if (buildOption != null)
-            {
-                GUILayout.Label($"Assets Generic Version : {buildOption.resourceVersion}", "WhiteLargeCenterLabel");
-                GUILayout.Space(20);
-            }
         }
 
         public void RefreshModuleList()

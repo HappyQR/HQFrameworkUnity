@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using HQFramework.Resource;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,10 +20,10 @@ namespace HQFramework.Editor
 
         public override void OnEnable()
         {
-            buildOption = AssetBuildUtility.GetDefaultOption();
+            buildOption = AssetBuildOptionManager.GetDefaultOption();
             RefreshModuleList();
 
-            if (buildOption == null || !buildOption.enableHotfix)
+            if (buildOption == null || buildOption.hotfixMode == AssetHotfixMode.NoHotfix)
                 return;
 
             btnUIContent = EditorGUIUtility.IconContent("SceneAsset Icon");
@@ -40,7 +41,7 @@ namespace HQFramework.Editor
 
         public override void OnGUI()
         {
-            if (buildOption == null || !buildOption.enableHotfix)
+            if (buildOption == null || buildOption.hotfixMode == AssetHotfixMode.NoHotfix)
                 return;
 
             DrawModules();
@@ -62,13 +63,18 @@ namespace HQFramework.Editor
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Android.Small");
                         break;
                     case BuildTargetPlatform.iOS:
+                    case BuildTargetPlatform.VisionOS:
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.iPhone.Small");
                         break;
                     case BuildTargetPlatform.StandaloneOSX:
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Standalone.Small");
                         break;
                     case BuildTargetPlatform.StandaloneWindows:
+                    case BuildTargetPlatform.StandaloneWindows64:
                         btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Metro.Small");
+                        break;
+                    case BuildTargetPlatform.WebGL://BuildSettings.WebGL.Small
+                        btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.WebGL.Small");
                         break;
                 }
                 enableBuild = true;
@@ -180,7 +186,7 @@ namespace HQFramework.Editor
 
         public void RefreshModuleList()
         {
-            hotfixModuleList = AssetBuildUtility.GetModuleList();
+            hotfixModuleList = AssetModuleManager.GetModuleList();
         }
     }
 }

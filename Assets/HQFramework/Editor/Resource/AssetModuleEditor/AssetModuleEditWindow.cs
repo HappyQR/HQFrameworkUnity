@@ -17,7 +17,7 @@ namespace HQFramework.Editor
             config = target;
             if (config == null)
             {
-                int id = AssetBuildUtility.GetNewModuleID();
+                int id = AssetModuleManager.GetNewModuleID();
                 AssetModuleConfig temp = ScriptableObject.CreateInstance<AssetModuleConfig>();
                 temp.id = id;
                 temp.currentPatchVersion = 1;
@@ -92,7 +92,7 @@ namespace HQFramework.Editor
                 {
                     saveNewConfig = true;
                     // Create New Module
-                    if (AssetBuildUtility.CreateNewAssetModule(config))
+                    if (AssetModuleManager.CreateNewAssetModule(config))
                     {
                         GetWindow<AssetBuildWindow>().RefreshModuleList();
                         Close();
