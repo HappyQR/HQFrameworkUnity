@@ -103,13 +103,6 @@ namespace HQFramework.Editor
                 }
             }
 
-            // GUIContent btnUploadContent = EditorGUIUtility.IconContent("Update-Available");
-            // btnUploadContent.text = " Upload";
-            // if (GUILayout.Button(btnUploadContent, GUILayout.Height(45)))
-            // {
-
-            // }
-
             GUI.enabled = true;
 
             GUILayout.Space(5);

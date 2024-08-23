@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
 
 namespace HQFramework.Editor
 {
@@ -15,7 +14,7 @@ namespace HQFramework.Editor
             window.Show();
         }
 
-        protected override void OnInitialized(out List<TabContentView> contentList)
+        protected override void OnInitialized(out TabContentView[] contentList)
         {
             GUIContent btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.SelectedIcon");
             btnBuildContent.text = " Build Modules";
@@ -26,7 +25,7 @@ namespace HQFramework.Editor
             GUIContent btnRuntimeContent = EditorGUIUtility.IconContent("d_Profiler.Memory");
             btnRuntimeContent.text = " Runtime Settings";
 
-            contentList = new List<TabContentView>
+            contentList = new TabContentView[]
             {
                 new AssetModuleBuildView(this, btnBuildContent),
                 new AssetModuleHotfixView(this, btnHotfixContent),

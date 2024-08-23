@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -12,7 +11,7 @@ namespace HQFramework.Editor
         private Rect tabPanelRect;
         private Rect contentPanelRect;
         private Rect splitterRect;
-        private List<TabContentView> contentList;
+        private TabContentView[] contentList;
         private int currentTabIndex = 0;
         private int preTabIndex = 0;
         private Vector2 tabViewPos;
@@ -79,7 +78,7 @@ namespace HQFramework.Editor
         {
             tabViewPos = GUILayout.BeginScrollView(tabViewPos);
             tabViewPos.x = 0;
-            for (int i = 0; i < contentList.Count; i++)
+            for (int i = 0; i < contentList.Length; i++)
             {
                 if (GUILayout.Button(contentList[i].TabTitle, currentTabIndex == i ? selectedTab : normalTab, GUILayout.Height(50)))
                 {
@@ -98,7 +97,7 @@ namespace HQFramework.Editor
 
         protected virtual void OnContentPanelGUI()
         {
-            if (contentList.Count > currentTabIndex)
+            if (contentList.Length > currentTabIndex)
             {
                 contentList[currentTabIndex].viewRect = contentPanelRect;
                 contentList[currentTabIndex].OnGUI();
@@ -133,7 +132,7 @@ namespace HQFramework.Editor
             }
             if (currentContentView == null)
             {
-                if (contentList.Count > 0)
+                if (contentList.Length > 0)
                 {
                     currentContentView = contentList[currentTabIndex];
                 }
@@ -142,7 +141,7 @@ namespace HQFramework.Editor
             currentContentView?.OnEnable();
         }
 
-        protected abstract void OnInitialized(out List<TabContentView> contentList);
+        protected abstract void OnInitialized(out TabContentView[] contentList);
     }
 
     public abstract class TabContentView
