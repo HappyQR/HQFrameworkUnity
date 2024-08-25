@@ -71,11 +71,6 @@ namespace HQFramework.Editor
 
                 GUILayout.Space(10);
                 GUI.enabled = true;
-
-                GUILayout.Label("Max Hotfix Download Thread Count:", headerStyle);
-                GUILayout.Space(5);
-                config.maxDownloadThreadCount = EditorGUILayout.IntField(config.maxDownloadThreadCount);
-                GUILayout.Space(10);
             }
             else
             {

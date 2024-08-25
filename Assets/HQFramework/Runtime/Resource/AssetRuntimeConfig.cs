@@ -12,6 +12,5 @@ namespace HQFramework.Runtime.Resource
 
         public string builtinDir;
         public string assetPersistentDir;
-        public int maxDownloadThreadCount;
     }
 }
