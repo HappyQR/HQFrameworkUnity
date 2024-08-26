@@ -31,8 +31,8 @@ namespace HQFramework.Editor
             }
 
             config.hotfixMode = buildOption.hotfixMode;
-            config.hotfixUrl = buildOption.bundleUploadUrl;
-            config.hotfixManifestUrl = buildOption.manifestUploadUrl;
+            // config.hotfixUrl = buildOption.bundleUploadUrl;
+            // config.hotfixManifestUrl = buildOption.manifestUploadUrl;
             if (!string.IsNullOrEmpty(buildOption.builtinDir))
             {
                 config.builtinDir = Path.GetRelativePath(Application.streamingAssetsPath, buildOption.builtinDir);
@@ -62,6 +62,7 @@ namespace HQFramework.Editor
                 GUILayout.Label("AssetBundle Hotfix URL:", headerStyle);
                 GUILayout.Space(5);
                 EditorGUILayout.TextField(config.hotfixUrl);
+                
 
                 GUILayout.Space(10);
 

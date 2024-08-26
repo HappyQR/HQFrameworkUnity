@@ -18,8 +18,8 @@ MonoBehaviour:
   isBuiltin: 1
   currentPatchVersion: 1
   minimalSupportedPatchVersion: 1
-  description: 
+  description: public built-in assets of this project.
   releaseNote: 
-  isBuild: 0
+  isBuild: 1
   autoIncreasePatchVersion: 0
-  createTimeTicks: 638600453242692485
+  createTimeTicks: 638602911534347720

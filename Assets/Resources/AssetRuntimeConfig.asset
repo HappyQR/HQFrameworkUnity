@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955cc7799e3b047a3a442d63f9c84252, type: 3}
   m_Name: AssetRuntimeConfig
   m_EditorClassIdentifier: 
-  hotfixMode: 2
+  hotfixMode: 1
   hotfixUrl: 
   hotfixManifestUrl: 
-  builtinDir: 
+  builtinDir: Assets
   assetPersistentDir: 
-  maxDownloadThreadCount: 0

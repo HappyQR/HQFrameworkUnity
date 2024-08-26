@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 309788d6790324b9a874ac511361ef37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logHelperTypeName: HQFramework.Unity.UnityLogHelper
+  logHelperTypeName: HQFramework.Runtime.UnityLogHelper
   gameProcedures:
   - ResourceDecompressProcedure
   entryProcedure: ResourceDecompressProcedure

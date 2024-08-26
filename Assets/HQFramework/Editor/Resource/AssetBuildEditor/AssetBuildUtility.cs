@@ -283,18 +283,5 @@ namespace HQFramework.Editor
 
             return (allAssetManifest, builtinManifest);
         }
-
-        public static void UpgradeAssetModuleGenericVersion()
-        {
-            List<AssetBuildOption> options = AssetBuildOptionManager.GetOptionList();
-            for (int i = 0; i < options.Count; i++)
-            {
-                options[i].resourceVersion++;
-                EditorUtility.SetDirty(options[i]);
-                AssetDatabase.SaveAssetIfDirty(options[i]);
-            }
-
-            BuildAllModules();
-        }
     }
 }

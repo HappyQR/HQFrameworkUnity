@@ -13,6 +13,7 @@ namespace HQFramework.Editor
             config = target;
             var window = GetWindow<HotfixModuleEditWindow>();
             window.titleContent = new GUIContent("Edit Hotfix Config");
+            window.minSize = window.maxSize = new Vector2(480, 500);
             window.Show();
         }
 

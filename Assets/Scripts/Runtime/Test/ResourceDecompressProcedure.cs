@@ -9,7 +9,6 @@ public class ResourceDecompressProcedure : ProcedureBase
     protected override void OnEnter()
     {
         HQDebugger.Log("ResourceDecompressProcedure Enter");
-        HQDebugger.LogInfo(Application.buildGUID);
     }
 
     protected override void OnUpdate()

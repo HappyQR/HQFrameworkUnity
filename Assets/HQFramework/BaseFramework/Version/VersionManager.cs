@@ -21,6 +21,11 @@ namespace HQFramework.Version
             CheckVersionInternal();
         }
 
+        public VersionInfo GetLocalVersionInfo()
+        {
+            return versionHelper.GetLocalVersionInfo();
+        }
+
         private async void CheckVersionInternal()
         {
             using HttpClient client = new HttpClient();

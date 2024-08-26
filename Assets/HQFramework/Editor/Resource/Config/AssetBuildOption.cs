@@ -6,14 +6,16 @@ namespace HQFramework.Editor
     [CreateAssetMenu(fileName = "AssetBuildOption", menuName = "HQFramework/AssetBuildOption", order = 0)]
     public class AssetBuildOption : ScriptableObject
     {
+        public string optionId;
         public string tag;
         public int resourceVersion;
+        public bool autoIncreaseResourceVersion;
         public AssetHotfixMode hotfixMode;
         public string bundleOutputDir;
         public string manifestOutputDir;
         public string builtinDir;
-        public string bundleUploadUrl;
-        public string manifestUploadUrl;
+        // public string bundleUploadUrl;
+        // public string manifestUploadUrl;
         public CompressOption compressOption;
         public BuildTargetPlatform platform;
 

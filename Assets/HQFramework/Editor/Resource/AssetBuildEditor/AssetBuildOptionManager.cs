@@ -27,15 +27,16 @@ namespace HQFramework.Editor
             EditorPrefs.SetString(bundleBuildOptionPrefsKey, optionPath);
         }
 
-        public static AssetBuildOption CreateNewOption(string tag)
+        public static AssetBuildOption CreateNewOption(string optionId, string tag)
         {
             if (!AssetDatabase.IsValidFolder(buildOptionDir))
             {
                 Directory.CreateDirectory(FileUtilityEditor.GetPhysicalPath(buildOptionDir));
                 AssetDatabase.Refresh();
             }
-            string optionPath = Path.Combine(buildOptionDir, $"{tag}BuildOption.asset");
+            string optionPath = Path.Combine(buildOptionDir, $"{optionId}BuildOption.asset");
             AssetBuildOption option = ScriptableObject.CreateInstance<AssetBuildOption>();
+            option.optionId = optionId;
             option.tag = tag;
             option.compressOption = CompressOption.LZ4;
             option.platform = (BuildTargetPlatform)EditorUserBuildSettings.activeBuildTarget;

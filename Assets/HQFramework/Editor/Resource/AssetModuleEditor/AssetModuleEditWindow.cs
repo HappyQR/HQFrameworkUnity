@@ -28,6 +28,7 @@ namespace HQFramework.Editor
                 createNewConfig = true;
             }
             var window = GetWindow<AssetModuleEditWindow>();
+            window.minSize = window.maxSize = new Vector2(480, 360);
             window.titleContent = new GUIContent("Create New Asset Module");
             window.Show();
         }

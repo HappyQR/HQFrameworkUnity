@@ -9,7 +9,7 @@ namespace HQFramework.Editor
     public class AssetBuildOptionView : TabContentView
     {
         private List<AssetBuildOption> optionList;
-        private string[] optionTagList;
+        private string[] optionNameList;
         private AssetBuildOption buildOption;
         private Vector2 scrollPos;
         private int selectedOptionIndex;
@@ -24,17 +24,17 @@ namespace HQFramework.Editor
             previousSelectedOptionIndex = -1;
             optionList = AssetBuildOptionManager.GetOptionList();
             buildOption = AssetBuildOptionManager.GetDefaultOption();
-            optionTagList = new string[optionList.Count + 1];
+            optionNameList = new string[optionList.Count + 1];
             for (int i = 0; i < optionList.Count; i++)
             {
-                optionTagList[i] = optionList[i].tag;
+                optionNameList[i] = optionList[i].optionId;
                 if (buildOption == optionList[i])
                 {
                     selectedOptionIndex = i;
                     previousSelectedOptionIndex = i;
                 }
             }
-            optionTagList[optionTagList.Length - 1] = "Add New...";
+            optionNameList[optionNameList.Length - 1] = "Add New...";
         }
 
         public override void OnGUI()
@@ -53,9 +53,9 @@ namespace HQFramework.Editor
             GUILayout.BeginArea(new Rect(10, 10, viewRect.width - 20, viewRect.height - 20));
             GUILayout.BeginHorizontal("PreBackground");
 
-            GUILayout.Label("Option Tag: ", headerStyle);
-            selectedOptionIndex = EditorGUILayout.Popup(selectedOptionIndex, optionTagList);
-            if (selectedOptionIndex == optionTagList.Length - 1)
+            GUILayout.Label("Build Option ID: ", headerStyle);
+            selectedOptionIndex = EditorGUILayout.Popup(selectedOptionIndex, optionNameList);
+            if (selectedOptionIndex == optionNameList.Length - 1)
             {
                 PopupNewOption();
                 selectedOptionIndex = previousSelectedOptionIndex;
@@ -81,11 +81,30 @@ namespace HQFramework.Editor
             scrollPos.x = 0;
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label("Product Name: ", headerStyle);
+            GUILayout.Label(Application.productName);
+            GUILayout.FlexibleSpace();
+            GUILayout.Label($"Build Tag : {buildOption.tag}", "AssetLabel");
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Product Version: ", headerStyle);
+            GUILayout.Label(Application.version);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Runtime Platform: ", headerStyle);
+            GUILayout.Label(buildOption.platform.ToString());
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
             GUILayout.Label("Hotfix Mode:", headerStyle);
             GUILayout.Space(5);
             buildOption.hotfixMode = (AssetHotfixMode)EditorGUILayout.EnumPopup(buildOption.hotfixMode);
             GUILayout.FlexibleSpace();
-            GUILayout.Label($"Assets Module Generic Version : {buildOption.resourceVersion}", "AssetLabel");
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 
@@ -132,20 +151,20 @@ namespace HQFramework.Editor
 
             GUILayout.Space(10);
 
-            if (buildOption.hotfixMode != AssetHotfixMode.NoHotfix)
-            {
-                GUILayout.Label("AssetBundle Upload URL:", headerStyle);
-                GUILayout.Space(5);
-                buildOption.bundleUploadUrl = EditorGUILayout.TextField(buildOption.bundleUploadUrl);
+            // if (buildOption.hotfixMode != AssetHotfixMode.NoHotfix)
+            // {
+            //     GUILayout.Label("AssetBundle Upload URL:", headerStyle);
+            //     GUILayout.Space(5);
+            //     buildOption.bundleUploadUrl = EditorGUILayout.TextField(buildOption.bundleUploadUrl);
 
-                GUILayout.Space(10);
+            //     GUILayout.Space(10);
 
-                GUILayout.Label("AssetBundle Manifest Upload URL:", headerStyle);
-                GUILayout.Space(5);
-                buildOption.manifestUploadUrl = EditorGUILayout.TextField(buildOption.manifestUploadUrl);
+            //     GUILayout.Label("AssetBundle Manifest Upload URL:", headerStyle);
+            //     GUILayout.Space(5);
+            //     buildOption.manifestUploadUrl = EditorGUILayout.TextField(buildOption.manifestUploadUrl);
 
-                GUILayout.Space(10);
-            }
+            //     GUILayout.Space(10);
+            // }
 
             GUILayout.Label("Select a Compression Function:", headerStyle);
             GUILayout.Space(5);
@@ -158,6 +177,19 @@ namespace HQFramework.Editor
             buildOption.platform = (BuildTargetPlatform)EditorGUILayout.EnumPopup(buildOption.platform);
 
             EditorGUILayout.Space(10);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Resource Version:", headerStyle);
+            GUILayout.Space(5);
+            GUI.enabled = !buildOption.autoIncreaseResourceVersion;
+            buildOption.resourceVersion = EditorGUILayout.IntField(buildOption.resourceVersion, GUILayout.Width(100));
+            GUI.enabled = true;
+            GUILayout.Space(5);
+            buildOption.autoIncreaseResourceVersion = GUILayout.Toggle(buildOption.autoIncreaseResourceVersion, "Auto Increase");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
 
             GUILayout.EndScrollView();
             GUILayout.FlexibleSpace();
@@ -182,22 +214,22 @@ namespace HQFramework.Editor
 
         private void PopupNewOption()
         {
-            CreateNewOptionWindow.Show((tag) =>
+            CreateNewOptionWindow.Show((optionId, tag) =>
             {
-                buildOption = AssetBuildOptionManager.CreateNewOption(tag);
+                buildOption = AssetBuildOptionManager.CreateNewOption(optionId, tag);
                 optionList = AssetBuildOptionManager.GetOptionList();
                 AssetBuildOptionManager.SetDefaultOption(buildOption);
-                optionTagList = new string[optionList.Count + 1];
+                optionNameList = new string[optionList.Count + 1];
                 for (int i = 0; i < optionList.Count; i++)
                 {
-                    optionTagList[i] = optionList[i].tag;
+                    optionNameList[i] = optionList[i].optionId;
                     if (buildOption == optionList[i])
                     {
                         selectedOptionIndex = i;
                         previousSelectedOptionIndex = i;
                     }
                 }
-                optionTagList[optionTagList.Length - 1] = "Add New";
+                optionNameList[optionNameList.Length - 1] = "Add New";
             });
         }
 
@@ -214,14 +246,15 @@ namespace HQFramework.Editor
 
     public class CreateNewOptionWindow : EditorWindow
     {
+        private string optionId;
         private string tag;
-        private static Action<string> confirmCallback;
+        private static Action<string, string> confirmCallback;
 
-        public static void Show(Action<string> callback)
+        public static void Show(Action<string, string> callback)
         {
             confirmCallback = callback;
             var window = GetWindow<CreateNewOptionWindow>();
-            window.maxSize = new Vector2(250, 85);
+            window.maxSize = new Vector2(270, 120);
             window.Show();
         }
 
@@ -236,7 +269,16 @@ namespace HQFramework.Editor
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(10);
-            GUILayout.Label("Tag : ");
+            GUILayout.Label("OptionId : ");
+            optionId = EditorGUILayout.TextField(optionId);
+            GUILayout.Space(10);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
+            GUILayout.Label("Tag         : ");
             tag = EditorGUILayout.TextField(tag);
             GUILayout.Space(10);
             GUILayout.EndHorizontal();
@@ -255,7 +297,11 @@ namespace HQFramework.Editor
                     Debug.LogError("You need to enter a tag!");
                     return;
                 }
-                confirmCallback.Invoke(tag);
+                else if (string.IsNullOrEmpty(optionId))
+                {
+                    Debug.LogError("You need to specify an option id.");
+                }
+                confirmCallback.Invoke(optionId, tag);
                 Close();
             }
             GUILayout.Space(10);
