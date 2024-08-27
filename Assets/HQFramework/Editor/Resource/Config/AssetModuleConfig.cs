@@ -5,7 +5,6 @@ using UnityObject = UnityEngine.Object;
 
 namespace HQFramework.Editor
 {
-    [CreateAssetMenu(fileName = "AssetModuleConfig", menuName = "HQFramework/AssetModuleConfig", order = 0)]
     public class AssetModuleConfig : ScriptableObject
     {
         public int id;

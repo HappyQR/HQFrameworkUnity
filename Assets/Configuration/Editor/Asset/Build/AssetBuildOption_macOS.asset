@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a729e49c2b4f4ea98c7ca3729902393, type: 3}
+  m_Name: AssetBuildOption_macOS
+  m_EditorClassIdentifier: 
+  optionTag: macOS
+  bundleOutputDir: ../Build/Assets
+  builtinDir: Assets
+  resourceVersion: 0
+  autoIncreaseResourceVersion: 0
+  platform: 2
+  compressOption: 256

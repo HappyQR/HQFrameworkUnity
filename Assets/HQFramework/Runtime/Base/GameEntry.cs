@@ -58,7 +58,7 @@ namespace HQFramework.Runtime
                 throw new Exception($"{logHelperTypeName} is not found.");
             }
             ILogHelper logHelper = Activator.CreateInstance(logHelperType) as ILogHelper;
-            HQDebugger.SetLogHelper(logHelper);
+            HQDebugger.SetHelper(logHelper);
         }
 
         private void RegisterAllProcedures()

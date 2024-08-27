@@ -13,8 +13,8 @@ namespace HQFramework.Resource
         public int minimalSupportedPatchVersion;
         public bool isBuiltin;
         public string releaseNote;
-        public Dictionary<string, AssetBundleInfo> bundleDic;
         public string[] dependencies;
+        public Dictionary<string, AssetBundleInfo> bundleDic;
         //模块全量资源信息
         public Dictionary<uint, AssetItemInfo> assetsDic;
     }

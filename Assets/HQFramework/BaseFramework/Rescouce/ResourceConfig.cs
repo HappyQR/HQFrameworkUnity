@@ -1,12 +1,10 @@
-using HQFramework.Resource;
-using UnityEngine;
+using System;
 
-namespace HQFramework.Editor
+namespace HQFramework.Resource
 {
-    public class AssetRuntimeConfig : ScriptableObject
+    [Serializable]
+    public class ResourceConfig
     {
-        public string tag;
-
         public AssetHotfixMode hotfixMode;
 
         public string assetPersistentDir;

@@ -8,7 +8,7 @@ namespace HQFramework
 
         public const string ENABLE_LOG_SYMBOL = "LOG_ENABLE";
 
-        public static void SetLogHelper(ILogHelper helper)
+        public static void SetHelper(ILogHelper helper)
         {
             logHelper = helper;
         }

@@ -13,8 +13,8 @@ namespace HQFramework.Resource
         PreHotfix,
 
         /// <summary>
-        /// hotfix or download modules at gaming time
+        /// hotfix or download modules at gaming time separately
         /// </summary>
-        RuntimeHotfix
+        SeparateHotfix
     }
 }
