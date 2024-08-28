@@ -114,9 +114,12 @@ namespace HQFramework.Editor
             buildOption.bundleOutputDir = EditorGUILayout.TextField(buildOption.bundleOutputDir);
             if (GUILayout.Button("...", GUILayout.Width(30)))
             {
-                string absDir = EditorUtility.OpenFolderPanel("Choose a directory to save bundles:", Application.dataPath + "/..", "");
-                string relatedDir = Path.GetRelativePath(Application.dataPath, absDir);
-                buildOption.bundleOutputDir = relatedDir.Replace("\\", "/");
+                string absDir = EditorUtility.OpenFolderPanel("Choose a directory to save assets:", Application.dataPath + "/..", "");
+                if (!string.IsNullOrEmpty(absDir))
+                {
+                    string relatedDir = Path.GetRelativePath(Application.dataPath, absDir);
+                    buildOption.bundleOutputDir = relatedDir.Replace("\\", "/");
+                }
             }
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
@@ -127,9 +130,12 @@ namespace HQFramework.Editor
             buildOption.builtinDir = EditorGUILayout.TextField(buildOption.builtinDir);
             if (GUILayout.Button("...", GUILayout.Width(30)))
             {
-                string absDir = EditorUtility.OpenFolderPanel("Choose a directory to save manifest:", Application.streamingAssetsPath, "");
-                string relatedDir = Path.GetRelativePath(Application.streamingAssetsPath, absDir);
-                buildOption.builtinDir = relatedDir.Replace("\\", "/");
+                string absDir = EditorUtility.OpenFolderPanel("Choose a built-in directory:", Application.streamingAssetsPath, "");
+                if (!string.IsNullOrEmpty(absDir))
+                {
+                    string relatedDir = Path.GetRelativePath(Application.streamingAssetsPath, absDir);
+                    buildOption.builtinDir = relatedDir.Replace("\\", "/");
+                }
             }
             GUILayout.EndHorizontal();
             GUILayout.Space(10);

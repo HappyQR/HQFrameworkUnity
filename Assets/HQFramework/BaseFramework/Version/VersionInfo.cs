@@ -9,6 +9,7 @@ namespace HQFramework.Version
         public string companyName;
         public string runtimePlatform;
         public string productVersion; // x.x.x
+        public string versionTag;
         public int internalVersionCode; // int value, auto-increment
         public int minimalSupportedVersionCode; // int value
         public string releaseNote;

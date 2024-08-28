@@ -11,6 +11,7 @@ namespace HQFramework.Resource
         public string runtimePlatform;
         public int resourceVersion;
         public string releaseNote;
+        public bool isBuiltinManifest;
         public Dictionary<int, AssetModuleInfo> moduleDic;
     }
 }
