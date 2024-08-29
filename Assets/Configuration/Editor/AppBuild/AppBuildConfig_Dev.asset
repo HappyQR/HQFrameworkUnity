@@ -18,10 +18,10 @@ MonoBehaviour:
   runtimePlatform: StandaloneOSX
   productVersion: 0.1.0
   versionTag: Beta
-  devBuild: 1
-  bundleOutputDir: ../Build/App
-  buildBundleName: test.apk
-  internalVersionCode: 0
+  devBuild: 0
+  bundleOutputDir: ../Build/App/Dev
+  buildBundleName: test
+  internalVersionCode: 5
   autoIncreaseBuildVersion: 1
   minimalSupportedVersionCode: 0
   releaseNote: first release.

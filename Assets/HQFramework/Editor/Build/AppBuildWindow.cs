@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ namespace HQFramework.Editor
         private Rect viewRect;
         private int selectedConfigIndex;
         private int previousSelectedConfigIndex;
+        private Texture2D appIcon;
 
         [MenuItem("HQFramework/Build/App Build")]
         private static void ShowWindow()
@@ -28,6 +30,12 @@ namespace HQFramework.Editor
 
         private void OnEnable()
         {
+            EditorApplication.delayCall += OnInit;
+        }
+
+        private void OnInit()
+        {
+            viewRect = new Rect(0, 0, 600, 600);
             previousSelectedConfigIndex = -1;
             configList = AppBuildConfigManager.GetConfigList();
             config = AppBuildConfigManager.GetDefaultConfig();
@@ -43,12 +51,16 @@ namespace HQFramework.Editor
             }
             configTagList[configTagList.Length - 1] = "Add New...";
 
-            viewRect = new Rect(0, 0, 600, 600);
+            Texture2D[] icons = PlayerSettings.GetIconsForTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            if (icons != null && icons.Length > 0)
+            {
+                appIcon = icons[0];
+            }
         }
     
         private void OnGUI()
         {
-            if (config == null && configList.Count == 0)
+            if (config == null && (configList == null || configList.Count == 0))
             {
                 GUILayout.Space(viewRect.height / 2 - 30);
                 if (GUILayout.Button("Create New App Build Config"))
@@ -78,6 +90,11 @@ namespace HQFramework.Editor
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
+
+            if (appIcon != null)
+            {
+                GUI.DrawTexture(new Rect(480, 30, 80, 80), appIcon, ScaleMode.ScaleToFit);
+            }
 
             if (config == null)
             {
@@ -181,7 +198,7 @@ namespace HQFramework.Editor
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Build App Bundle", GUILayout.Height(45)))
             {
-                AppBuildUtility.StartBuild(config);
+                EditorApplication.delayCall += () => AppBuildUtility.StartBuild(config);
             }
 
             if (GUILayout.Button("Upload Version Info", GUILayout.Height(45)))
@@ -218,6 +235,7 @@ namespace HQFramework.Editor
         {
             configList = null;
             configTagList = null;
+            appIcon = null;
             if (config != null)
             {
                 EditorUtility.SetDirty(config);

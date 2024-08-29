@@ -59,7 +59,8 @@ namespace HQFramework.Editor
                 string filePath = AssetDatabase.GUIDToAssetPath(results[i]);
                 try
                 {
-                    configs.Add(AssetDatabase.LoadAssetAtPath<AppBuildConfig>(filePath));
+                    AppBuildConfig config = AssetDatabase.LoadAssetAtPath<AppBuildConfig>(filePath);
+                    configs.Add(config);
                 }
                 catch (Exception ex)
                 {

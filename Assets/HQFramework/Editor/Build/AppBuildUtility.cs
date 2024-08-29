@@ -27,13 +27,17 @@ namespace HQFramework.Editor
             buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
             string originFileName = Path.GetFileNameWithoutExtension(config.buildBundleName);
             string fileExtension = Path.GetExtension(config.buildBundleName);
-            string fileName = $"{originFileName}_{config.productVersion}_{config.internalVersionCode}_{config.versionTag}{fileExtension}";
+            string fileName = $"{originFileName}_{config.productVersion.Replace('.', '_')}_{config.internalVersionCode}_{config.versionTag}{fileExtension}";
             buildPlayerOptions.locationPathName = Path.Combine(Application.dataPath, config.bundleOutputDir, fileName);
             
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 
             if (report.summary.result == BuildResult.Succeeded)
             {
+                if (config.autoIncreaseBuildVersion)
+                {
+                    config.internalVersionCode++;
+                }
                 Debug.Log("Build App Successfully");
             }
             else

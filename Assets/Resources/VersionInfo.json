@@ -4,7 +4,7 @@
     "runtimePlatform": "StandaloneOSX",
     "productVersion": "0.1.0",
     "versionTag": "Beta",
-    "internalVersionCode": 0,
+    "internalVersionCode": 5,
     "minimalSupportedVersionCode": 0,
     "releaseNote": "first release."
 }
