@@ -184,6 +184,7 @@ namespace HQFramework.Editor
     {
         private AssetModuleConfig config;
         private GUIStyle desStyle;
+        private Vector2 scrollPos;
 
         public void ShowWindow(AssetModuleConfig target)
         {
@@ -204,6 +205,8 @@ namespace HQFramework.Editor
             }
 
             GUILayout.BeginArea(new Rect(10, 10, position.width - 20, position.height - 20));
+            scrollPos = GUILayout.BeginScrollView(scrollPos);
+            scrollPos.x = 0;
 
             GUIStyle headerStyle = "AM HeaderStyle";
             GUILayout.BeginHorizontal();
@@ -255,6 +258,7 @@ namespace HQFramework.Editor
             config.releaseNote = EditorGUILayout.TextArea(config.releaseNote, GUILayout.Height(120));
             GUILayout.Space(10);
 
+            GUILayout.EndScrollView();
             GUILayout.EndArea();
         }
 

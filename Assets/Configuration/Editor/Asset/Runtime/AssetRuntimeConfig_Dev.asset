@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tag: Dev
   hotfixMode: 1
-  assetPersistentDir: 
-  assetBuiltinDir: 
+  assetPersistentDir: Assets
+  assetBuiltinDir: Assets
   hotfixUrl: 
   hotfixManifestUrl: 

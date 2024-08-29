@@ -18,7 +18,14 @@ MonoBehaviour:
   isBuiltin: 1
   currentPatchVersion: 1
   minimalSupportedPatchVersion: 1
-  description: 
+  description: 'x.x.x
+
+
+    xxxxxxxxxxx
+
+    xxx
+
+    xxxx'
   releaseNote: 
   isBuild: 1
   autoIncreasePatchVersion: 0

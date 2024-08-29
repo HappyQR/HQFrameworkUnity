@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using HQFramework.Resource;
 using UnityEditor;
 using UnityEngine;
 
@@ -100,13 +101,13 @@ namespace HQFramework.Editor
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 
-            // GUILayout.BeginHorizontal();
-            // GUILayout.Label("Hotfix Mode:", headerStyle);
-            // GUILayout.Space(5);
-            // buildOption.hotfixMode = (AssetHotfixMode)EditorGUILayout.EnumPopup(buildOption.hotfixMode);
-            // GUILayout.FlexibleSpace();
-            // GUILayout.EndHorizontal();
-            // GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Hotfix Mode:", headerStyle);
+            GUILayout.Space(5);
+            buildOption.hotfixMode = (AssetHotfixMode)EditorGUILayout.EnumPopup(buildOption.hotfixMode);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
 
             GUILayout.Label("Asset Output Dir(Related to Application.dataPath):", headerStyle);
             GUILayout.Space(5);

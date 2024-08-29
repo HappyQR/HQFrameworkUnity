@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using HQFramework.Resource;
+using UnityEditor;
 using UnityEngine;
 
 namespace HQFramework.Editor
@@ -9,9 +11,19 @@ namespace HQFramework.Editor
     public class AssetBuildUtility
     {
         public static readonly string assetManifestFileName = "AssetModuleManifest.json";
-        public static readonly string builtinManifestFileName = "BuiltinModuleManifest.json";
 
-        public static void GenerateAssetModuleManifest()
+        public static void BuildAllAssetModules()
+        {
+            List<AssetModuleConfig> modules = AssetModuleConfigManager.GetModuleList();
+            BuildAssetModules(modules);
+        }
+
+        public static void BuildAssetModules(List<AssetModuleConfig> modules)
+        {
+
+        }
+
+        public static void GenerateAssetManifest(Dictionary<int, AssetModuleInfo> moduleDic)
         {
             
         }
@@ -19,7 +31,8 @@ namespace HQFramework.Editor
         public static AssetModuleManifest GetCurrentManifest()
         {
             AssetBuildOption option = AssetBuildOptionManager.GetDefaultConfig();
-            string manifestPath = Path.Combine(Application.dataPath, option.bundleOutputDir, assetManifestFileName);
+            AppBuildConfig appBuildConfig = AppBuildConfigManager.GetDefaultConfig();
+            string manifestPath = Path.Combine(Application.dataPath, option.bundleOutputDir, appBuildConfig.internalVersionCode.ToString(), assetManifestFileName);
             if (File.Exists(manifestPath))
             {
                 string manifestJsonStr = File.ReadAllText(manifestPath);
@@ -33,7 +46,7 @@ namespace HQFramework.Editor
         public static AssetModuleManifest GetCurrentBuiltinManifest()
         {
             AssetBuildOption option = AssetBuildOptionManager.GetDefaultConfig();
-            string manifestPath = Path.Combine(Application.streamingAssetsPath, option.builtinDir, builtinManifestFileName);
+            string manifestPath = Path.Combine(Application.streamingAssetsPath, option.builtinDir, assetManifestFileName);
             if (File.Exists(manifestPath))
             {
                 string manifestJsonStr = File.ReadAllText(manifestPath);

@@ -1,3 +1,4 @@
+using HQFramework.Resource;
 using UnityEngine;
 
 namespace HQFramework.Editor
@@ -5,6 +6,7 @@ namespace HQFramework.Editor
     public class AssetBuildOption : ScriptableObject
     {
         public string optionTag;
+        public AssetHotfixMode hotfixMode;
         public string bundleOutputDir;
         public string builtinDir;
         public int resourceVersion;
