@@ -8,6 +8,8 @@ namespace HQFramework.Editor
 {
     public abstract class HotfixBuild
     {
+        public static readonly string assetManifestFileName = "AssetModuleManifest.json";
+
         List<AssetModuleConfig> modules;
         protected AssetBuildOption buildOption;
         protected AppBuildConfig appBuildConfig;
@@ -28,8 +30,11 @@ namespace HQFramework.Editor
 
         protected abstract AssetModuleInfo PostProcessAssetModuleBuild(AssetModuleConfig module, AssetBundleManifest manifest);
 
+        protected abstract void GenerateAssetModuleManifest(Dictionary<int, AssetModuleInfo> moduleDic);
+
         public virtual void BuildAssetMoudles(List<AssetModuleConfig> modules)
         {
+            OnBuildStart();
             List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
             for(int i = 0; i < modules.Count; i++)
             {
@@ -52,17 +57,13 @@ namespace HQFramework.Editor
                 AssetModuleInfo info = PostProcessAssetModuleBuild(modules[i], manifest);
                 moduleDic.Add(info.id, info);
             }
-            AssetBuildUtility.GenerateAssetManifest(moduleDic);
+            GenerateAssetModuleManifest(moduleDic);
             OnBuildSuccess();
         }
 
-        public virtual void ClearBuilds()
+        protected virtual void OnBuildStart()
         {
-            string bundleOutputDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir);
-            string bundleBuiltinDir = Path.Combine(Application.persistentDataPath, buildOption.builtinDir);
 
-            Directory.Delete(bundleOutputDir, true);
-            Directory.Delete(bundleBuiltinDir, true);
         }
 
         protected virtual void OnBuildSuccess()

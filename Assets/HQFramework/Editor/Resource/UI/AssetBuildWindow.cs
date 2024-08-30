@@ -17,9 +17,9 @@ namespace HQFramework.Editor
         protected override void OnInitialized(out TabContentView[] contentList)
         {
             GUIContent btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.SelectedIcon");
-            btnBuildContent.text = " Build Modules";
+            btnBuildContent.text = " Generic Build";
             GUIContent btnHotfixContent = EditorGUIUtility.IconContent("CustomTool");
-            btnHotfixContent.text = " Build Hotfixes";
+            btnHotfixContent.text = " Separate Hotfix";
             GUIContent btnConfigContent = EditorGUIUtility.IconContent("SettingsIcon");
             btnConfigContent.text = " Build Settings";
             GUIContent btnRuntimeContent = EditorGUIUtility.IconContent("d_Profiler.Memory");

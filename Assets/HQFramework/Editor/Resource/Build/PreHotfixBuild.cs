@@ -13,6 +13,60 @@ namespace HQFramework.Editor
         {
         }
 
+        protected override void GenerateAssetModuleManifest(Dictionary<int, AssetModuleInfo> moduleDic)
+        {
+            // Generate all modules manifest
+            AssetModuleManifest modulesManifest = GenerateBaseManifest(moduleDic);
+            modulesManifest.isBuiltinManifest = false;
+            string modulesManifestJsonStr = JsonUtilityEditor.ToJson(modulesManifest);
+            Debug.Log($"Build Successfully!\n<color=#00ff00>{modulesManifestJsonStr}</color>");
+            string modulesManifestFilePath = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, 
+                                            appBuildConfig.internalVersionCode.ToString(), 
+                                            assetManifestFileName);
+            File.WriteAllText(modulesManifestFilePath, modulesManifestJsonStr);
+
+            // Generate built-in manifest
+            Dictionary<int, AssetModuleInfo> builtinModuleDic = new Dictionary<int, AssetModuleInfo>();
+            foreach (var module in moduleDic.Values)
+            {
+                if (module.isBuiltin)
+                {
+                    builtinModuleDic.Add(module.id, module);
+                }
+            }
+            AssetModuleManifest builtinManifest = GenerateBaseManifest(builtinModuleDic);
+            builtinManifest.isBuiltinManifest = true;
+            string builtinManifestJsonStr = JsonUtilityEditor.ToJson(builtinManifest);
+            string builtinManifestFilePath = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir, assetManifestFileName);
+            File.WriteAllText(builtinManifestFilePath, builtinManifestJsonStr);
+
+            AssetDatabase.Refresh();
+        }
+
+        private AssetModuleManifest GenerateBaseManifest(Dictionary<int, AssetModuleInfo> moduleDic)
+        {
+            AssetModuleManifest manifest = new AssetModuleManifest();
+            manifest.productName = appBuildConfig.productName;
+            manifest.productVersion = appBuildConfig.productVersion;
+            manifest.runtimePlatform = appBuildConfig.runtimePlatform;
+            manifest.resourceVersion = buildOption.resourceVersion;
+            manifest.moduleDic = moduleDic;
+            return manifest;
+        }
+
+        protected override void OnBuildStart()
+        {
+            string assetDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, 
+                                            appBuildConfig.internalVersionCode.ToString(), 
+                                            buildOption.resourceVersion.ToString());
+            string builtinDir = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir);
+
+            if (Directory.Exists(assetDir))
+                Directory.Delete(assetDir, true);
+            if (Directory.Exists(builtinDir))
+                Directory.Delete(builtinDir, true);
+        }
+
         protected override void OnBuildSuccess()
         {
             if (buildOption.autoIncreaseResourceVersion)
@@ -28,14 +82,9 @@ namespace HQFramework.Editor
                                             buildOption.resourceVersion.ToString(),
                                             module.moduleName);
             string moduleBuitinDir = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir, module.moduleName);
-            if (Directory.Exists(moduleDir))
+            Directory.CreateDirectory(moduleDir);
+            if (module.isBuiltin)
             {
-                Directory.Delete(moduleDir, true);
-                Directory.CreateDirectory(moduleDir);
-            }
-            if (Directory.Exists(moduleBuitinDir))
-            {
-                Directory.Delete(moduleBuitinDir, true);
                 Directory.CreateDirectory(moduleBuitinDir);
             }
             string[] bundles = GetModuleBundles(module, manifest);
@@ -67,7 +116,7 @@ namespace HQFramework.Editor
                 for (int k = 0; k < bundleInfo.dependencies.Length; k++)
                 {
                     AssetModuleConfig dependenceModule = GetBundleModule(bundleInfo.dependencies[k]);
-                    if (dependenceModule != null)
+                    if (dependenceModule != null && dependenceModule.id != module.id)
                     {
                         dependenciesSet.Add(dependenceModule.id);
                     }

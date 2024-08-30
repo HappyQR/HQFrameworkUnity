@@ -12,7 +12,6 @@ namespace HQFramework.Editor
         private GUIStyle selectedBtnStyle;
         private Vector2 scrollPos;
         private AssetBuildOption buildOption;
-        private AssetRuntimeConfig runtimeConfig;
         private List<AssetModuleConfig> hotfixModuleList;
 
         public AssetModuleHotfixView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
@@ -22,10 +21,9 @@ namespace HQFramework.Editor
         public override void OnEnable()
         {
             buildOption = AssetBuildOptionManager.GetDefaultConfig();
-            runtimeConfig = AssetRuntimeConfigManager.GetDefaultConfig();
             hotfixModuleList = AssetModuleConfigManager.GetModuleList();
 
-            if (runtimeConfig == null || runtimeConfig.hotfixMode == AssetHotfixMode.NoHotfix)
+            if (buildOption == null || buildOption.hotfixMode == AssetHotfixMode.NoHotfix)
                 return;
 
             btnUIContent = EditorGUIUtility.IconContent("SceneAsset Icon");
@@ -43,7 +41,7 @@ namespace HQFramework.Editor
 
         public override void OnGUI()
         {
-            if (runtimeConfig == null || runtimeConfig.hotfixMode == AssetHotfixMode.NoHotfix)
+            if (buildOption == null || buildOption.hotfixMode != AssetHotfixMode.SeparateHotfix)
                 return;
 
             DrawModules();
@@ -84,26 +82,20 @@ namespace HQFramework.Editor
 
             GUI.enabled = enableBuild;
 
-            // btnBuildContent.text = " Build";
-            // if (GUILayout.Button(btnBuildContent, GUILayout.Height(45)))
-            // {
-            //     List<AssetModuleConfig> selectedModules = new List<AssetModuleConfig>();
-            //     for (int i = 0; i < hotfixModuleList.Count; i++)
-            //     {
-            //         if (hotfixModuleList[i].isBuild)
-            //         {
-            //             selectedModules.Add(hotfixModuleList[i]);
-            //         }
-            //     }
-            //     try
-            //     {
-            //         AssetBuildUtility.BuildHotfixModules(selectedModules);
-            //     }
-            //     catch (System.Exception ex)
-            //     {
-            //         Debug.LogError(ex.Message);
-            //     }
-            // }
+            btnBuildContent.text = " Build";
+            if (GUILayout.Button(btnBuildContent, GUILayout.Height(45)))
+            {
+                List<AssetModuleConfig> selectedModules = new List<AssetModuleConfig>();
+                for (int i = 0; i < hotfixModuleList.Count; i++)
+                {
+                    if (hotfixModuleList[i].isBuild)
+                    {
+                        selectedModules.Add(hotfixModuleList[i]);
+                    }
+                }
+                    
+                EditorApplication.delayCall += () => AssetBuildUtility.BuildAssetModules(selectedModules);
+            }
 
             GUI.enabled = true;
 

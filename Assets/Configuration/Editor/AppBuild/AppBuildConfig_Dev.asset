@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: AppBuildConfig_Dev
   m_EditorClassIdentifier: 
   tag: Dev
-  productName: HQFrameworkUnity
-  companyName: DefaultCompany
+  productName: HQFramework
+  companyName: HappyQ
   runtimePlatform: StandaloneOSX
-  productVersion: 0.1.0
+  productVersion: 1.0.0
   versionTag: Beta
   devBuild: 0
   bundleOutputDir: ../Build/App/Dev
