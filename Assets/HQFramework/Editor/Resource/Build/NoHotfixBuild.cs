@@ -40,6 +40,7 @@ namespace HQFramework.Editor
             manifest.resourceVersion = buildOption.resourceVersion;
             manifest.moduleDic = moduleDic;
             manifest.isBuiltinManifest = true;
+            manifest.releaseNote = releaseNote;
             string builtinManifestJsonStr = JsonUtilityEditor.ToJson(manifest);
             string builtinManifestFilePath = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir, assetManifestFileName);
             File.WriteAllText(builtinManifestFilePath, builtinManifestJsonStr);

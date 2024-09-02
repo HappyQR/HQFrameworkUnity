@@ -16,7 +16,7 @@ MonoBehaviour:
   moduleName: Public
   rootFolder: {fileID: 102900000, guid: d1588484680fe324e90e5ba9afcd9109, type: 3}
   isBuiltin: 1
-  currentPatchVersion: 4
+  currentPatchVersion: 7
   minimalSupportedPatchVersion: 1
   description: 'x.x.x
 

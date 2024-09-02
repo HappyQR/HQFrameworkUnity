@@ -82,7 +82,7 @@ namespace HQFramework.Editor
             btnBuildContent.text = " Build";
             if (GUILayout.Button(btnBuildContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 20) / 2)))
             {
-                EditorApplication.delayCall += AssetBuildUtility.BuildAllAssetModules;
+                EditorWindow.GetWindow<AssetModuleBuildWindow>().ShowWindow(moduleList);
             }
             GUIContent btnCheckContent = EditorGUIUtility.IconContent("d_DebuggerDisabled");
             btnCheckContent.text = " Inspect";
@@ -327,6 +327,68 @@ namespace HQFramework.Editor
             }
 
             GUILayout.EndArea();
+        }
+    }
+
+    public class AssetModuleBuildWindow : EditorWindow
+    {
+        private List<AssetModuleConfig> modules;
+        private string releaseNote;
+        private Vector2 scrollPos;
+
+        public void ShowWindow(List<AssetModuleConfig> modules)
+        {
+            this.modules = modules;
+            AssetModuleBuildWindow window = GetWindow<AssetModuleBuildWindow>();
+            window.titleContent = new GUIContent("Build Assets");
+            window.maxSize = window.minSize = new Vector2(480, 420);
+            window.Show();
+        }
+
+        private void OnGUI()
+        {
+            GUILayout.BeginArea(new Rect(10, 10, position.width - 20, position.height - 20));
+            scrollPos = GUILayout.BeginScrollView(scrollPos);
+            scrollPos.x = 0;
+            GUIStyle headerStyle = "AM HeaderStyle";
+
+            GUILayout.Label("Include Modules:", headerStyle);
+            GUILayout.Space(5);
+            for (int i = 0; i < modules.Count; i++)
+            {
+                GUILayout.Label(modules[i].moduleName, "AssetLabel");
+                GUILayout.Space(3);
+            }
+            GUILayout.Space(30);
+
+            GUILayout.Label("Release Notes:", headerStyle);
+            GUILayout.Space(5);
+            releaseNote = EditorGUILayout.TextArea(releaseNote, GUILayout.Height(240));
+            GUILayout.FlexibleSpace();
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Cancel", GUILayout.Height(30)))
+            {
+                Close();
+            }
+            
+            if (GUILayout.Button("Build", GUILayout.Height(30)))
+            {
+                EditorApplication.delayCall += () => 
+                {
+                    AssetBuildUtility.BuildAssetModules(modules, releaseNote);
+                    Close();
+                };
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndScrollView();
+            GUILayout.EndArea();
+        }
+
+        private void OnDisable()
+        {
+            modules = null;
+            releaseNote = null;
         }
     }
 }

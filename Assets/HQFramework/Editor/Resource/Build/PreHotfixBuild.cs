@@ -18,6 +18,7 @@ namespace HQFramework.Editor
             // Generate all modules manifest
             AssetModuleManifest modulesManifest = GenerateBaseManifest(moduleDic);
             modulesManifest.isBuiltinManifest = false;
+            modulesManifest.releaseNote = releaseNote;
             string modulesManifestJsonStr = JsonUtilityEditor.ToJson(modulesManifest);
             Debug.Log($"Build Successfully!\n<color=#00ff00>{modulesManifestJsonStr}</color>");
             string modulesManifestFilePath = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, 
@@ -36,6 +37,7 @@ namespace HQFramework.Editor
             }
             AssetModuleManifest builtinManifest = GenerateBaseManifest(builtinModuleDic);
             builtinManifest.isBuiltinManifest = true;
+            builtinManifest.releaseNote = releaseNote;
             string builtinManifestJsonStr = JsonUtilityEditor.ToJson(builtinManifest);
             string builtinManifestFilePath = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir, assetManifestFileName);
             File.WriteAllText(builtinManifestFilePath, builtinManifestJsonStr);

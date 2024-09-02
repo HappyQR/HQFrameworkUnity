@@ -9,13 +9,13 @@ namespace HQFramework.Editor
 {
     public class AssetBuildUtility
     {
-        public static void BuildAllAssetModules()
+        public static void BuildAllAssetModules(string releaseNote = null)
         {
             List<AssetModuleConfig> modules = AssetModuleConfigManager.GetModuleList();
-            BuildAssetModules(modules);
+            BuildAssetModules(modules, releaseNote);
         }
 
-        public static void BuildAssetModules(List<AssetModuleConfig> modules)
+        public static void BuildAssetModules(List<AssetModuleConfig> modules, string releaseNote = null)
         {
             if (modules == null || modules.Count == 0)
             {
@@ -26,7 +26,7 @@ namespace HQFramework.Editor
             string builderTypeName = "HQFramework.Editor." + buildOption.hotfixMode.ToString() + "Build";
             Type builderType = Type.GetType(builderTypeName);
             HotfixBuild builder = Activator.CreateInstance(builderType, buildOption, appBuildConfig) as HotfixBuild;
-            builder.BuildAssetMoudles(modules);
+            builder.BuildAssetMoudles(modules, releaseNote);
         }
 
         public static void InspectAssetModules()

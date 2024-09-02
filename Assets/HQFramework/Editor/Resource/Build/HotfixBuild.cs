@@ -13,6 +13,7 @@ namespace HQFramework.Editor
         List<AssetModuleConfig> modules;
         protected AssetBuildOption buildOption;
         protected AppBuildConfig appBuildConfig;
+        protected string releaseNote;
         protected string bundleBuildCacheDir;
 
         public HotfixBuild(AssetBuildOption buildOption, AppBuildConfig appBuildConfig)
@@ -32,8 +33,9 @@ namespace HQFramework.Editor
 
         protected abstract void GenerateAssetModuleManifest(Dictionary<int, AssetModuleInfo> moduleDic);
 
-        public virtual void BuildAssetMoudles(List<AssetModuleConfig> modules)
+        public virtual void BuildAssetMoudles(List<AssetModuleConfig> modules, string releaseNote)
         {
+            this.releaseNote = releaseNote;
             OnBuildStart();
             List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
             for(int i = 0; i < modules.Count; i++)

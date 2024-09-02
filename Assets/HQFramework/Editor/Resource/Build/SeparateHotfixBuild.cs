@@ -40,6 +40,7 @@ namespace HQFramework.Editor
                     }
                 }
             }
+            modulesManifest.releaseNote = releaseNote;
             string modulesManifestFilePath = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, appBuildConfig.internalVersionCode.ToString(), assetManifestFileName);
             string modulesManifestJsonStr = JsonUtilityEditor.ToJson(modulesManifest);
             Debug.Log($"Build Successfully!\n<color=#00ff00>{modulesManifestJsonStr}</color>");
@@ -82,8 +83,9 @@ namespace HQFramework.Editor
                     }
                 }
             }
+            builtinManifest.releaseNote = releaseNote;
             string builtinManifestFilePath = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir, assetManifestFileName);
-            string builtinManifestJsonStr = JsonUtilityEditor.ToJson(modulesManifest);
+            string builtinManifestJsonStr = JsonUtilityEditor.ToJson(builtinManifest);
             File.WriteAllText(builtinManifestFilePath, builtinManifestJsonStr);
 
             AssetDatabase.Refresh();
