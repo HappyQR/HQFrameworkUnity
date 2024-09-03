@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace HQFramework.Coroutine
 {
     internal partial class CoroutineManager

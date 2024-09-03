@@ -5,9 +5,9 @@ namespace HQFramework
 {
     public abstract class ResumableTaskDispatcher<T> : ITaskDispatcher<T> where T : ResumableTask
     {
-        private Queue<ResumableTask> workingQueue;
-        private LinkedList<ResumableTask> taskList;
-        private Dictionary<int, ResumableTask> taskDic;
+        private Queue<T> workingQueue;
+        private LinkedList<T> taskList;
+        protected Dictionary<int, T> taskDic;
         private readonly ushort maxConcurrentCount;
 
         public ushort MaxConcurrentCount => maxConcurrentCount;
@@ -19,15 +19,15 @@ namespace HQFramework
         public ResumableTaskDispatcher(ushort maxConcurrentCount)
         {
             this.maxConcurrentCount = maxConcurrentCount;
-            workingQueue = new Queue<ResumableTask>(maxConcurrentCount);
-            taskList = new LinkedList<ResumableTask>();
-            taskDic = new Dictionary<int, ResumableTask>();
+            workingQueue = new Queue<T>(maxConcurrentCount);
+            taskList = new LinkedList<T>();
+            taskDic = new Dictionary<int, T>();
             ReferencePool.RegisterPool(typeof(T), maxConcurrentCount);
         }
-
+        
         public int AddTask(T task)
         {
-            LinkedListNode<ResumableTask> node = taskList.Last;
+            LinkedListNode<T> node = taskList.Last;
             while (node != null)
             {
                 if (node.Value.Priority <= task.Priority)
@@ -64,7 +64,7 @@ namespace HQFramework
         public int RemoveTasks(int groupID)
         {
             int resultCount = 0;
-            LinkedListNode<ResumableTask> node = taskList.First;
+            LinkedListNode<T> node = taskList.First;
             while (node != null)
             {
                 if (node.Value.GroupID == groupID)
@@ -78,7 +78,7 @@ namespace HQFramework
             int count = workingQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ResumableTask task = workingQueue.Dequeue();
+                T task = workingQueue.Dequeue();
                 if (task.GroupID == groupID)
                 {
                     task.Cancel();
@@ -92,7 +92,7 @@ namespace HQFramework
 
         public void RemoveAllTasks()
         {
-            LinkedListNode<ResumableTask> node = taskList.First;
+            LinkedListNode<T> node = taskList.First;
             while (node != null)
             {
                 node.Value.Cancel();
@@ -102,7 +102,7 @@ namespace HQFramework
             int count = workingQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ResumableTask task = workingQueue.Dequeue();
+                T task = workingQueue.Dequeue();
                 task.Cancel();
                 workingQueue.Enqueue(task);
             }
@@ -113,7 +113,7 @@ namespace HQFramework
             int count = workingQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ResumableTask task = workingQueue.Dequeue();
+                T task = workingQueue.Dequeue();
                 if (task.ID == id)
                 {
                     task.Pause();
@@ -132,7 +132,7 @@ namespace HQFramework
             int count = workingQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ResumableTask task = workingQueue.Dequeue();
+                T task = workingQueue.Dequeue();
                 if (task.GroupID == groupID)
                 {
                     task.Pause();
@@ -149,7 +149,7 @@ namespace HQFramework
             int count = workingQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ResumableTask task = workingQueue.Dequeue();
+                T task = workingQueue.Dequeue();
                 if (task.ID == id)
                 {
                     task.Resume();
@@ -168,7 +168,7 @@ namespace HQFramework
             int count = workingQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ResumableTask task = workingQueue.Dequeue();
+                T task = workingQueue.Dequeue();
                 if (task.GroupID == groupID)
                 {
                     task.Resume();
@@ -183,10 +183,10 @@ namespace HQFramework
         public void ProcessTasks()
         {
             // process waiting tasks
-            LinkedListNode<ResumableTask> current = taskList.First;
+            LinkedListNode<T> current = taskList.First;
             while (workingQueue.Count < maxConcurrentCount && current != null)
             {
-                LinkedListNode<ResumableTask> next = current.Next;
+                LinkedListNode<T> next = current.Next;
                 if (current.Value.Status == TaskStatus.Canceled)
                 {
                     ReferencePool.Recyle(current.Value);
@@ -222,7 +222,7 @@ namespace HQFramework
             int count = workingQueue.Count;
             for (int i = 0; i < count; i++)
             {
-                ResumableTask task = workingQueue.Dequeue();
+                T task = workingQueue.Dequeue();
                 if (task.Status == TaskStatus.Done || task.Status == TaskStatus.Canceled || task.Status == TaskStatus.Error)
                 {
                     ReferencePool.Recyle(task);

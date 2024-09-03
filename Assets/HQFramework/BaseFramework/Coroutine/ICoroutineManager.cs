@@ -5,7 +5,7 @@ namespace HQFramework.Coroutine
 {
     public interface ICoroutineManager
     {
-        int StartCoroutine(IEnumerator func, int groupID, int priority);
+        int StartCoroutine(IEnumerator func, int groupID = 0, int priority = 0);
 
         bool StopCoroutine(int id);
 

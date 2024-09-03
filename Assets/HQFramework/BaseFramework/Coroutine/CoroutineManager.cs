@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 
-
 namespace HQFramework.Coroutine
 {
     internal sealed partial class CoroutineManager : HQModuleBase, ICoroutineManager
