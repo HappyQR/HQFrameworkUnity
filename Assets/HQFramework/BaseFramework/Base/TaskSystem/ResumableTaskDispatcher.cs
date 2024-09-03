@@ -8,20 +8,21 @@ namespace HQFramework
         private Queue<ResumableTask> workingQueue;
         private LinkedList<ResumableTask> taskList;
         private Dictionary<int, ResumableTask> taskDic;
-        private readonly int maxConcurrentCount;
+        private readonly ushort maxConcurrentCount;
 
-        public int MaxConcurrentCount => maxConcurrentCount;
+        public ushort MaxConcurrentCount => maxConcurrentCount;
 
         public int WorkingCount => workingQueue.Count;
 
         public int WaitingCount => taskList.Count;
 
-        public ResumableTaskDispatcher(int maxConcurrentCount)
+        public ResumableTaskDispatcher(ushort maxConcurrentCount)
         {
             this.maxConcurrentCount = maxConcurrentCount;
             workingQueue = new Queue<ResumableTask>(maxConcurrentCount);
             taskList = new LinkedList<ResumableTask>();
             taskDic = new Dictionary<int, ResumableTask>();
+            ReferencePool.RegisterPool(typeof(T), maxConcurrentCount);
         }
 
         public int AddTask(T task)

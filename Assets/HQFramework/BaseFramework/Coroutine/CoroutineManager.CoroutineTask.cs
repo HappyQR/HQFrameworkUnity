@@ -4,7 +4,7 @@ namespace HQFramework.Coroutine
 {
     internal partial class CoroutineManager
     {
-        private class CoroutineTask : ResumableTask
+        private sealed class CoroutineTask : ResumableTask
         {
             private static int serialID;
 

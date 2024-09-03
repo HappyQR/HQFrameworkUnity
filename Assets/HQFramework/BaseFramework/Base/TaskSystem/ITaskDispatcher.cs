@@ -2,7 +2,7 @@ namespace HQFramework
 {
     public interface ITaskDispatcher<T> where T : TaskBase
     {
-        int MaxConcurrentCount
+        ushort MaxConcurrentCount
         {
             get;
         }

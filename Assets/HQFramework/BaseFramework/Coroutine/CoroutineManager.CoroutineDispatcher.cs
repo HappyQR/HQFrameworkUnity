@@ -4,9 +4,9 @@ namespace HQFramework.Coroutine
 {
     internal partial class CoroutineManager
     {
-        private class CoroutineDispatcher : ResumableTaskDispatcher<CoroutineTask>
+        private sealed class CoroutineDispatcher : ResumableTaskDispatcher<CoroutineTask>
         {
-            public CoroutineDispatcher(int maxConcurrentCount) : base(maxConcurrentCount)
+            public CoroutineDispatcher(ushort maxConcurrentCount) : base(maxConcurrentCount)
             {
             }
         }
