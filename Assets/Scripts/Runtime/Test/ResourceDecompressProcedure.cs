@@ -4,11 +4,14 @@ using HQFramework;
 using HQFramework.Coroutine;
 using HQFramework.Procedure;
 using UnityEngine;
+using HQFramework.Download;
 
 public class ResourceDecompressProcedure : ProcedureBase
 {
     ICoroutineManager coroutineManager;
+    IDownloadManager downloadManager;
     int coroutineID;
+    int downloadID;
 
     protected override void OnEnter()
     {
@@ -34,6 +37,48 @@ public class ResourceDecompressProcedure : ProcedureBase
         {
             HQDebugger.LogInfo("Resume : " + info.id);
         });
+
+        
+        downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
+        downloadManager.InitDownloadModule(10, 5);
+        string url = "https://happyq-test.oss-cn-beijing.aliyuncs.com/AssetFramework/tropical_beach_day.png";
+        string filePath = Application.persistentDataPath + "/tropical_beach_day.png";
+        downloadID = downloadManager.AddDownload(url, filePath, true, true, 0, 0);
+
+        downloadManager.AddDownloadCancelEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Cancel : " + info.id);
+        });
+
+        downloadManager.AddDownloadUpdateEvent(downloadID, (info) =>
+        {
+            HQDebugger.Log("Download Progress : " + (float)info.DownloadedSize / info.TotalSize);
+        });
+
+        downloadManager.AddDownloadPauseEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Paused : " + info.id);
+        }); 
+
+        downloadManager.AddDownloadResumeEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Resume : " + info.id);
+        });
+
+        downloadManager.AddDownloadErrorEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogError("Download Error : " + info.ErrorMsg);
+        });
+
+        downloadManager.AddDownloadCompleteEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Done : " + info.id);
+        });
+
+        downloadManager.AddDownloadHashCheckEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Hash Check Result : " + info.Result + "\nLocal Hash : " + info.LocalHash + "\nRemote Hash : " + info.TargetHash);
+        });
     }
 
     protected override void OnUpdate()
@@ -43,21 +88,25 @@ public class ResourceDecompressProcedure : ProcedureBase
         if (Input.GetKeyDown(KeyCode.P))
         {
             coroutineManager.PauseCoroutine(coroutineID);
+            downloadManager.PauseDownload(downloadID);
         }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
             coroutineManager.ResumeCoroutine(coroutineID);
+            downloadManager.ResumeDownload(downloadID);
         }
 
         if (Input.GetKeyDown(KeyCode.X))
         {
             coroutineManager.StopCoroutine(coroutineID);
+            downloadManager.StopDownload(downloadID);
         }
 
         if (Input.GetKeyDown(KeyCode.S))
         {
             coroutineManager.StopCoroutines(0);
+            downloadManager.StopDownloads(0);
         }
     }
 

@@ -50,7 +50,7 @@ namespace HQFramework
             return task.ID;
         }
 
-        public bool RemoveTask(int id)
+        public bool CancelTask(int id)
         {
             if (taskDic.ContainsKey(id))
             {
@@ -61,7 +61,7 @@ namespace HQFramework
             return false;
         }
 
-        public int RemoveTasks(int groupID)
+        public int CancelTasks(int groupID)
         {
             int resultCount = 0;
             LinkedListNode<T> node = taskList.First;
@@ -90,7 +90,7 @@ namespace HQFramework
             return resultCount;
         }
 
-        public void RemoveAllTasks()
+        public void CancelAllTasks()
         {
             LinkedListNode<T> node = taskList.First;
             while (node != null)

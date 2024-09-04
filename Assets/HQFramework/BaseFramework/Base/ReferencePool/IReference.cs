@@ -2,6 +2,6 @@
 {
     public interface IReference
     {
-        void OnRecyle();
+        protected internal void OnRecyle();
     }
 }

@@ -48,7 +48,7 @@ namespace HQFramework.Coroutine
                 }
             }
 
-            public override void OnRecyle()
+            protected override void OnRecyle()
             {
                 base.OnRecyle();
                 func = null;

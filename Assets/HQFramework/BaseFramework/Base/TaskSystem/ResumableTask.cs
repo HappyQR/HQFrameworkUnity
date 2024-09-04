@@ -39,7 +39,7 @@ namespace HQFramework
             }
         }
 
-        public override void OnRecyle()
+        protected override void OnRecyle()
         {
             base.OnRecyle();
             onPause = null;

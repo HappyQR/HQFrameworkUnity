@@ -22,7 +22,7 @@ namespace HQFramework.Coroutine
 
         protected override void OnShutdown()
         {
-            dispatcher.RemoveAllTasks();
+            dispatcher.CancelAllTasks();
         }
 
         public int StartCoroutine(IEnumerator func, int groupID = 0, int priority = 0)
@@ -68,22 +68,22 @@ namespace HQFramework.Coroutine
 
         public int ResumeCoroutines(int groupID)
         {
-            return dispatcher.RemoveTasks(groupID);
+            return dispatcher.CancelTasks(groupID);
         }
 
         public bool StopCoroutine(int id)
         {
-            return dispatcher.RemoveTask(id);
+            return dispatcher.CancelTask(id);
         }
 
         public int StopCoroutines(int groupID)
         {
-            return dispatcher.RemoveTasks(groupID);
+            return dispatcher.CancelTasks(groupID);
         }
 
         public void StopAllCoroutines()
         {
-            dispatcher.RemoveAllTasks();
+            dispatcher.CancelAllTasks();
         }
 
         public int DelayInvoke(float delayTime, Action func, bool realtime = true)

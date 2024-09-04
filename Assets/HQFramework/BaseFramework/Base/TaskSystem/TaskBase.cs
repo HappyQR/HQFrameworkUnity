@@ -39,11 +39,16 @@ namespace HQFramework
             onCancel?.Invoke(info);
         }
 
-        public virtual void OnRecyle()
+        protected virtual void OnRecyle()
         {
             status = TaskStatus.Waiting;
             onCancel = null;
             onCompleted = null;
+        }
+
+        void IReference.OnRecyle()
+        {
+            OnRecyle();
         }
     }
 }

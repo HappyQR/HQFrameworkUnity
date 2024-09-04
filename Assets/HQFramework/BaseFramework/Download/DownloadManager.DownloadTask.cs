@@ -57,50 +57,82 @@ namespace HQFramework.Download
                 worker = DownloadTaskWorker.Create(this);
                 worker.HashCheckEvent += onHashCheck;
                 worker.DownloadUpdateEvent += onDownloadUpdate;
+                worker.DownloadErrorEvent += onDownloadError;
+                worker.PauseEvent += OnDownloadPause;
+                worker.ResumeEvent += OnDownloadResume;
                 worker.CompleteEvent += OnDownloadComplete;
-                worker.DownloadErrorEvent += OnDownloadError;
+                worker.CancelEvent += OnDownloadCanceled;
 
                 worker.Start(client, url, filePath, resumable, enableAutoHashCheck);
 
-                status = TaskStatus.InProgress;
                 return TaskStartStatus.InProgress;
             }
 
             public override void OnUpdate()
             {
-                
+                status = worker.Status;
             }
 
-            private void OnDownloadError(DownloadErrorEventArgs e)
+            private void OnDownloadPause()
             {
-                status = TaskStatus.Error;
-                onDownloadError?.Invoke(e);
+                TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
+                onPause?.Invoke(taskInfo);
+            }
+
+            private void OnDownloadResume()
+            {
+                TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
+                onResume?.Invoke(taskInfo);
             }
 
             private void OnDownloadComplete()
             {
-                status = TaskStatus.Done;
                 TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
                 onCompleted?.Invoke(taskInfo);
             }
 
-            public override void OnRecyle()
+            private void OnDownloadCanceled()
+            {
+                TaskInfo info = new TaskInfo(ID, GroupID, Priority, Status);
+                onCancel?.Invoke(info);
+            }
+
+            public override void Cancel()
+            {
+                if (worker != null)
+                {
+                    worker.Cancel();
+                }
+            }
+
+            public override void Pause()
+            {
+                if (worker != null)
+                {
+                    worker.Pause();
+                }
+            }
+
+            public override void Resume()
+            {
+                if (worker!= null)
+                {
+                    worker.Resume();
+                }
+            }
+
+            protected override void OnRecyle()
             {
                 base.OnRecyle();
                 client = null;
                 url = null;
                 filePath = null;
+                worker = null;
                 resumable = false;
                 enableAutoHashCheck = false;
                 onHashCheck = null;
                 onDownloadError = null;
                 onDownloadUpdate = null;
-
-                if (worker != null)
-                {
-                    ReferencePool.Recyle(worker);
-                    worker = null;
-                }
             }
         }
     }

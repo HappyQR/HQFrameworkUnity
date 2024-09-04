@@ -23,7 +23,7 @@ namespace HQFramework.Download
             return args;
         }
 
-        public void OnRecyle()
+        void IReference.OnRecyle()
         {
             ID = -1;
             GroupID = -1;

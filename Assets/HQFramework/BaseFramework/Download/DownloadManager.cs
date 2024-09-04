@@ -10,6 +10,13 @@ namespace HQFramework.Download
 
         public override byte Priority => byte.MaxValue;
 
+        public void InitDownloadModule(float timeOut, ushort maxConcurrentCount)
+        {
+            client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(timeOut);
+            dispatcher = new DownloadTaskDispatcher(maxConcurrentCount);
+        }
+
         protected override void OnUpdate()
         {
             dispatcher.ProcessTasks();
@@ -18,81 +25,83 @@ namespace HQFramework.Download
         protected override void OnShutdown()
         {
             client.CancelPendingRequests();
-        }
-
-        public void InitDownloadModule(float timeOut, ushort maxConcurrentCount)
-        {
-            throw new NotImplementedException();
+            dispatcher.CancelAllTasks();
         }
 
         public int AddDownload(string url, string filePath, bool resumable = false, bool enableAutoHashCheck = false, int groupID = 0, int priority = 0)
         {
-            throw new NotImplementedException();
+            DownloadTask task = DownloadTask.Create(client, url, filePath, resumable, enableAutoHashCheck, groupID, priority);
+            return dispatcher.AddTask(task);
         }
 
         public void AddDownloadCancelEvent(int id, Action<TaskInfo> onCancel)
         {
-            throw new NotImplementedException();
+            dispatcher.AddTaskCancelEvent(id, onCancel);
         }
 
         public void AddDownloadCompleteEvent(int id, Action<TaskInfo> onCompleted)
         {
-            throw new NotImplementedException();
+            dispatcher.AddTaskCompleteEvent(id, onCompleted);
         }
 
         public void AddDownloadPauseEvent(int id, Action<TaskInfo> onPause)
         {
-            throw new NotImplementedException();
+            dispatcher.AddTaskPauseEvent(id, onPause);
         }
 
         public void AddDownloadResumeEvent(int id, Action<TaskInfo> onResume)
         {
-            throw new NotImplementedException();
+            dispatcher.AddTaskResumeEvent(id, onResume);
         }
 
         public void AddDownloadErrorEvent(int id, Action<DownloadErrorEventArgs> onError)
         {
-            throw new NotImplementedException();
+            dispatcher.AddDownloadErrorEvent(id, onError);
         }
 
-        public void AddDownloadUpdateEvent(int id, Action<DownloadUpdateEventArgs> onDpwnloadUpdate)
+        public void AddDownloadUpdateEvent(int id, Action<DownloadUpdateEventArgs> onDownloadUpdate)
         {
-            throw new NotImplementedException();
+            dispatcher.AddDownloadUpdateEvent(id, onDownloadUpdate);
         }
 
         public void AddDownloadHashCheckEvent(int id, Action<DownloadHashCheckEventArgs> onHashCheck)
         {
-            throw new NotImplementedException();
+            dispatcher.AddDownloadHashCheckEvent(id, onHashCheck);
         }
 
         public bool PauseDownload(int id)
         {
-            throw new NotImplementedException();
+            return dispatcher.PauseTask(id);
         }
 
         public bool ResumeDownload(int id)
         {
-            throw new NotImplementedException();
+            return dispatcher.ResumeTask(id);
+        }
+
+        public bool StopDownload(int id)
+        {
+            return dispatcher.CancelTask(id);
         }
 
         public int StopDownloads(int groupID)
         {
-            throw new NotImplementedException();
+            return dispatcher.CancelTasks(groupID);
         }
 
         public int PauseDownloads(int groupID)
         {
-            throw new NotImplementedException();
+            return dispatcher.PauseTasks(groupID);
         }
 
         public int ResumeDownloads(int groupID)
         {
-            throw new NotImplementedException();
+            return dispatcher.ResumeTasks(groupID);
         }
 
         public void StopAllDownloads()
         {
-            throw new NotImplementedException();
+            dispatcher.CancelAllTasks();
         }
     }
 }

@@ -18,13 +18,15 @@ namespace HQFramework.Download
 
         public void AddDownloadErrorEvent(int id, Action<DownloadErrorEventArgs> onError);
 
-        public void AddDownloadUpdateEvent(int id, Action<DownloadUpdateEventArgs> onDpwnloadUpdate);
+        public void AddDownloadUpdateEvent(int id, Action<DownloadUpdateEventArgs> onDownloadUpdate);
 
         public void AddDownloadHashCheckEvent(int id, Action<DownloadHashCheckEventArgs> onHashCheck);
 
         bool PauseDownload(int id);
 
         bool ResumeDownload(int id);
+
+        bool StopDownload(int id);
 
         int StopDownloads(int groupID);
 

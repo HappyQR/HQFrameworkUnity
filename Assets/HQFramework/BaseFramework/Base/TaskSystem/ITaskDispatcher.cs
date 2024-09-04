@@ -19,11 +19,11 @@ namespace HQFramework
 
         int AddTask(T task);
 
-        bool RemoveTask(int id);
+        bool CancelTask(int id);
 
-        int RemoveTasks(int groupID);
+        int CancelTasks(int groupID);
 
-        void RemoveAllTasks();
+        void CancelAllTasks();
 
         void ProcessTasks();
     }
