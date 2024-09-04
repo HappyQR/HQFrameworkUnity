@@ -113,6 +113,14 @@ namespace HQFramework.Editor
 
             GUILayout.EndScrollView();
             GUILayout.FlexibleSpace();
+
+            GUIContent content = EditorGUIUtility.IconContent("d_editicon.sml");
+            content.text = " Generate Assets Runtime Settings";
+            if (GUILayout.Button(content, GUILayout.Height(45)))
+            {
+                EditorApplication.delayCall += () => AssetRuntimeConfigManager.GenerateRuntimeSettings(config);
+            }
+
             GUILayout.EndArea();
         }
 

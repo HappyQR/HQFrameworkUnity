@@ -16,7 +16,7 @@ MonoBehaviour:
   hotfixMode: 1
   bundleOutputDir: ../Build/Assets
   builtinDir: Assets
-  resourceVersion: 10
+  resourceVersion: 12
   autoIncreaseResourceVersion: 1
   platform: 2
   compressOption: 256

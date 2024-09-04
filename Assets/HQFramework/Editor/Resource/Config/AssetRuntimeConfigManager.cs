@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using HQFramework.Resource;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace HQFramework.Editor
     {
         private static readonly string runtimeConfigPrefsKey = "asset_runtime_config";
         private static readonly string runtimeConfigDir = "Assets/Configuration/Editor/Asset/Runtime/";
+        private static readonly string runtimeSettingSavePath = "Assets/Resources/ResourceConfig.json";
 
         public static AssetRuntimeConfig GetDefaultConfig()
         {
@@ -68,6 +70,20 @@ namespace HQFramework.Editor
                 }
             }
             return configs;
+        }
+
+        public static void GenerateRuntimeSettings(AssetRuntimeConfig config)
+        {
+            ResourceConfig runtimeConfig = new ResourceConfig();
+            runtimeConfig.hotfixMode = config.hotfixMode;
+            runtimeConfig.assetBuiltinDir = config.assetBuiltinDir;
+            runtimeConfig.assetPersistentDir = config.assetPersistentDir;
+            runtimeConfig.hotfixManifestUrl = config.hotfixManifestUrl;
+            runtimeConfig.hotfixUrl = config.hotfixUrl;
+
+            string configJson = JsonUtilityEditor.ToJson(runtimeConfig);
+            File.WriteAllText(runtimeSettingSavePath, configJson);
+            AssetDatabase.Refresh();
         }
     }
 }

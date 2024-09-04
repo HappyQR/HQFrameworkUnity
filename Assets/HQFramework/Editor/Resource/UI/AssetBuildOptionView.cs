@@ -174,21 +174,28 @@ namespace HQFramework.Editor
             GUILayout.EndScrollView();
             GUILayout.FlexibleSpace();
 
-            // GUILayout.BeginHorizontal();
-            // GUIContent btnCheckContent = EditorGUIUtility.IconContent("d_DebuggerDisabled");
-            // btnCheckContent.text = " Check All Modules";
-            // if (GUILayout.Button(btnCheckContent, GUILayout.Height(45)))
-            // {
-                
-            // }
+            GUILayout.BeginHorizontal();
+            GUIContent btnCheckContent = EditorGUIUtility.IconContent("TreeEditor.Trash");
+            btnCheckContent.text = " Clear All Builds";
+            if (GUILayout.Button(btnCheckContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 30) / 2)))
+            {
+                bool result = EditorUtility.DisplayDialog("Delete All Asset Build History",
+                                                "This operation will delete all assets builds, Are you sure to continue?",
+                                                "Yes, Delete.",
+                                                "No, Cancel");
+                if (result)
+                {
+                    EditorApplication.delayCall += AssetBuildUtility.ClearBuilds;
+                }
+            }
 
-            // GUIContent btnUploadContent = EditorGUIUtility.IconContent("d_RotateTool On");
-            // btnUploadContent.text = " Sync With Server";
-            // if (GUILayout.Button(btnUploadContent, GUILayout.Height(45)))
-            // {
+            GUIContent btnUploadContent = EditorGUIUtility.IconContent("d_RotateTool On");
+            btnUploadContent.text = " Sync With Server";
+            if (GUILayout.Button(btnUploadContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 30) / 2)))
+            {
                 
-            // }
-            // GUILayout.EndHorizontal();
+            }
+            GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
 

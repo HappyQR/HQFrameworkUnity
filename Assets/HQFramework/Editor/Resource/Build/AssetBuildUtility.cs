@@ -68,9 +68,15 @@ namespace HQFramework.Editor
         {
             AssetBuildOption buildOption = AssetBuildOptionManager.GetDefaultConfig();
             string bundleOutputDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir);
-            string bundleBuiltinDir = Path.Combine(Application.persistentDataPath, buildOption.builtinDir);
-            Directory.Delete(bundleOutputDir, true);
-            Directory.Delete(bundleBuiltinDir, true);
+            string bundleBuiltinDir = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir);
+            if (Directory.Exists(bundleOutputDir))
+                Directory.Delete(bundleOutputDir, true);
+            if (Directory.Exists(bundleBuiltinDir))
+                Directory.Delete(bundleBuiltinDir, true);
+
+            AssetDatabase.Refresh();
+
+            Debug.Log("Clear All Builds Done.");
         }
     }
 }
