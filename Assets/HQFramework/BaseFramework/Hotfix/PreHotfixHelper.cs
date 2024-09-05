@@ -18,7 +18,7 @@ namespace HQFramework.Hotfix
                 return args;
             }
             
-            List<HotfixPatch> patchList = new List<HotfixPatch>();
+            patchList = new List<HotfixPatch>();
             foreach (AssetModuleInfo remoteModule in remoteManifest.moduleDic.Values)
             {
                 if (!localManifest.moduleDic.ContainsKey(remoteModule.id))

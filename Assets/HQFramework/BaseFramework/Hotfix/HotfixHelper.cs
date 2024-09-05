@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using HQFramework.Resource;
 
 namespace HQFramework.Hotfix
@@ -6,6 +8,11 @@ namespace HQFramework.Hotfix
     {
         protected string hotfixUrl;
         protected string assetPersistentDir;
+        protected List<HotfixPatch> patchList;
+
+        public event Action<HotfixErrorEventArgs> onHotfixError;
+        public event Action<HotfixUpdateEventArgs> onHotfixUpdate;
+        public event Action onHotfixDone;
 
         public HotfixHelper(string hotfixUrl, string assetPersistentDir)
         {
