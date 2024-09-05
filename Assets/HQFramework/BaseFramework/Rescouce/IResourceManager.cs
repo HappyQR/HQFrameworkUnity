@@ -5,5 +5,7 @@ namespace HQFramework.Resource
         void SetHelper(IResourceHelper resourceHelper);
 
         void DecompressBuiltinResource();
+
+        // int LoadAsset(int crc);
     }
 }

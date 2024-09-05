@@ -163,6 +163,14 @@ namespace HQFramework.Editor
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Minimal Supported Resource Version:", headerStyle);
+            GUILayout.Space(5);
+            buildOption.minimalSupportedVersion = EditorGUILayout.IntField(buildOption.minimalSupportedVersion, GUILayout.Width(100));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+
             // GUILayout.BeginHorizontal();
             // GUILayout.Label("Enable Bundle Encryption:", headerStyle);
             // GUILayout.Space(5);

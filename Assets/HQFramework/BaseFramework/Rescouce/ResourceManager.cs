@@ -1,10 +1,10 @@
 namespace HQFramework.Resource
 {
-    internal class ResourceManager : HQModuleBase, IResourceManager
+    internal sealed partial class ResourceManager : HQModuleBase, IResourceManager
     {
         private IResourceHelper resourceHelper;
         private ResourceConfig config;
-        public override byte Priority => 10;
+        public override byte Priority => byte.MaxValue;
 
         protected override void OnInitialize()
         {
@@ -21,5 +21,7 @@ namespace HQFramework.Resource
         {
             
         }
+
+
     }
 }

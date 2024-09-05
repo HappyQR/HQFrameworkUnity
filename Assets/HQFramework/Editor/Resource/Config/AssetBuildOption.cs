@@ -10,6 +10,7 @@ namespace HQFramework.Editor
         public string bundleOutputDir;
         public string builtinDir;
         public int resourceVersion;
+        public int minimalSupportedVersion;
         public bool autoIncreaseResourceVersion;
         public BuildTargetPlatform platform;
         public CompressOption compressOption;

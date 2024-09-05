@@ -98,6 +98,7 @@ namespace HQFramework.Editor
             manifest.productVersion = appBuildConfig.productVersion;
             manifest.runtimePlatform = appBuildConfig.runtimePlatform;
             manifest.resourceVersion = buildOption.resourceVersion;
+            manifest.minimalSupportedVersion = buildOption.minimalSupportedVersion;
             return manifest;
         }
 
