@@ -31,7 +31,7 @@ namespace HQFramework.Hotfix
 
         public void StartHotfix()
         {
-
+            
         }
 
         public async void StartHotfixCheck()

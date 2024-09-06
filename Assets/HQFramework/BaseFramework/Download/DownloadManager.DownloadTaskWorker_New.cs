@@ -11,82 +11,39 @@ namespace HQFramework.Download
 {
     internal partial class DownloadManager
     {
-        private class DownloadTaskWorker : IReference
+        private class DownloadTaskWorker_New : IReference
         {
             private byte[] buffer;
             private int totalSize;
             private int downloadedSize;
+            private string errorMessage;
             private TaskStatus status;
-            private DownloadTask task;
+            private DownloadTask_New task;
             private HttpResponseMessage responseMsg;
             private CancellationTokenSource cancelToken;
             private BlockingCollection<byte[]> writeQueue;
 
-            private Action<DownloadHashCheckEventArgs> onHashCheck;
-            private Action<DownloadErrorEventArgs> onDownloadError;
-            private Action<DownloadUpdateEventArgs> onDownloadUpdate;
-            private Action onPaused;
-            private Action onResume;
-            private Action onCompleted;
-            private Action onCanceled;
-
             private static readonly int defaultBufferSize = 262144; //256kb
 
             public TaskStatus Status => status;
+            public int TotalSize => totalSize;
+            public int DownloadedSize => downloadedSize;
 
-            public event Action<DownloadHashCheckEventArgs> HashCheckEvent
+            public static DownloadTaskWorker_New Create(DownloadTask_New task)
             {
-                add { onHashCheck += value; }
-                remove { onHashCheck -= value; }
-            }
-
-            public event Action<DownloadErrorEventArgs> DownloadErrorEvent
-            {
-                add { onDownloadError += value; }
-                remove { onDownloadError -= value; }
-            }
-
-            public event Action<DownloadUpdateEventArgs> DownloadUpdateEvent
-            {
-                add { onDownloadUpdate += value; }
-                remove { onDownloadUpdate -= value; }
-            }
-
-            public event Action CompleteEvent
-            {
-                add { onCompleted += value; }
-                remove { onCompleted -= value; }
-            }
-
-            public event Action CancelEvent
-            {
-                add { onCanceled += value; }
-                remove { onCanceled -= value; }
-            }
-
-            public event Action PauseEvent
-            {
-                add { onPaused += value; }
-                remove {onPaused -= value; }
-            }
-
-            public event Action ResumeEvent
-            {
-                add { onResume += value; }
-                remove { onResume -= value; }
-            }
-
-            public static DownloadTaskWorker Create(DownloadTask task)
-            {
-                DownloadTaskWorker worker = ReferencePool.Spawn<DownloadTaskWorker>();
+                DownloadTaskWorker_New worker = ReferencePool.Spawn<DownloadTaskWorker_New>();
                 worker.buffer = ArrayPool<byte>.Shared.Rent(defaultBufferSize);
                 worker.cancelToken = new CancellationTokenSource();
                 worker.task = task;
-                worker.status = TaskStatus.Waiting;
                 return worker;
             }
 
-            public async void Start(HttpClient client, string url, string filePath, bool resumable, bool enableAutoHashCheck)
+            public void Start(HttpClient client, string url, string filePath, bool resumable)
+            {
+                Task.Run(() => StartInternalAsync(client, url, filePath, resumable));
+            }
+
+            private async void StartInternalAsync(HttpClient client, string url, string filePath, bool resumable)
             {
                 status = TaskStatus.InProgress;
 
@@ -111,26 +68,7 @@ namespace HQFramework.Download
                             }
                             else if (rangeOffset == totalSize)
                             {
-                                // maybe download complete, just do the hash checking.
-                                if (enableAutoHashCheck)
-                                {
-                                    byte[] md5 = contentLengthResponseMsg.Content.Headers.ContentMD5;
-                                    if (md5 != null && md5.Length > 0)
-                                    {
-                                        string targetHash = Utility.Hash.ConvertByHashBytes(md5);
-                                        string hash = Utility.Hash.ComputeHash(filePath);
-                                        DownloadHashCheckEventArgs args = DownloadHashCheckEventArgs.Create(task.ID, task.GroupID, url, filePath, targetHash, hash, hash == targetHash);
-                                        onHashCheck?.Invoke(args);
-                                        ReferencePool.Recyle(args);
-                                    }
-                                    else
-                                    {
-                                        throw new InvalidOperationException("AutoHashCheck is not supported on target server!");
-                                    }
-                                }
                                 status = TaskStatus.Done;
-                                onCompleted?.Invoke();
-                                ReferencePool.Recyle(this);
                                 return;
                             }
                             else
@@ -141,16 +79,12 @@ namespace HQFramework.Download
                         }
                         catch (TaskCanceledException) // canceled
                         {
-                            ReferencePool.Recyle(this);
                             return;
                         }
                         catch (Exception ex)
                         {
                             status = TaskStatus.Error;
-                            DownloadErrorEventArgs errAgrs = DownloadErrorEventArgs.Create(task.ID, task.GroupID, url, filePath, ex.Message);
-                            onDownloadError?.Invoke(errAgrs);
-                            ReferencePool.Recyle(errAgrs);
-                            ReferencePool.Recyle(this);
+                            errorMessage = ex.Message;
                             return;
                         }
                     }
@@ -171,15 +105,11 @@ namespace HQFramework.Download
                     responseMsg = await client.SendAsync(requestMsg, HttpCompletionOption.ResponseHeadersRead, cancelToken.Token);
                     responseMsg.EnsureSuccessStatusCode();
                     totalSize = (int)(responseMsg.Content.Headers.ContentLength.Value + rangeOffset);
-                    DownloadUpdateEventArgs downloadUpdateArgs = DownloadUpdateEventArgs.Create(task.ID, task.GroupID, url, filePath, downloadedSize, downloadedSize, totalSize);
-                    onDownloadUpdate?.Invoke(downloadUpdateArgs);
-                    ReferencePool.Recyle(downloadUpdateArgs);
                     using Stream netStream = await responseMsg.Content.ReadAsStreamAsync();
                     while (true)
                     {
                         if (status == TaskStatus.Canceled) // call stop manually
                         {
-                            ReferencePool.Recyle(this);
                             break;
                         }
                         else if (status == TaskStatus.Paused)
@@ -187,70 +117,34 @@ namespace HQFramework.Download
                             await Task.Yield();
                             continue;
                         }
-                        receivedSize = await netStream.ReadAsync(buffer, bufferOffset, defaultBufferSize - bufferOffset, cancelToken.Token);
+                        receivedSize = netStream.Read(buffer, bufferOffset, defaultBufferSize - bufferOffset);
                         if (receivedSize == 0)
                         {
-                            // await fs.WriteAsync(buffer, 0, bufferOffset, cancelToken.Token);
-
                             byte[] extraDataChunck = new byte[bufferOffset];
                             Array.Copy(buffer, 0, extraDataChunck, 0, bufferOffset);
                             writeQueue.Add(extraDataChunck);
-
-                            downloadedSize += bufferOffset;
-                            downloadUpdateArgs = DownloadUpdateEventArgs.Create(task.ID, task.GroupID, url, filePath, bufferOffset, downloadedSize, totalSize);
-                            onDownloadUpdate?.Invoke(downloadUpdateArgs);
-                            ReferencePool.Recyle(downloadUpdateArgs);
-
-                            if (enableAutoHashCheck)
-                            {
-                                byte[] md5 = responseMsg.Content.Headers.ContentMD5;
-                                if (md5 != null && md5.Length > 0)
-                                {
-                                    string targetHash = Utility.Hash.ConvertByHashBytes(md5);
-                                    fs.Seek(0, SeekOrigin.Begin);
-                                    string hash = Utility.Hash.ComputeHash(fs);
-                                    DownloadHashCheckEventArgs args = DownloadHashCheckEventArgs.Create(task.ID, task.GroupID, url, filePath, targetHash, hash, hash == targetHash);
-                                    onHashCheck?.Invoke(args);
-                                    ReferencePool.Recyle(args);
-                                }
-                                else
-                                {
-                                    throw new InvalidOperationException("AutoHashCheck is not supported on target server!");
-                                }
-                            }
                             status = TaskStatus.Done;
-                            onCompleted?.Invoke();
-                            ReferencePool.Recyle(this);
                             break;
                         }
                         bufferOffset += receivedSize;
+                        downloadedSize += receivedSize;
                         if (bufferOffset == defaultBufferSize)
                         {
-                            // await fs.WriteAsync(buffer, 0, bufferOffset, cancelToken.Token);
-
                             byte[] tempDataChunck = ArrayPool<byte>.Shared.Rent(bufferOffset);
                             Array.Copy(buffer, 0, tempDataChunck, 0, bufferOffset);
                             writeQueue.Add(tempDataChunck);
-
-                            downloadedSize += bufferOffset;
-                            downloadUpdateArgs = DownloadUpdateEventArgs.Create(task.ID, task.GroupID, url, filePath, bufferOffset, downloadedSize, totalSize);
-                            onDownloadUpdate?.Invoke(downloadUpdateArgs);
-                            ReferencePool.Recyle(downloadUpdateArgs);
                             bufferOffset = 0;
                         }
                     }
                 }
                 catch (TaskCanceledException)
                 {
-                    ReferencePool.Recyle(this);
+
                 }
                 catch (Exception ex)
                 {
                     status = TaskStatus.Error;
-                    DownloadErrorEventArgs errAgrs = DownloadErrorEventArgs.Create(task.ID, task.GroupID, url, filePath, ex.Message);
-                    onDownloadError?.Invoke(errAgrs);
-                    ReferencePool.Recyle(errAgrs);
-                    responseMsg?.Dispose();
+                    errorMessage = ex.Message;
                 }
                 finally
                 {
@@ -284,26 +178,27 @@ namespace HQFramework.Download
                 {
                     status = TaskStatus.Canceled;
                     cancelToken.Cancel();
-                    onCanceled?.Invoke();
                 }
             }
 
-            public void Pause()
+            public bool Pause()
             {
                 if (status == TaskStatus.InProgress)
                 {
                     status = TaskStatus.Paused;
-                    onPaused.Invoke();
+                    return true;
                 }
+                return false;
             }
 
-            public void Resume()
+            public bool Resume()
             {
                 if (status == TaskStatus.Paused)
                 {
                     status = TaskStatus.InProgress;
-                    onResume.Invoke();
+                    return true;
                 }
+                return false;
             }
 
             void IReference.OnRecyle()
@@ -313,16 +208,10 @@ namespace HQFramework.Download
                 cancelToken.Dispose();
                 ArrayPool<byte>.Shared.Return(buffer);
                 buffer = null;
-                task = null;
                 responseMsg = null;
                 cancelToken = null;
-                onCanceled = null;
-                onCompleted = null;
-                onPaused = null;
-                onResume = null;
-                onHashCheck = null;
-                onDownloadError = null;
-                onDownloadUpdate = null;
+                status = TaskStatus.Waiting;
+                errorMessage = null;
             }
         }
     }

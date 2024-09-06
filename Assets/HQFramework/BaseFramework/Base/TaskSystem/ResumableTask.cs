@@ -24,7 +24,7 @@ namespace HQFramework
             if (status == TaskStatus.InProgress)
             {
                 status = TaskStatus.Paused;
-                TaskInfo info = new TaskInfo(ID, GroupID, Priority, Status);
+                TaskInfo info = new TaskInfo(id, groupID, priority, status);
                 onPause?.Invoke(info);
             }
         }
@@ -34,7 +34,7 @@ namespace HQFramework
             if (status == TaskStatus.Paused)
             {
                 status = TaskStatus.InProgress;
-                TaskInfo info = new TaskInfo(ID, GroupID, Priority, Status);
+                TaskInfo info = new TaskInfo(id, groupID, priority, status);
                 onResume?.Invoke(info);
             }
         }

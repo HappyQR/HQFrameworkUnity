@@ -35,7 +35,7 @@ namespace HQFramework
         public virtual void Cancel()
         {
             status = TaskStatus.Canceled;
-            TaskInfo info = new TaskInfo(ID, GroupID, Priority, Status);
+            TaskInfo info = new TaskInfo(id, groupID, priority, status);
             onCancel?.Invoke(info);
         }
 
