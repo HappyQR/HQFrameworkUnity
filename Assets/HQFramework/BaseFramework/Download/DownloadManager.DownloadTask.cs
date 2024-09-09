@@ -17,15 +17,8 @@ namespace HQFramework.Download
             private DownloadTaskWorker worker;
             private DownloadTaskSignal signal;
 
-            private Action<DownloadHashCheckEventArgs> onHashCheck;
             private Action<DownloadErrorEventArgs> onDownloadError;
             private Action<DownloadUpdateEventArgs> onDownloadUpdate;
-
-            public event Action<DownloadHashCheckEventArgs> HashCheckEvent
-            {
-                add { onHashCheck += value;}
-                remove { onHashCheck -= value;}
-            }
 
             public event Action<DownloadErrorEventArgs> DownloadErrorEvent
             {
@@ -135,7 +128,6 @@ namespace HQFramework.Download
                 filePath = null;
                 worker = null;
                 resumable = false;
-                onHashCheck = null;
                 onDownloadError = null;
                 onDownloadUpdate = null;
             }

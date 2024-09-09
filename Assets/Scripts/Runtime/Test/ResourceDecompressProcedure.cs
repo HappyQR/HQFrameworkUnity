@@ -22,11 +22,11 @@ public class ResourceDecompressProcedure : ProcedureBase
     {
         HQDebugger.Log("ResourceDecompressProcedure Enter");
 
-        coroutineManager = HQFrameworkEngine.GetModule<ICoroutineManager>();
-        coroutineManager.RepeatInvoke(0.02f, () =>
-        {
-            HQDebugger.Log("Repeat...");
-        });
+        // coroutineManager = HQFrameworkEngine.GetModule<ICoroutineManager>();
+        // coroutineManager.RepeatInvoke(0.02f, () =>
+        // {
+        //     HQDebugger.Log("Repeat...");
+        // });
         // coroutineID = coroutineManager.StartCoroutine(TestCoroutine());
         // coroutineManager.AddCoroutinePauseEvent(coroutineID, (info) =>
         // {
@@ -79,11 +79,6 @@ public class ResourceDecompressProcedure : ProcedureBase
         {
             HQDebugger.LogInfo("Download Done : " + info.id);
             Debug.Log("Download Cost Time : " + time);
-        });
-
-        downloadManager.AddDownloadHashCheckEvent(downloadID, (info) =>
-        {
-            HQDebugger.LogInfo("Download Hash Check Result : " + info.Result + "\nLocal Hash : " + info.LocalHash + "\nRemote Hash : " + info.TargetHash);
         });
 
         // coroutineID = coroutineManager.StartCoroutine(DownloadFile(url, filePath));

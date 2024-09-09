@@ -10,14 +10,6 @@ namespace HQFramework.Download
             {
             }
 
-            public void AddDownloadHashCheckEvent(int id, Action<DownloadHashCheckEventArgs> onHashCheck)
-            {
-                if (taskDic.ContainsKey(id))
-                {
-                    taskDic[id].HashCheckEvent += onHashCheck;
-                }
-            }
-
             public void AddDownloadErrorEvent(int id, Action<DownloadErrorEventArgs> onDownloadError)
             {
                 if (taskDic.ContainsKey(id))

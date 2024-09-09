@@ -1,29 +1,25 @@
 using System.Collections.Generic;
-using System.IO;
 using HQFramework.Resource;
 
 namespace HQFramework.Hotfix
 {
-    internal sealed class PreHotfixHelper : HotfixHelper
+    internal sealed class PreHotfixChecker : IHotfixChecker
     {
-        public PreHotfixHelper(string hotfixUrl, string assetPersistentDir) : base(hotfixUrl, assetPersistentDir)
+        public HotfixCheckEventArgs CheckManifestUpdate(AssetModuleManifest localManifest, AssetModuleManifest remoteManifest)
         {
-        }
-
-        public override HotfixCheckEventArgs CheckManifestUpdate(AssetModuleManifest localManifest, AssetModuleManifest remoteManifest)
-        {
+            List<HotfixManager.HotfixPatch> patchList = new List<HotfixManager.HotfixPatch>();
             if (!localManifest.isBuiltinManifest && localManifest.resourceVersion == remoteManifest.resourceVersion)
             {
-                HotfixCheckEventArgs args = new HotfixCheckEventArgs(true, false, null, 0);
+                HotfixCheckEventArgs args = new HotfixCheckEventArgs(true, false, null, 0, null);
                 return args;
             }
             
-            patchList = new List<HotfixPatch>();
+            patchList = new List<HotfixManager.HotfixPatch>();
             foreach (AssetModuleInfo remoteModule in remoteManifest.moduleDic.Values)
             {
                 if (!localManifest.moduleDic.ContainsKey(remoteModule.id))
                 {
-                    patchList.Add(new HotfixPatch(remoteModule, remoteModule.bundleDic.Values));
+                    patchList.Add(new HotfixManager.HotfixPatch(remoteModule, remoteModule.bundleDic.Values));
                     continue;
                 }
 
@@ -39,7 +35,7 @@ namespace HQFramework.Hotfix
                 }
                 if (bundleList.Count > 0)
                 {
-                    patchList.Add(new HotfixPatch(remoteModule, bundleList));
+                    patchList.Add(new HotfixManager.HotfixPatch(remoteModule, bundleList));
                 }
             }
 
@@ -55,23 +51,7 @@ namespace HQFramework.Hotfix
                 }
             }
 
-            if (forceUpdate)
-            {
-                // delete the obsolete modules
-                foreach (AssetModuleInfo localModule in localManifest.moduleDic.Values)
-                {
-                    if (!remoteManifest.moduleDic.ContainsKey(localModule.id))
-                    {
-                        string moduleDir = Path.Combine(assetPersistentDir, localModule.moduleName);
-                        if (Directory.Exists(moduleDir))
-                        {
-                            Directory.Delete(moduleDir, true);
-                        }
-                    }
-                }
-            }
-
-            HotfixCheckEventArgs checkEventArgs = new HotfixCheckEventArgs(isLatest, forceUpdate, releaseNote, totalSize);
+            HotfixCheckEventArgs checkEventArgs = new HotfixCheckEventArgs(isLatest, forceUpdate, releaseNote, totalSize, patchList);
             return checkEventArgs;
         }
     }

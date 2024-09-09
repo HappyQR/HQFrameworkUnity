@@ -64,11 +64,6 @@ namespace HQFramework.Download
             dispatcher.AddDownloadUpdateEvent(id, onDownloadUpdate);
         }
 
-        public void AddDownloadHashCheckEvent(int id, Action<DownloadHashCheckEventArgs> onHashCheck)
-        {
-            dispatcher.AddDownloadHashCheckEvent(id, onHashCheck);
-        }
-
         public bool PauseDownload(int id)
         {
             return dispatcher.PauseTask(id);

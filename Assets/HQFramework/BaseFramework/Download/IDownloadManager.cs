@@ -20,8 +20,6 @@ namespace HQFramework.Download
 
         public void AddDownloadUpdateEvent(int id, Action<DownloadUpdateEventArgs> onDownloadUpdate);
 
-        public void AddDownloadHashCheckEvent(int id, Action<DownloadHashCheckEventArgs> onHashCheck);
-
         bool PauseDownload(int id);
 
         bool ResumeDownload(int id);

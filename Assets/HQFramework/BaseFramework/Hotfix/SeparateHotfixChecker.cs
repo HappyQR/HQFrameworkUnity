@@ -1,19 +1,14 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using HQFramework.Resource;
 
 namespace HQFramework.Hotfix
 {
-    internal sealed class SeparateHotfixHelper : HotfixHelper
+    internal sealed class SeparateHotfixChecker : IHotfixChecker
     {
-        public SeparateHotfixHelper(string hotfixUrl, string assetPersistentDir) : base(hotfixUrl, assetPersistentDir)
+        public HotfixCheckEventArgs CheckManifestUpdate(AssetModuleManifest localManifest, AssetModuleManifest remoteManifest)
         {
-        }
-
-        public override HotfixCheckEventArgs CheckManifestUpdate(AssetModuleManifest localManifest, AssetModuleManifest remoteManifest)
-        {
-            patchList = new List<HotfixPatch>();
+            List<HotfixManager.HotfixPatch> patchList = new List<HotfixManager.HotfixPatch>();
             bool forceUpdate = false;
             foreach (AssetModuleInfo remoteModule in remoteManifest.moduleDic.Values)
             {
@@ -26,7 +21,7 @@ namespace HQFramework.Hotfix
                 if (!localManifest.moduleDic.ContainsKey(remoteModule.id))
                 {
                     forceUpdate = true;
-                    patchList.Add(new HotfixPatch(remoteModule, remoteModule.bundleDic.Values));
+                    patchList.Add(new HotfixManager.HotfixPatch(remoteModule, remoteModule.bundleDic.Values));
                     continue;
                 }
 
@@ -47,7 +42,7 @@ namespace HQFramework.Hotfix
                 }
                 if (bundleList.Count > 0)
                 {
-                    patchList.Add(new HotfixPatch(remoteModule, bundleList));
+                    patchList.Add(new HotfixManager.HotfixPatch(remoteModule, bundleList));
                 }
             }
 
@@ -64,23 +59,7 @@ namespace HQFramework.Hotfix
                 }
             }
 
-            if (forceUpdate)
-            {
-                // delete the obsolete modules
-                foreach (AssetModuleInfo localModule in localManifest.moduleDic.Values)
-                {
-                    if (!remoteManifest.moduleDic.ContainsKey(localModule.id))
-                    {
-                        string moduleDir = Path.Combine(assetPersistentDir, localModule.moduleName);
-                        if (Directory.Exists(moduleDir))
-                        {
-                            Directory.Delete(moduleDir, true);
-                        }
-                    }
-                }
-            }
-
-            HotfixCheckEventArgs checkEventArgs = new HotfixCheckEventArgs(isLatest, forceUpdate, releaseNote.ToString(), totalSize);
+            HotfixCheckEventArgs checkEventArgs = new HotfixCheckEventArgs(isLatest, forceUpdate, releaseNote.ToString(), totalSize, patchList);
             return checkEventArgs;
         }
     }
