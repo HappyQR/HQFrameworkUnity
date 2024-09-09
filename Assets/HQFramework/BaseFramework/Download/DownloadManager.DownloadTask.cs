@@ -12,9 +12,10 @@ namespace HQFramework.Download
             private string url;
             private string filePath;
             private bool resumable; //broken-point continuingly-transferring
-            private bool enableAutoHashCheck;
+            private int lastDownloadedSize = 0;
             private HttpClient client;
             private DownloadTaskWorker worker;
+            private DownloadTaskSignal signal;
 
             private Action<DownloadHashCheckEventArgs> onHashCheck;
             private Action<DownloadErrorEventArgs> onDownloadError;
@@ -38,7 +39,7 @@ namespace HQFramework.Download
                 remove { onDownloadUpdate -= value;}
             }
 
-            public static DownloadTask Create(HttpClient client, string url, string filePath, bool resumable, bool enableAutoHashCheck, int groupID, int priority)
+            public static DownloadTask Create(HttpClient client, string url, string filePath, bool resumable, int groupID, int priority)
             {
                 DownloadTask task = ReferencePool.Spawn<DownloadTask>();
                 task.id = serialID++;
@@ -48,53 +49,52 @@ namespace HQFramework.Download
                 task.url = url;
                 task.filePath = filePath;
                 task.resumable = resumable;
-                task.enableAutoHashCheck = enableAutoHashCheck;
                 return task;
             }
 
             public override TaskStartStatus Start()
             {
                 worker = DownloadTaskWorker.Create(this);
-                worker.HashCheckEvent += onHashCheck;
-                worker.DownloadUpdateEvent += onDownloadUpdate;
-                worker.DownloadErrorEvent += onDownloadError;
-                worker.PauseEvent += OnDownloadPause;
-                worker.ResumeEvent += OnDownloadResume;
-                worker.CompleteEvent += OnDownloadComplete;
-                worker.CancelEvent += OnDownloadCanceled;
-
-                worker.Start(client, url, filePath, resumable, enableAutoHashCheck);
-
+                worker.Start(client, url, filePath, resumable);
+                status = TaskStatus.InProgress;
                 return TaskStartStatus.InProgress;
             }
 
             public override void OnUpdate()
             {
-                status = worker.Status;
-            }
+                if (signal != null)
+                {
+                    if (signal.Succeeded)
+                    {
+                        int deltaSize = signal.DownloadedSize - lastDownloadedSize;
+                        DownloadUpdateEventArgs args = DownloadUpdateEventArgs.Create(id, groupID, url, filePath, deltaSize, signal.DownloadedSize, signal.TotalSize);
+                        onDownloadUpdate?.Invoke(args);
+                        ReferencePool.Recyle(args);
 
-            private void OnDownloadPause()
-            {
-                TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
-                onPause?.Invoke(taskInfo);
-            }
+                        status = TaskStatus.Done;
+                        TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
+                        onCompleted?.Invoke(taskInfo);
+                    }
+                    else
+                    {
+                        status = TaskStatus.Error;
+                        DownloadErrorEventArgs args = DownloadErrorEventArgs.Create(id, groupID, url, filePath, signal.ErrorMessage);
+                        onDownloadError?.Invoke(args);
+                        ReferencePool.Recyle(args);
+                    }
+                    ReferencePool.Recyle(signal);
+                    return;
+                }
 
-            private void OnDownloadResume()
-            {
-                TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
-                onResume?.Invoke(taskInfo);
-            }
-
-            private void OnDownloadComplete()
-            {
-                TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
-                onCompleted?.Invoke(taskInfo);
-            }
-
-            private void OnDownloadCanceled()
-            {
-                TaskInfo info = new TaskInfo(ID, GroupID, Priority, Status);
-                onCancel?.Invoke(info);
+                // handle the update event
+                if (worker.Status == TaskStatus.InProgress)
+                {
+                    int deltaSize = worker.DownloadedSize - lastDownloadedSize;
+                    lastDownloadedSize = worker.DownloadedSize;
+                    DownloadUpdateEventArgs args = DownloadUpdateEventArgs.Create(id, groupID, url, filePath, deltaSize, worker.DownloadedSize, worker.TotalSize);
+                    onDownloadUpdate?.Invoke(args);
+                    ReferencePool.Recyle(args);
+                } 
             }
 
             public override void Cancel()
@@ -107,29 +107,34 @@ namespace HQFramework.Download
 
             public override void Pause()
             {
-                if (worker != null)
+                if (worker != null && worker.Pause())
                 {
-                    worker.Pause();
+                    base.Pause();
                 }
             }
 
             public override void Resume()
             {
-                if (worker!= null)
+                if (worker!= null && worker.Resume())
                 {
-                    worker.Resume();
+                    base.Resume();
                 }
+            }
+
+            public void ReceiveSignal(DownloadTaskSignal signal)
+            {
+                this.signal = signal;
             }
 
             protected override void OnRecyle()
             {
                 base.OnRecyle();
+                lastDownloadedSize = 0;
                 client = null;
                 url = null;
                 filePath = null;
                 worker = null;
                 resumable = false;
-                enableAutoHashCheck = false;
                 onHashCheck = null;
                 onDownloadError = null;
                 onDownloadUpdate = null;

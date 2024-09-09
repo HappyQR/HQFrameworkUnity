@@ -48,43 +48,43 @@ public class ResourceDecompressProcedure : ProcedureBase
         downloadManager.InitDownloadModule(10, 5);
         string url = "https://happyq-test.oss-cn-beijing.aliyuncs.com/AssetFramework/tropical_beach_day.png";
         string filePath = Application.persistentDataPath + "/tropical_beach_day.png";
-        // downloadID = downloadManager.AddDownload(url, filePath, true, true, 0, 0);
+        downloadID = downloadManager.AddDownload(url, filePath, true, 0, 0);
 
-        // downloadManager.AddDownloadCancelEvent(downloadID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Download Cancel : " + info.id);
-        // });
+        downloadManager.AddDownloadCancelEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Cancel : " + info.id);
+        });
 
-        // downloadManager.AddDownloadUpdateEvent(downloadID, (info) =>
-        // {
-        //     HQDebugger.Log("Download Progress : " + (float)info.DownloadedSize / info.TotalSize);
-        // });
+        downloadManager.AddDownloadUpdateEvent(downloadID, (info) =>
+        {
+            HQDebugger.Log("Download Progress : " + (float)info.DownloadedSize / info.TotalSize);
+        });
 
-        // downloadManager.AddDownloadPauseEvent(downloadID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Download Paused : " + info.id);
-        // }); 
+        downloadManager.AddDownloadPauseEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Paused : " + info.id);
+        }); 
 
-        // downloadManager.AddDownloadResumeEvent(downloadID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Download Resume : " + info.id);
-        // });
+        downloadManager.AddDownloadResumeEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Resume : " + info.id);
+        });
 
-        // downloadManager.AddDownloadErrorEvent(downloadID, (info) =>
-        // {
-        //     HQDebugger.LogError("Download Error : " + info.ErrorMsg);
-        // });
+        downloadManager.AddDownloadErrorEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogError("Download Error : " + info.ErrorMsg);
+        });
 
-        // downloadManager.AddDownloadCompleteEvent(downloadID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Download Done : " + info.id);
-        //     Debug.Log("Download Cost Time : " + time);
-        // });
+        downloadManager.AddDownloadCompleteEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Done : " + info.id);
+            Debug.Log("Download Cost Time : " + time);
+        });
 
-        // downloadManager.AddDownloadHashCheckEvent(downloadID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Download Hash Check Result : " + info.Result + "\nLocal Hash : " + info.LocalHash + "\nRemote Hash : " + info.TargetHash);
-        // });
+        downloadManager.AddDownloadHashCheckEvent(downloadID, (info) =>
+        {
+            HQDebugger.LogInfo("Download Hash Check Result : " + info.Result + "\nLocal Hash : " + info.LocalHash + "\nRemote Hash : " + info.TargetHash);
+        });
 
         // coroutineID = coroutineManager.StartCoroutine(DownloadFile(url, filePath));
         // coroutineManager.AddCoroutinePauseEvent(coroutineID, (info) =>
@@ -102,7 +102,7 @@ public class ResourceDecompressProcedure : ProcedureBase
         //     HQDebugger.LogInfo("Resume : " + info.id);
         // });
 
-        DownloadFileAsync(url, filePath);
+        // DownloadFileAsync(url, filePath);
     }
 
     protected override void OnUpdate()

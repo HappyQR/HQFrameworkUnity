@@ -6,7 +6,7 @@ namespace HQFramework.Download
     {
         void InitDownloadModule(float timeOut, ushort maxConcurrentCount);
 
-        int AddDownload(string url, string filePath, bool resumable = false, bool enableAutoHashCheck = false, int groupID = 0, int priority = 0);
+        int AddDownload(string url, string filePath, bool resumable = false, int groupID = 0, int priority = 0);
 
         void AddDownloadCancelEvent(int id, Action<TaskInfo> onCancel);
 

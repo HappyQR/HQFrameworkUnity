@@ -28,9 +28,9 @@ namespace HQFramework.Download
             dispatcher.CancelAllTasks();
         }
 
-        public int AddDownload(string url, string filePath, bool resumable = false, bool enableAutoHashCheck = false, int groupID = 0, int priority = 0)
+        public int AddDownload(string url, string filePath, bool resumable = false, int groupID = 0, int priority = 0)
         {
-            DownloadTask task = DownloadTask.Create(client, url, filePath, resumable, enableAutoHashCheck, groupID, priority);
+            DownloadTask task = DownloadTask.Create(client, url, filePath, resumable, groupID, priority);
             return dispatcher.AddTask(task);
         }
 
