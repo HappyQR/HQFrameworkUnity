@@ -169,8 +169,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logHelperTypeName: HQFramework.Runtime.UnityLogHelper
   gameProcedures:
+  - HotfixProcedure
   - ResourceDecompressProcedure
-  entryProcedure: ResourceDecompressProcedure
+  entryProcedure: HotfixProcedure
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

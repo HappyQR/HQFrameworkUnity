@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using HQFramework.Download;
 using HQFramework.Resource;
@@ -18,9 +17,11 @@ namespace HQFramework.Hotfix
         private AssetModuleManifest remoteManifest;
         private List<HotfixPatch> patchList;
         private Dictionary<int, HotfixDownloadItem> downloadDic;
-        private List<HotfixDownloadItem> failedDownloadList;
+        private Dictionary<int, Dictionary<int, HotfixDownloadItem>> moduleDownloadMap;
         private float totalSize;
         private float downloadedSize;
+        private IDownloadManager downloadManager;
+        private string manifestFilePath;
 
         public override byte Priority => byte.MaxValue;
 
@@ -34,13 +35,14 @@ namespace HQFramework.Hotfix
         {
             this.config = config;
             this.localManifest = localManifest;
+            manifestFilePath = Path.Combine(config.assetPersistentDir, ResourceManager.manifestFileName);
         }
 
         public void StartHotfix()
         {
-            IDownloadManager downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
+            downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
             downloadDic = new Dictionary<int, HotfixDownloadItem>();
-            failedDownloadList = new List<HotfixDownloadItem>();
+            moduleDownloadMap = new Dictionary<int, Dictionary<int, HotfixDownloadItem>>();
             string hotfixUrlRoot = Path.Combine(config.hotfixUrl, remoteManifest.resourceVersion.ToString());
             for (int i = 0; i < patchList.Count; i++)
             {
@@ -51,13 +53,19 @@ namespace HQFramework.Hotfix
                 {
                     Directory.CreateDirectory(moduleLocalDir);
                 }
+                moduleDownloadMap.Add(module.id, new Dictionary<int, HotfixDownloadItem>());
                 for (int j = 0; j < patchList[i].bundleList.Count; j++)
                 {
                     AssetBundleInfo bundle = patchList[i].bundleList[j];
                     string bundleUrl = Path.Combine(moduleUrlRoot, bundle.bundleName);
                     string bundlePath = Path.Combine(moduleLocalDir, bundle.bundleName);
                     int downloadID = downloadManager.AddDownload(bundleUrl, bundlePath, false, hotfixDownloadGroupID, 0);
-                    downloadDic.Add(downloadID, new HotfixDownloadItem(bundleUrl, bundlePath, bundle));
+                    downloadManager.AddDownloadErrorEvent(downloadID, OnDownloadBundleError);
+                    downloadManager.AddDownloadUpdateEvent(downloadID, OnDownloadBundleUpdate);
+                    downloadManager.AddDownloadCompleteEvent(downloadID, OnDownloadBundleDone);
+                    HotfixDownloadItem item = new HotfixDownloadItem(bundleUrl, bundlePath, bundle);
+                    downloadDic.Add(downloadID, item);
+                    moduleDownloadMap[module.id].Add(downloadID, item);
                 }
             }
         }
@@ -84,35 +92,130 @@ namespace HQFramework.Hotfix
             }
         }
 
-        private void DeleteObsoleteAssets()
-        {
-
-        }
-
         private void OnDownloadBundleError(DownloadErrorEventArgs args)
         {
-            
+            downloadManager.StopDownloads(hotfixDownloadGroupID);
+            HotfixErrorEventArgs errorArgs = new HotfixErrorEventArgs(args.ErrorMsg);
+            onHotfixError?.Invoke(errorArgs);
+            SaveLocalManifest();
         }
 
         private void OnDownloadBundleDone(TaskInfo taskInfo)
         {
             HotfixDownloadItem item = downloadDic[taskInfo.id];
+            downloadDic.Remove(taskInfo.id);
+            moduleDownloadMap[item.bundle.moduleID].Remove(taskInfo.id);
             // do the hash check.
+            string localHash = Utility.Hash.ComputeHash(item.filePath);
+            if (localHash == item.bundle.md5)
+            {
+                // hash check passed.
+                if (moduleDownloadMap[item.bundle.moduleID].Count == 0)
+                {
+                    AssetModuleInfo remoteModule = remoteManifest.moduleDic[item.bundle.moduleID];
+                    if (localManifest.moduleDic.ContainsKey(remoteModule.id))
+                    {
+                        // delete obsolete bundles
+                        foreach (AssetBundleInfo localBundle in localManifest.moduleDic[remoteModule.id].bundleDic.Values)
+                        {
+                            if (!remoteModule.bundleDic.ContainsKey(localBundle.bundleName))
+                            {
+                                string obsoleteBundlePath = Path.Combine(config.assetPersistentDir, remoteModule.moduleName, localBundle.bundleName);
+                                if (File.Exists(obsoleteBundlePath))
+                                {
+                                    File.Delete(obsoleteBundlePath);
+                                }
+                            }
+                        }
+                        localManifest.moduleDic[remoteModule.id] = remoteModule;
+                    }
+                    else
+                    {
+                        localManifest.moduleDic.Add(remoteModule.id, remoteModule);
+                    }
+                    SaveLocalManifest();
+                }
+            }
+            else
+            {
+                // redownload
+                int downloadID = downloadManager.AddDownload(item.url, item.filePath, false, hotfixDownloadGroupID, 0);
+                downloadManager.AddDownloadErrorEvent(downloadID, OnDownloadBundleError);
+                downloadManager.AddDownloadUpdateEvent(downloadID, OnDownloadBundleUpdate);
+                downloadManager.AddDownloadCompleteEvent(downloadID, OnDownloadBundleDone);
+                downloadDic.Add(downloadID, item);
+                moduleDownloadMap[item.bundle.moduleID].Add(downloadID, item);
+            }
+
+            if (downloadDic.Count == 0)
+            {
+                // hotfix done.
+                // override localManifest.
+                DeleteObsoleteAssets();
+                localManifest.productName = remoteManifest.productName;
+                localManifest.productVersion = remoteManifest.productVersion;
+                localManifest.runtimePlatform = remoteManifest.runtimePlatform;
+                localManifest.resourceVersion = remoteManifest.resourceVersion;
+                localManifest.minimalSupportedVersion = remoteManifest.minimalSupportedVersion;
+                localManifest.releaseNote = remoteManifest.releaseNote;
+                localManifest.isBuiltinManifest = false;
+                SaveLocalManifest();
+
+                onHotfixDone?.Invoke();
+                ClearHotfix();
+            }
         }
 
         private void OnDownloadBundleUpdate(DownloadUpdateEventArgs args)
         {
             downloadedSize += args.DeltaSize;
+            HotfixUpdateEventArgs updateArgs = HotfixUpdateEventArgs.Create(downloadedSize / totalSize);
+            onHotfixUpdate?.Invoke(updateArgs);
+            ReferencePool.Recyle(updateArgs);
+        }
+
+        private void DeleteObsoleteAssets()
+        {
+            foreach (AssetModuleInfo localModule in localManifest.moduleDic.Values)
+            {
+                if (!remoteManifest.moduleDic.ContainsKey(localModule.id))
+                {
+                    string localModuleDir = Path.Combine(config.assetPersistentDir, localModule.moduleName);
+                    if (Directory.Exists(localModuleDir))
+                    {
+                        Directory.Delete(localModuleDir, true);
+                    }
+                }
+            }
+        }
+
+        private void SaveLocalManifest()
+        {
+            string manifestJsonStr = SerializeManager.ObjectToJson(localManifest);
+            File.WriteAllText(manifestFilePath, manifestJsonStr);
         }
 
         private void ClearHotfix()
         {
-
+            downloadManager = null;
+            onHotfixCheckDone = null;
+            onHotfixCheckError = null;
+            onHotfixError = null;
+            onHotfixUpdate = null;
+            onHotfixDone = null;
+            patchList = null;
+            downloadDic = null;
+            moduleDownloadMap = null;
+            manifestFilePath = null;
+            downloadedSize = totalSize = 0;
         }
 
         protected override void OnShutdown()
         {
-            
+            ClearHotfix();
+            config = null;
+            localManifest = null;
+            remoteManifest = null;
         }
     }
 }

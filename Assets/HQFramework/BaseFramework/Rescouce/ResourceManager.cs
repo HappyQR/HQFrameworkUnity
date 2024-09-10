@@ -6,6 +6,8 @@ namespace HQFramework.Resource
         private ResourceConfig config;
         public override byte Priority => byte.MaxValue;
 
+        public static readonly string manifestFileName = "AssetModuleManifest.json";
+
         protected override void OnInitialize()
         {
             

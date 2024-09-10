@@ -17,6 +17,7 @@ MonoBehaviour:
   bundleOutputDir: ../Build/Assets
   builtinDir: Assets
   resourceVersion: 12
+  minimalSupportedVersion: 0
   autoIncreaseResourceVersion: 1
   platform: 2
   compressOption: 256

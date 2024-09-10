@@ -1,10 +1,12 @@
 namespace HQFramework.Hotfix
 {
-    public class HotfixErrorEventArgs : IReference
+    public class HotfixErrorEventArgs
     {
-        void IReference.OnRecyle()
+        public string ErrorMessage { get; private set; }
+
+        public HotfixErrorEventArgs(string message)
         {
-            throw new System.NotImplementedException();
+            ErrorMessage = message;
         }
     }
 }
