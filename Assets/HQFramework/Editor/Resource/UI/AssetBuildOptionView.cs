@@ -201,7 +201,7 @@ namespace HQFramework.Editor
             btnUploadContent.text = " Sync With Server";
             if (GUILayout.Button(btnUploadContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 30) / 2)))
             {
-                
+                EditorApplication.delayCall += AssetsUploader.SyncAssetsWithServer;
             }
             GUILayout.EndHorizontal();
             GUILayout.EndArea();

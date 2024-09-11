@@ -2,9 +2,12 @@ namespace HQFramework.Resource
 {
     public interface IResourceManager
     {
-        void SetHelper(IResourceHelper resourceHelper);
+        ResourceConfig Config
+        {
+            get;
+        }
 
-        void DecompressBuiltinResource();
+        void SetHelper(IResourceHelper resourceHelper);
 
         // int LoadAsset(int crc);
     }

@@ -15,6 +15,10 @@ namespace HQFramework.Runtime
             ResourceConfig config = SerializeManager.JsonToObject<ResourceConfig>(jsonStr);
             config.assetBuiltinDir = Path.Combine(Application.streamingAssetsPath, config.assetBuiltinDir);
             config.assetPersistentDir = Path.Combine(Application.persistentDataPath, config.assetPersistentDir);
+            if (!Directory.Exists(config.assetPersistentDir))
+            {
+                Directory.CreateDirectory(config.assetPersistentDir);
+            }
             return config;
         }
     }

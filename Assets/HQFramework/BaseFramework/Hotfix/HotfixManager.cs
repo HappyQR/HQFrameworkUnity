@@ -31,15 +31,26 @@ namespace HQFramework.Hotfix
         public event Action<HotfixUpdateEventArgs> onHotfixUpdate;
         public event Action onHotfixDone;
 
-        public void InitHotfixModule(ResourceConfig config, AssetModuleManifest localManifest)
+        protected override void OnInitialize()
         {
-            this.config = config;
-            this.localManifest = localManifest;
-            manifestFilePath = Path.Combine(config.assetPersistentDir, ResourceManager.manifestFileName);
+            config = HQFrameworkEngine.GetModule<IResourceManager>().Config;
+            if (config == null)
+            {
+                throw new InvalidOperationException("You need to initialize Resource Module before using Hotfix Module.");
+            }
+
+            this.manifestFilePath = Path.Combine(config.assetPersistentDir, ResourceManager.manifestFileName);
+            this.localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(File.ReadAllText(manifestFilePath));
         }
 
         public void StartHotfix()
         {
+            if (patchList == null || patchList.Count == 0)
+            {
+                onHotfixDone?.Invoke();
+                ClearHotfix();
+                return;
+            }
             downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
             downloadDic = new Dictionary<int, HotfixDownloadItem>();
             moduleDownloadMap = new Dictionary<int, Dictionary<int, HotfixDownloadItem>>();

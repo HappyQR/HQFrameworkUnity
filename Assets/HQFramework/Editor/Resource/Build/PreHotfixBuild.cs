@@ -21,9 +21,7 @@ namespace HQFramework.Editor
             modulesManifest.releaseNote = releaseNote;
             string modulesManifestJsonStr = JsonUtilityEditor.ToJson(modulesManifest);
             Debug.Log($"Build Successfully!\n<color=#00ff00>{modulesManifestJsonStr}</color>");
-            string modulesManifestFilePath = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, 
-                                            appBuildConfig.internalVersionCode.ToString(), 
-                                            assetManifestFileName);
+            string modulesManifestFilePath = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, assetManifestFileName);
             File.WriteAllText(modulesManifestFilePath, modulesManifestJsonStr);
 
             // Generate built-in manifest
@@ -59,9 +57,7 @@ namespace HQFramework.Editor
 
         protected override void OnBuildStart()
         {
-            string assetDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, 
-                                            appBuildConfig.internalVersionCode.ToString(), 
-                                            buildOption.resourceVersion.ToString());
+            string assetDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, buildOption.resourceVersion.ToString());
             string builtinDir = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir);
 
             if (Directory.Exists(assetDir))
@@ -81,9 +77,9 @@ namespace HQFramework.Editor
         protected override AssetModuleInfo PostProcessAssetModuleBuild(AssetModuleConfig module, AssetBundleManifest manifest)
         {
             string moduleDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, 
-                                            appBuildConfig.internalVersionCode.ToString(), 
                                             buildOption.resourceVersion.ToString(),
-                                            module.moduleName);
+                                            module.moduleName,
+                                            module.currentPatchVersion.ToString());
             string moduleBuitinDir = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir, module.moduleName);
             Directory.CreateDirectory(moduleDir);
             if (module.isBuiltin)
@@ -96,6 +92,9 @@ namespace HQFramework.Editor
             moduleInfo.moduleName = module.moduleName;
             moduleInfo.description = module.description;
             moduleInfo.isBuiltin = module.isBuiltin;
+            moduleInfo.currentPatchVersion = module.currentPatchVersion;
+            moduleInfo.minimalSupportedPatchVersion = module.minimalSupportedPatchVersion;
+            moduleInfo.releaseNote = module.releaseNote;
             moduleInfo.bundleDic = new Dictionary<string, AssetBundleInfo>(bundles.Length);
             moduleInfo.assetsDic = new Dictionary<uint, AssetItemInfo>();
             HashSet<int> dependenciesSet = new HashSet<int>();

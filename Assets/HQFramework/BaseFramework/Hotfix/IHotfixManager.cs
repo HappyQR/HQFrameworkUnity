@@ -1,5 +1,4 @@
 using System;
-using HQFramework.Resource;
 
 namespace HQFramework.Hotfix
 {
@@ -14,8 +13,6 @@ namespace HQFramework.Hotfix
         event Action<HotfixUpdateEventArgs> onHotfixUpdate;
 
         event Action onHotfixDone;
-
-        void InitHotfixModule(ResourceConfig config, AssetModuleManifest localManifest);
 
         void StartHotfixCheck();
 

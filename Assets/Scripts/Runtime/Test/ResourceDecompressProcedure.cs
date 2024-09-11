@@ -1,190 +1,82 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.IO;
 using HQFramework;
 using HQFramework.Coroutine;
 using HQFramework.Procedure;
-using UnityEngine;
-using HQFramework.Download;
+using HQFramework.Resource;
+using HQFramework.Runtime;
 using UnityEngine.Networking;
-using System.IO;
-using System.Net.Http;
 
 public class ResourceDecompressProcedure : ProcedureBase
 {
-    ICoroutineManager coroutineManager;
-    IDownloadManager downloadManager;
-    int coroutineID;
-    int downloadID;
-
-    float time;
+    private IResourceManager resourceManager;
+    private ICoroutineManager coroutineManager;
+    private string assetManifestFileName = "AssetModuleManifest.json";
 
     protected override void OnEnter()
     {
         HQDebugger.Log("ResourceDecompressProcedure Enter");
 
-        // coroutineManager = HQFrameworkEngine.GetModule<ICoroutineManager>();
-        // coroutineManager.RepeatInvoke(0.02f, () =>
-        // {
-        //     HQDebugger.Log("Repeat...");
-        // });
-        // coroutineID = coroutineManager.StartCoroutine(TestCoroutine());
-        // coroutineManager.AddCoroutinePauseEvent(coroutineID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Pause : " + info.id);
-        // });
+        JsonLitHelper jsonLitHelper = new JsonLitHelper();
+        SerializeManager.SetJsonHelper(jsonLitHelper);
 
-        // coroutineManager.AddCoroutineStopEvent(coroutineID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Stop : " + info.id);
-        // });
+        DefaultResourceHelper helper = new DefaultResourceHelper();
+        resourceManager = HQFrameworkEngine.GetModule<IResourceManager>();
+        resourceManager.SetHelper(helper);
 
-        // coroutineManager.AddCoroutineResumeEvent(coroutineID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Resume : " + info.id);
-        // });
-
-        
-        downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
-        downloadManager.InitDownloadModule(10, 5);
-        string url = "https://happyq-test.oss-cn-beijing.aliyuncs.com/AssetFramework/tropical_beach_day.png";
-        string filePath = Application.persistentDataPath + "/tropical_beach_day.png";
-        downloadID = downloadManager.AddDownload(url, filePath, true, 0, 0);
-
-        downloadManager.AddDownloadCancelEvent(downloadID, (info) =>
-        {
-            HQDebugger.LogInfo("Download Cancel : " + info.id);
-        });
-
-        downloadManager.AddDownloadUpdateEvent(downloadID, (info) =>
-        {
-            HQDebugger.Log("Download Progress : " + (float)info.DownloadedSize / info.TotalSize);
-        });
-
-        downloadManager.AddDownloadPauseEvent(downloadID, (info) =>
-        {
-            HQDebugger.LogInfo("Download Paused : " + info.id);
-        }); 
-
-        downloadManager.AddDownloadResumeEvent(downloadID, (info) =>
-        {
-            HQDebugger.LogInfo("Download Resume : " + info.id);
-        });
-
-        downloadManager.AddDownloadErrorEvent(downloadID, (info) =>
-        {
-            HQDebugger.LogError("Download Error : " + info.ErrorMsg);
-        });
-
-        downloadManager.AddDownloadCompleteEvent(downloadID, (info) =>
-        {
-            HQDebugger.LogInfo("Download Done : " + info.id);
-            Debug.Log("Download Cost Time : " + time);
-        });
-
-        // coroutineID = coroutineManager.StartCoroutine(DownloadFile(url, filePath));
-        // coroutineManager.AddCoroutinePauseEvent(coroutineID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Pause : " + info.id);
-        // });
-
-        // coroutineManager.AddCoroutineStopEvent(coroutineID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Stop : " + info.id);
-        // });
-
-        // coroutineManager.AddCoroutineResumeEvent(coroutineID, (info) =>
-        // {
-        //     HQDebugger.LogInfo("Resume : " + info.id);
-        // });
-
-        // DownloadFileAsync(url, filePath);
+        coroutineManager = HQFrameworkEngine.GetModule<ICoroutineManager>();
+        coroutineManager.StartCoroutine(DecompressBuiltinResource());
     }
 
-    protected override void OnUpdate()
+    private IEnumerator DecompressBuiltinResource()
     {
-        // HQDebugger.Log("ResourceDecompressProcedure Update");
-        time += Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.P))
+        string localManifestFilePath = Path.Combine(resourceManager.Config.assetPersistentDir, assetManifestFileName);
+        if (File.Exists(localManifestFilePath))
         {
-            coroutineManager.PauseCoroutine(coroutineID);
-            downloadManager.PauseDownload(downloadID);
+            SwitchProcedure<HotfixProcedure>();
+            yield break;
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
+        string lcoalManifestUrl = "file://" + Path.Combine(resourceManager.Config.assetBuiltinDir, assetManifestFileName);
+        using UnityWebRequest localManifestRequest = UnityWebRequest.Get(lcoalManifestUrl);
+        localManifestRequest.SendWebRequest();
+        while (!localManifestRequest.isDone)
         {
-            coroutineManager.ResumeCoroutine(coroutineID);
-            downloadManager.ResumeDownload(downloadID);
+            yield return null;
         }
+        string manifestJson = localManifestRequest.downloadHandler.text;
+        AssetModuleManifest localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(manifestJson);
+        foreach (var module in localManifest.moduleDic.Values)
+        {
+            string moudleDir = Path.Combine(resourceManager.Config.assetPersistentDir, module.moduleName);
+            string moduleUrl = "file://" + Path.Combine(resourceManager.Config.assetBuiltinDir, module.moduleName);
+            if (!Directory.Exists(moudleDir))
+            {
+                Directory.CreateDirectory(moudleDir);
+            }
+            foreach (var bundle in module.bundleDic.Values)
+            {
+                string bundlePath = Path.Combine(moudleDir, bundle.bundleName);
+                string bundleUrl = Path.Combine(moduleUrl, bundle.bundleName);
+                using UnityWebRequest bundleRequest = UnityWebRequest.Get(bundleUrl);
+                bundleRequest.SendWebRequest();
+                while (!bundleRequest.isDone)
+                {
+                    yield return null;
+                }
+                File.WriteAllBytes(bundlePath, bundleRequest.downloadHandler.data);
+            }
+        }
+        File.WriteAllText(localManifestFilePath, manifestJson);
 
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            coroutineManager.StopCoroutine(coroutineID);
-            downloadManager.StopDownload(downloadID);
-        }
-
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            coroutineManager.StopCoroutines(0);
-            downloadManager.StopDownloads(0);
-        }
+        SwitchProcedure<HotfixProcedure>();
     }
 
     protected override void OnExit()
     {
+        resourceManager = null;
+        coroutineManager = null;
+        assetManifestFileName = null;
         HQDebugger.Log("ResourceDecompressProcedure Exit");
-    }
-
-    protected override void OnShutdown()
-    {
-        HQDebugger.Log("ResourceDecompressProcedure Shutdown");
-    }
-
-    private IEnumerator TestCoroutine()
-    {
-        HQDebugger.LogInfo("Hello HQ Framework");
-
-        yield return new YieldSecondsRealtime(3);
-
-        while (true)
-        {
-            HQDebugger.LogInfo("I'm in...");
-            yield return null;
-        }
-    }
-
-    private IEnumerator TestCoroutine2()
-    {
-        HQDebugger.LogInfo("Hello HQ Framework");
-
-        yield return new YieldSecondsRealtime(3);
-
-        while (true)
-        {
-            HQDebugger.LogInfo("I'm in...");
-            yield return null;
-        }
-    }
-
-    private IEnumerator DownloadFile(string url, string filePath)
-    {
-        using UnityWebRequest request = UnityWebRequest.Get(url);
-        request.SendWebRequest();
-
-        while (!request.isDone)
-        {
-            HQDebugger.Log(request.downloadProgress);
-            yield return null;
-        }
-        File.WriteAllBytes(filePath, request.downloadHandler.data);
-        HQDebugger.LogInfo("Download Time : " + time);
-    }
-
-    private async void DownloadFileAsync(string url, string filePath)
-    {
-        using HttpClient client = new HttpClient();
-        using HttpResponseMessage msg = await client.GetAsync(url);
-        byte[] bytes = await msg.Content.ReadAsByteArrayAsync();
-        await File.WriteAllBytesAsync(filePath, bytes);
-        HQDebugger.LogInfo("Download Time : " + time);
     }
 }

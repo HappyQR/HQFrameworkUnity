@@ -16,5 +16,5 @@ MonoBehaviour:
   hotfixMode: 1
   assetPersistentDir: Assets
   assetBuiltinDir: Assets
-  hotfixUrl: 
-  hotfixManifestUrl: 
+  hotfixUrl: https://happyq-test.oss-cn-beijing.aliyuncs.com/HQFramework/Assets
+  hotfixManifestUrl: https://happyq-test.oss-cn-beijing.aliyuncs.com/HQFramework/Assets/AssetModuleManifest.json

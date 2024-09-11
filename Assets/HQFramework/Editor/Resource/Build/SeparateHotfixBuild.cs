@@ -41,7 +41,7 @@ namespace HQFramework.Editor
                 }
             }
             modulesManifest.releaseNote = releaseNote;
-            string modulesManifestFilePath = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, appBuildConfig.internalVersionCode.ToString(), assetManifestFileName);
+            string modulesManifestFilePath = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, assetManifestFileName);
             string modulesManifestJsonStr = JsonUtilityEditor.ToJson(modulesManifest);
             Debug.Log($"Build Successfully!\n<color=#00ff00>{modulesManifestJsonStr}</color>");
             File.WriteAllText(modulesManifestFilePath, modulesManifestJsonStr);
@@ -105,7 +105,7 @@ namespace HQFramework.Editor
         protected override AssetModuleInfo PostProcessAssetModuleBuild(AssetModuleConfig module, AssetBundleManifest manifest)
         {
             string moduleDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, 
-                                            appBuildConfig.internalVersionCode.ToString(), 
+                                            buildOption.resourceVersion.ToString(), 
                                             module.moduleName,
                                             module.currentPatchVersion.ToString());
             string moduleBuitinDir = Path.Combine(Application.streamingAssetsPath, buildOption.builtinDir, module.moduleName);

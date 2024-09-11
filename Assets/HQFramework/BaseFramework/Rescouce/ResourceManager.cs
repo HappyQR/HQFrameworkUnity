@@ -6,6 +6,8 @@ namespace HQFramework.Resource
         private ResourceConfig config;
         public override byte Priority => byte.MaxValue;
 
+        public ResourceConfig Config => config;
+
         public static readonly string manifestFileName = "AssetModuleManifest.json";
 
         protected override void OnInitialize()
@@ -18,12 +20,5 @@ namespace HQFramework.Resource
             this.resourceHelper = resourceHelper;
             config = resourceHelper.LoadResourceConfig();
         }
-
-        public void DecompressBuiltinResource()
-        {
-            
-        }
-
-
     }
 }
