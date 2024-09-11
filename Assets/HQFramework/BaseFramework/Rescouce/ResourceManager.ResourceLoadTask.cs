@@ -4,6 +4,8 @@ namespace HQFramework.Resource
     {
         private class ResourceLoadTask : TaskBase
         {
+            
+
             public override void OnUpdate()
             {
                 
