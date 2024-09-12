@@ -12,7 +12,6 @@ namespace HQFramework.Hotfix
         private static readonly byte hotfixTimeout = 10;
         private static readonly int hotfixDownloadGroupID = 1;
 
-        private ResourceConfig config;
         private AssetModuleManifest localManifest;
         private AssetModuleManifest remoteManifest;
         private List<HotfixPatch> patchList;
@@ -21,6 +20,7 @@ namespace HQFramework.Hotfix
         private float totalSize;
         private float downloadedSize;
         private IDownloadManager downloadManager;
+        private IResourceManager resourceManager;
         private string manifestFilePath;
 
         public override byte Priority => byte.MaxValue;
@@ -33,13 +33,9 @@ namespace HQFramework.Hotfix
 
         protected override void OnInitialize()
         {
-            config = HQFrameworkEngine.GetModule<IResourceManager>().Config;
-            if (config == null)
-            {
-                throw new InvalidOperationException("You need to initialize Resource Module before using Hotfix Module.");
-            }
+            resourceManager = HQFrameworkEngine.GetModule<IResourceManager>();
 
-            this.manifestFilePath = Path.Combine(config.assetPersistentDir, ResourceManager.manifestFileName);
+            this.manifestFilePath = Path.Combine(resourceManager.PersistentDir, ResourceManager.manifestFileName);
             this.localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(File.ReadAllText(manifestFilePath));
         }
 
@@ -54,12 +50,12 @@ namespace HQFramework.Hotfix
             downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
             downloadDic = new Dictionary<int, HotfixDownloadItem>();
             moduleDownloadMap = new Dictionary<int, Dictionary<int, HotfixDownloadItem>>();
-            string hotfixUrlRoot = Path.Combine(config.hotfixUrl, remoteManifest.resourceVersion.ToString());
+            string hotfixUrlRoot = Path.Combine(resourceManager.HotfixUrl, remoteManifest.resourceVersion.ToString());
             for (int i = 0; i < patchList.Count; i++)
             {
                 AssetModuleInfo module = patchList[i].module;
                 string moduleUrlRoot = Path.Combine(hotfixUrlRoot, module.moduleName, module.currentPatchVersion.ToString());
-                string moduleLocalDir = Path.Combine(config.assetPersistentDir, module.moduleName);
+                string moduleLocalDir = Path.Combine(resourceManager.PersistentDir, module.moduleName);
                 if (!Directory.Exists(moduleLocalDir))
                 {
                     Directory.CreateDirectory(moduleLocalDir);
@@ -87,9 +83,9 @@ namespace HQFramework.Hotfix
             {
                 using HttpClient client = new HttpClient();
                 client.Timeout = TimeSpan.FromSeconds(hotfixTimeout);
-                string jsonStr = await client.GetStringAsync(config.hotfixManifestUrl);
+                string jsonStr = await client.GetStringAsync(resourceManager.HotfixManifestUrl);
                 remoteManifest = SerializeManager.JsonToObject<AssetModuleManifest>(jsonStr);
-                Type helperType = Type.GetType($"HQFramework.Hotfix.{config.hotfixMode}Checker");
+                Type helperType = Type.GetType($"HQFramework.Hotfix.{resourceManager.HotfixMode}Checker");
                 IHotfixChecker checker = Activator.CreateInstance(helperType) as IHotfixChecker;
                 HotfixCheckEventArgs args = checker.CheckManifestUpdate(localManifest, remoteManifest);
                 patchList = args.patchList;
@@ -131,7 +127,7 @@ namespace HQFramework.Hotfix
                         {
                             if (!remoteModule.bundleDic.ContainsKey(localBundle.bundleName))
                             {
-                                string obsoleteBundlePath = Path.Combine(config.assetPersistentDir, remoteModule.moduleName, localBundle.bundleName);
+                                string obsoleteBundlePath = Path.Combine(resourceManager.PersistentDir, remoteModule.moduleName, localBundle.bundleName);
                                 if (File.Exists(obsoleteBundlePath))
                                 {
                                     File.Delete(obsoleteBundlePath);
@@ -191,7 +187,7 @@ namespace HQFramework.Hotfix
             {
                 if (!remoteManifest.moduleDic.ContainsKey(localModule.id))
                 {
-                    string localModuleDir = Path.Combine(config.assetPersistentDir, localModule.moduleName);
+                    string localModuleDir = Path.Combine(resourceManager.PersistentDir, localModule.moduleName);
                     if (Directory.Exists(localModuleDir))
                     {
                         Directory.Delete(localModuleDir, true);
@@ -224,7 +220,7 @@ namespace HQFramework.Hotfix
         protected override void OnShutdown()
         {
             ClearHotfix();
-            config = null;
+            resourceManager = null;
             localManifest = null;
             remoteManifest = null;
         }

@@ -70,6 +70,7 @@ namespace HQFramework.Editor
                 File.Copy(bundleFilePath, desBuiltinPath, true);
                 AssetBundleInfo bundleInfo = new AssetBundleInfo();
                 bundleInfo.moduleID = module.id;
+                bundleInfo.moduleName = module.moduleName;
                 bundleInfo.bundleName = bundles[i];
                 bundleInfo.dependencies = manifest.GetAllDependencies(bundles[i]);
                 bundleInfo.md5 = FileUtilityEditor.GetMD5(bundleFilePath);

@@ -30,14 +30,14 @@ public class ResourceDecompressProcedure : ProcedureBase
 
     private IEnumerator DecompressBuiltinResource()
     {
-        string localManifestFilePath = Path.Combine(resourceManager.Config.assetPersistentDir, assetManifestFileName);
+        string localManifestFilePath = Path.Combine(resourceManager.PersistentDir, assetManifestFileName);
         if (File.Exists(localManifestFilePath))
         {
             SwitchProcedure<HotfixProcedure>();
             yield break;
         }
 
-        string lcoalManifestUrl = "file://" + Path.Combine(resourceManager.Config.assetBuiltinDir, assetManifestFileName);
+        string lcoalManifestUrl = "file://" + Path.Combine(resourceManager.BuiltinDir, assetManifestFileName);
         using UnityWebRequest localManifestRequest = UnityWebRequest.Get(lcoalManifestUrl);
         localManifestRequest.SendWebRequest();
         while (!localManifestRequest.isDone)
@@ -48,8 +48,8 @@ public class ResourceDecompressProcedure : ProcedureBase
         AssetModuleManifest localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(manifestJson);
         foreach (var module in localManifest.moduleDic.Values)
         {
-            string moudleDir = Path.Combine(resourceManager.Config.assetPersistentDir, module.moduleName);
-            string moduleUrl = "file://" + Path.Combine(resourceManager.Config.assetBuiltinDir, module.moduleName);
+            string moudleDir = Path.Combine(resourceManager.PersistentDir, module.moduleName);
+            string moduleUrl = "file://" + Path.Combine(resourceManager.BuiltinDir, module.moduleName);
             if (!Directory.Exists(moudleDir))
             {
                 Directory.CreateDirectory(moudleDir);

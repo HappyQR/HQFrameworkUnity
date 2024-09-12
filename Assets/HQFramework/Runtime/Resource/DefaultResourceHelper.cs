@@ -11,7 +11,8 @@ namespace HQFramework.Runtime
 
         public ResourceConfig LoadResourceConfig()
         {
-            string jsonStr = Resources.Load<TextAsset>(resourceConfigFilePath).text;
+            TextAsset asset = Resources.Load<TextAsset>(resourceConfigFilePath);
+            string jsonStr = asset.text;
             ResourceConfig config = SerializeManager.JsonToObject<ResourceConfig>(jsonStr);
             config.assetBuiltinDir = Path.Combine(Application.streamingAssetsPath, config.assetBuiltinDir);
             config.assetPersistentDir = Path.Combine(Application.persistentDataPath, config.assetPersistentDir);
@@ -19,6 +20,7 @@ namespace HQFramework.Runtime
             {
                 Directory.CreateDirectory(config.assetPersistentDir);
             }
+            Resources.UnloadAsset(asset);
             return config;
         }
     }
