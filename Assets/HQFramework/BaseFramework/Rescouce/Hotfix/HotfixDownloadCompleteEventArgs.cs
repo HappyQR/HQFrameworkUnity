@@ -1,6 +1,6 @@
 namespace HQFramework.Resource
 {
-    public class BundleManager
+    public class HotfixDownloadCompleteEventArgs
     {
         
     }

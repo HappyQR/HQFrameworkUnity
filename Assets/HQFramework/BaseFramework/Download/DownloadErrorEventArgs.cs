@@ -6,7 +6,7 @@ namespace HQFramework.Download
         public int GroupID { get; private set; }
         public string Url { get; private set; }
         public string FilePath { get; private set; }
-        public string ErrorMsg { get; private set; }
+        public string ErrorMessage { get; private set; }
 
         public static DownloadErrorEventArgs Create(int id, int groupID, string url, string filePath, string errorMsg)
         {
@@ -15,7 +15,7 @@ namespace HQFramework.Download
             args.GroupID = groupID;
             args.Url = url;
             args.FilePath = filePath;
-            args.ErrorMsg = errorMsg;
+            args.ErrorMessage = errorMsg;
             return args;
         }
 
@@ -25,7 +25,7 @@ namespace HQFramework.Download
             GroupID = -1;
             Url = null;
             FilePath = null;
-            ErrorMsg = null;
+            ErrorMessage = null;
         }
     }
 }

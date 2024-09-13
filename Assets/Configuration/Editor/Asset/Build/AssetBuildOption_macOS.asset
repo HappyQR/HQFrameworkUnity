@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AssetBuildOption_macOS
   m_EditorClassIdentifier: 
   optionTag: macOS
-  hotfixMode: 1
+  hotfixMode: 2
   bundleOutputDir: ../Build/Assets
   builtinDir: Assets
   resourceVersion: 15

@@ -22,25 +22,7 @@ namespace HQFramework.Resource
 
             public override TaskStartStatus Start()
             {
-                if (!manager.assetItemMap.ContainsKey(crc))
-                {
-                    HQDebugger.LogError($"Asset(crc : {crc}) doesn't exist.");
-                    return TaskStartStatus.Error;
-                }
-                
-                AssetItemInfo item = manager.assetItemMap[crc];
-                if (manager.cachedBundleDic.ContainsKey(item.bundleName))
-                {
-                    // load asset from bundle
-
-                    return TaskStartStatus.InProgress;
-                }
-                else
-                {
-                    // load bundle
-
-                    return TaskStartStatus.HasToWait;
-                }
+                throw new NotImplementedException();
             }
 
             public override void OnUpdate()

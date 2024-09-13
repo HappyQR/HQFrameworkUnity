@@ -9,6 +9,8 @@ namespace HQFramework.Runtime
     {
         private static readonly string resourceConfigFilePath = "ResourceConfig";
 
+        public int HotfixDownloadGroupID => 1;
+
         public ResourceConfig LoadResourceConfig()
         {
             TextAsset asset = Resources.Load<TextAsset>(resourceConfigFilePath);

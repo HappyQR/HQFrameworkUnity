@@ -1,15 +1,32 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace HQFramework.Resource
 {
     internal sealed partial class ResourceManager : HQModuleBase, IResourceManager
     {
+        public static readonly string manifestFileName = "AssetModuleManifest.json";
+
+        private ResourceConfig config;
         private IResourceHelper resourceHelper;
         private ResourceLoader resourceLoader;
-        private ResourceConfig config;
-        private Dictionary<uint, AssetItemInfo> assetItemMap;
-        private Dictionary<string, BundleBase> cachedBundleDic;
+        private ResourceHotfixChecker hotfixChecker;
+        private ResourceDownloader resourceDownloader;
+
+        private AssetModuleManifest localManifest;
+        private AssetModuleManifest remoteManifest;
+
+        private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> necessaryHotfixContent;
+        private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> separateHotfixContent;
+        
+        private Action<HotfixCheckErrorEventArgs> onHotfixCheckError;
+        private Action<HotfixCheckCompleteEventArgs> onHotfixCheckComplete;
+        private Action<HotfixDownloadUpdateEventArgs> onHotfixDownloadUpdate;
+        private Action<HotfixDownloadErrorEventArgs> onHotfixDownloadError;
+        private Action<HotfixDownloadCompleteEventArgs> onHotfixDownloadComplete;
+
+        private string localManifestFilePath;
 
         public override byte Priority => byte.MaxValue;
         public AssetHotfixMode HotfixMode => config.hotfixMode;
@@ -18,28 +35,88 @@ namespace HQFramework.Resource
         public string HotfixUrl => config.hotfixUrl;
         public string HotfixManifestUrl => config.hotfixManifestUrl;
 
-        public static readonly string manifestFileName = "AssetModuleManifest.json";
+
+        public event Action<HotfixCheckErrorEventArgs> HotfixCheckErrorEvent
+        {
+            add { onHotfixCheckError += value; }
+            remove { onHotfixCheckError -= value; }
+        }
+        public event Action<HotfixCheckCompleteEventArgs> HotfixCheckCompleteEvent
+        {
+            add { onHotfixCheckComplete += value; }
+            remove { onHotfixCheckComplete -= value; }
+        }
+        public event Action<HotfixDownloadUpdateEventArgs> HotfixDownloadUpdateEvent
+        {
+            add { onHotfixDownloadUpdate += value; }
+            remove { onHotfixDownloadUpdate -= value; }
+        }
+        public event Action<HotfixDownloadErrorEventArgs> HotfixDownloadErrorEvent
+        {
+            add { onHotfixDownloadError += value; }
+            remove { onHotfixDownloadError -= value; }
+        }
+        public event Action<HotfixDownloadCompleteEventArgs> HotfixDownloadCompleteEvent
+        {
+            add { onHotfixDownloadComplete += value; }
+            remove { onHotfixDownloadComplete -= value;}
+        }
 
         protected override void OnInitialize()
         {
-            resourceLoader = new ResourceLoader(this);
+            
         }
 
-        public void LoadAsset(uint crc, Type assetType, Action<object> callback)
+        protected override void OnUpdate()
         {
-            if (!assetItemMap.ContainsKey(crc))
-            {
-                throw new ArgumentException($"Asset(crc : {crc}) doesn't exist.");
-            }
-
-            AssetItemInfo item = assetItemMap[crc];
-            resourceLoader.LoadAsset(item, assetType, callback);
+            resourceDownloader?.OnUpdate();
         }
 
         public void SetHelper(IResourceHelper resourceHelper)
         {
             this.resourceHelper = resourceHelper;
             config = resourceHelper.LoadResourceConfig();
+            localManifestFilePath = Path.Combine(config.assetPersistentDir, manifestFileName);
+        }
+
+        public async void CheckHotfix()
+        {
+            if (config.hotfixMode == AssetHotfixMode.NoHotfix)
+            {
+                throw new InvalidOperationException("You can't use CheckHotfix under NoHotfix mode.");
+            }
+            if (hotfixChecker == null)
+            {
+                hotfixChecker = new ResourceHotfixChecker(this);
+            }
+            if (localManifest == null)
+            {
+                string manifestJsonStr = await File.ReadAllTextAsync(localManifestFilePath);
+                localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(manifestJsonStr);
+            }
+            hotfixChecker.CheckHotfix();
+        }
+
+        public void StartHotfix()
+        {
+            if (config.hotfixMode == AssetHotfixMode.NoHotfix)
+            {
+                throw new InvalidOperationException("You can't use CheckHotfix under NoHotfix mode.");
+            }
+            if (necessaryHotfixContent == null || necessaryHotfixContent.Count == 0)
+            {
+                throw new InvalidOperationException("Nothing to update.");
+            }
+            if (resourceDownloader == null)
+            {
+                resourceDownloader = new ResourceDownloader(this);
+            }
+            resourceDownloader.StartHotfix();
+        }
+
+        public void LoadAsset(uint crc, Type assetType, Action<object> callback)
+        {
+            throw new NotImplementedException();
         }
 
         public void ReleaseAsset(object asset)
@@ -50,6 +127,40 @@ namespace HQFramework.Resource
         public void LoadAsset<T>(uint crc, Action<T> callback) where T : class
         {
             throw new NotImplementedException();
+        }
+
+        private async void OverrideLocalManifest()
+        {
+            string manifestJsonStr = SerializeManager.ObjectToJson(localManifest);
+            await File.WriteAllTextAsync(localManifestFilePath, manifestJsonStr);
+        }
+
+        public HotfixCheckCompleteEventArgs CheckModuleHotfix(int moduleID)
+        {
+            if (config.hotfixMode != AssetHotfixMode.SeparateHotfix)
+            {
+                throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
+            }
+
+            return hotfixChecker.CheckModuleHotfix(moduleID);
+        }
+
+        public int StartModuleHotfix(int moduleID)
+        {
+            if (config.hotfixMode != AssetHotfixMode.SeparateHotfix)
+            {
+                throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
+            }
+
+            AssetModuleInfo remoteModule = remoteManifest.moduleDic[moduleID];
+            if (separateHotfixContent.ContainsKey(remoteModule))
+            {
+                return resourceDownloader.DownloadModule(remoteModule, separateHotfixContent[remoteModule]);
+            }
+            else
+            {
+                throw new InvalidOperationException("Nothing to update");
+            }
         }
     }
 }

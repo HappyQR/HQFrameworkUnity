@@ -2,6 +2,11 @@ namespace HQFramework.Resource
 {
     public interface IResourceHelper
     {
-        public ResourceConfig LoadResourceConfig();
+        int HotfixDownloadGroupID
+        {
+            get;
+        }
+        
+        ResourceConfig LoadResourceConfig();
     }
 }
