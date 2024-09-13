@@ -6,8 +6,6 @@ namespace HQFramework.Resource
 {
     internal sealed partial class ResourceManager : HQModuleBase, IResourceManager
     {
-        public static readonly string manifestFileName = "AssetModuleManifest.json";
-
         private ResourceConfig config;
         private IResourceHelper resourceHelper;
         private ResourceLoader resourceLoader;
@@ -25,8 +23,6 @@ namespace HQFramework.Resource
         private Action<HotfixDownloadUpdateEventArgs> onHotfixDownloadUpdate;
         private Action<HotfixDownloadErrorEventArgs> onHotfixDownloadError;
         private Action<HotfixDownloadCompleteEventArgs> onHotfixDownloadComplete;
-
-        private string localManifestFilePath;
 
         public override byte Priority => byte.MaxValue;
         public AssetHotfixMode HotfixMode => config.hotfixMode;
@@ -76,7 +72,6 @@ namespace HQFramework.Resource
         {
             this.resourceHelper = resourceHelper;
             config = resourceHelper.LoadResourceConfig();
-            localManifestFilePath = Path.Combine(config.assetPersistentDir, manifestFileName);
         }
 
         public async void CheckHotfix()
@@ -91,8 +86,7 @@ namespace HQFramework.Resource
             }
             if (localManifest == null)
             {
-                string manifestJsonStr = await File.ReadAllTextAsync(localManifestFilePath);
-                localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(manifestJsonStr);
+                localManifest = await resourceHelper.LoadAssetManifestAsync();
             }
             hotfixChecker.CheckHotfix();
         }
@@ -127,12 +121,6 @@ namespace HQFramework.Resource
         public void LoadAsset<T>(uint crc, Action<T> callback) where T : class
         {
             throw new NotImplementedException();
-        }
-
-        private async void OverrideLocalManifest()
-        {
-            string manifestJsonStr = SerializeManager.ObjectToJson(localManifest);
-            await File.WriteAllTextAsync(localManifestFilePath, manifestJsonStr);
         }
 
         public HotfixCheckCompleteEventArgs CheckModuleHotfix(int moduleID)
