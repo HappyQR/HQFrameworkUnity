@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace HQFramework.Resource
 {
@@ -8,59 +7,25 @@ namespace HQFramework.Resource
     {
         private ResourceConfig config;
         private IResourceHelper resourceHelper;
-        private ResourceLoader resourceLoader;
         private ResourceHotfixChecker hotfixChecker;
         private ResourceDownloader resourceDownloader;
+        private ResourceLoader resourceLoader;
 
         private AssetModuleManifest localManifest;
         private AssetModuleManifest remoteManifest;
 
         private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> necessaryHotfixContent;
         private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> separateHotfixContent;
-        
-        private Action<HotfixCheckErrorEventArgs> onHotfixCheckError;
-        private Action<HotfixCheckCompleteEventArgs> onHotfixCheckComplete;
-        private Action<HotfixDownloadUpdateEventArgs> onHotfixDownloadUpdate;
-        private Action<HotfixDownloadErrorEventArgs> onHotfixDownloadError;
-        private Action<HotfixDownloadCompleteEventArgs> onHotfixDownloadComplete;
+        private Dictionary<string, string> bundleFilePathDic;
 
         public override byte Priority => byte.MaxValue;
         public AssetHotfixMode HotfixMode => config.hotfixMode;
         public string PersistentDir => config.assetPersistentDir;
         public string BuiltinDir => config.assetBuiltinDir;
-        public string HotfixUrl => config.hotfixUrl;
-        public string HotfixManifestUrl => config.hotfixManifestUrl;
-
-
-        public event Action<HotfixCheckErrorEventArgs> HotfixCheckErrorEvent
-        {
-            add { onHotfixCheckError += value; }
-            remove { onHotfixCheckError -= value; }
-        }
-        public event Action<HotfixCheckCompleteEventArgs> HotfixCheckCompleteEvent
-        {
-            add { onHotfixCheckComplete += value; }
-            remove { onHotfixCheckComplete -= value; }
-        }
-        public event Action<HotfixDownloadUpdateEventArgs> HotfixDownloadUpdateEvent
-        {
-            add { onHotfixDownloadUpdate += value; }
-            remove { onHotfixDownloadUpdate -= value; }
-        }
-        public event Action<HotfixDownloadErrorEventArgs> HotfixDownloadErrorEvent
-        {
-            add { onHotfixDownloadError += value; }
-            remove { onHotfixDownloadError -= value; }
-        }
-        public event Action<HotfixDownloadCompleteEventArgs> HotfixDownloadCompleteEvent
-        {
-            add { onHotfixDownloadComplete += value; }
-            remove { onHotfixDownloadComplete -= value;}
-        }
 
         protected override void OnInitialize()
         {
-            
+            bundleFilePathDic = new Dictionary<string, string>();
         }
 
         protected override void OnUpdate()
@@ -74,7 +39,7 @@ namespace HQFramework.Resource
             config = resourceHelper.LoadResourceConfig();
         }
 
-        public async void CheckHotfix()
+        public int LaunchHotfixCheck()
         {
             if (config.hotfixMode == AssetHotfixMode.NoHotfix)
             {
@@ -84,14 +49,31 @@ namespace HQFramework.Resource
             {
                 hotfixChecker = new ResourceHotfixChecker(this);
             }
-            if (localManifest == null)
-            {
-                localManifest = await resourceHelper.LoadAssetManifestAsync();
-            }
-            hotfixChecker.CheckHotfix();
+            
+            return hotfixChecker.LaunchHotfix();
         }
 
-        public void StartHotfix()
+        public int ModuleHotfixCheck(int moduleID)
+        {
+            if (config.hotfixMode != AssetHotfixMode.SeparateHotfix)
+            {
+                throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
+            }
+
+            return hotfixChecker.ModuleHotfixCheck(moduleID);
+        }
+
+        public void AddHotfixCheckErrorEvent(int hotfixID, Action<HotfixCheckErrorEventArgs> onHotfixCheckError)
+        {
+            hotfixChecker.AddHotfixCheckErrorEvent(hotfixID, onHotfixCheckError);
+        }
+
+        public void AddHotfixCheckCompleteEvent(int hotfixID, Action<HotfixCheckCompleteEventArgs> onHotfixCheckComplete)
+        {
+            hotfixChecker.AddHotfixCheckCompleteEvent(hotfixID, onHotfixCheckComplete);
+        }
+
+        public int LaunchHotfix()
         {
             if (config.hotfixMode == AssetHotfixMode.NoHotfix)
             {
@@ -105,35 +87,10 @@ namespace HQFramework.Resource
             {
                 resourceDownloader = new ResourceDownloader(this);
             }
-            resourceDownloader.StartHotfix();
+            return resourceDownloader.LaunchHotfix();
         }
 
-        public void LoadAsset(uint crc, Type assetType, Action<object> callback)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ReleaseAsset(object asset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void LoadAsset<T>(uint crc, Action<T> callback) where T : class
-        {
-            throw new NotImplementedException();
-        }
-
-        public HotfixCheckCompleteEventArgs CheckModuleHotfix(int moduleID)
-        {
-            if (config.hotfixMode != AssetHotfixMode.SeparateHotfix)
-            {
-                throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
-            }
-
-            return hotfixChecker.CheckModuleHotfix(moduleID);
-        }
-
-        public int StartModuleHotfix(int moduleID)
+        public int ModuleHotfix(int moduleID)
         {
             if (config.hotfixMode != AssetHotfixMode.SeparateHotfix)
             {
@@ -143,11 +100,85 @@ namespace HQFramework.Resource
             AssetModuleInfo remoteModule = remoteManifest.moduleDic[moduleID];
             if (separateHotfixContent.ContainsKey(remoteModule))
             {
-                return resourceDownloader.DownloadModule(remoteModule, separateHotfixContent[remoteModule]);
+                return resourceDownloader.ModuleHotfix(remoteModule, separateHotfixContent[remoteModule]);
             }
             else
             {
                 throw new InvalidOperationException("Nothing to update");
+            }
+        }
+
+        public void PauseHotfix(int hotfixID)
+        {
+            resourceDownloader.PauseHotfix(hotfixID);
+        }
+
+        public void ResumeHotfix(int hotfixID)
+        {
+            resourceDownloader.ResumeHotfix(hotfixID);
+        }
+
+        public void CancelHotfix(int hotfixID)
+        {
+            resourceDownloader.CancelHotfix(hotfixID);
+        }
+
+        public void AddHotfixDownloadUpdateEvent(int hotfixID, Action<HotfixDownloadUpdateEventArgs> onHotfixUpdate)
+        {
+            resourceDownloader.AddHotfixDownloadUpdateEvent(hotfixID, onHotfixUpdate);
+        }
+
+        public void AddHotfixDownloadErrorEvent(int hotfixID, Action<HotfixDownloadErrorEventArgs> onHotfixError)
+        {
+            resourceDownloader.AddHotfixDownloadErrorEvent(hotfixID, onHotfixError);
+        }
+
+        public void AddHotfixDownloadPauseEvent(int hotfixID, Action<HotfixDownloadPauseEventArgs> onHotfixPause)
+        {
+            resourceDownloader.AddHotfixDownloadPauseEvent(hotfixID, onHotfixPause);
+        }
+
+        public void AddHotfixDownloadResumeEvent(int hotfixID, Action<HotfixDownloadResumeEventArgs> onHotfixResume)
+        {
+            resourceDownloader.AddHotfixDownloadResumeEvent(hotfixID, onHotfixResume);
+        }
+
+        public void AddHotfixDownloadCancelEvent(int hotfixID, Action<HotfixDownloadCancelEventArgs> onHotfixCancel)
+        {
+            resourceDownloader.AddHotfixDownloadCancelEvent(hotfixID, onHotfixCancel);
+        }
+
+        public void AddHotfixDownloadCompleteEvent(int hotfixID, Action<HotfixDownloadCompleteEventArgs> onHotfixComplete)
+        {
+            resourceDownloader.AddHotfixDownloadCompleteEvent(hotfixID, onHotfixComplete);
+        }
+
+        public void LoadAsset(uint crc, Type assetType, Action<object> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LoadAsset<T>(uint crc, Action<T> callback) where T : class
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ReleaseAsset(object asset)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string GetBundleFilePath(AssetBundleInfo bundleInfo)
+        {
+            if (bundleFilePathDic.ContainsKey(bundleInfo.bundleName))
+            {
+                return bundleFilePathDic[bundleInfo.bundleName];
+            }
+            else
+            {
+                string bundlePath = resourceHelper.GetBundleFilePath(bundleInfo);
+                bundleFilePathDic.Add(bundleInfo.bundleName, bundlePath);
+                return bundlePath;
             }
         }
     }

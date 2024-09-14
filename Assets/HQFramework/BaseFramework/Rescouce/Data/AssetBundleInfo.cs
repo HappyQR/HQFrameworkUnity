@@ -11,6 +11,7 @@ namespace HQFramework.Resource
         public string bundleName;
         public string md5;
         public int size; // unit : byte
+        public string bundleUrlRelatedToModule;
         public string[] dependencies;
     }
 }

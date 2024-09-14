@@ -66,7 +66,7 @@ namespace HQFramework.Download
                             else if (rangeOffset == totalSize)
                             {
                                 status = TaskStatus.Done;
-                                DownloadTaskSignal signal = DownloadTaskSignal.Create(true, null, totalSize, totalSize);
+                                DownloadTaskSignal signal = DownloadTaskSignal.Create(DownloadResult.Complete, null, totalSize, totalSize);
                                 task.ReceiveSignal(signal);
                                 ReferencePool.Recyle(this);
                                 return;
@@ -77,10 +77,17 @@ namespace HQFramework.Download
                                 requestMsg.Headers.Range = new RangeHeaderValue(rangeOffset, null);
                             }
                         }
+                        catch (TaskCanceledException)
+                        {
+                            status = TaskStatus.Canceled;
+                            DownloadTaskSignal signal = DownloadTaskSignal.Create(DownloadResult.Canceled, "Task was canceled.", downloadedSize, totalSize);
+                            task.ReceiveSignal(signal);
+                            ReferencePool.Recyle(this);
+                        }
                         catch (Exception ex)
                         {
                             status = TaskStatus.Error;
-                            DownloadTaskSignal signal = DownloadTaskSignal.Create(false, ex.Message, downloadedSize, totalSize);
+                            DownloadTaskSignal signal = DownloadTaskSignal.Create(DownloadResult.Error, ex.Message, downloadedSize, totalSize);
                             task.ReceiveSignal(signal);
                             ReferencePool.Recyle(this);
                             return;
@@ -110,7 +117,7 @@ namespace HQFramework.Download
                         if (status == TaskStatus.Canceled) // call stop manually
                         {
                             status = TaskStatus.Canceled;
-                            DownloadTaskSignal signal = DownloadTaskSignal.Create(false, "Task was canceled.", downloadedSize, totalSize);
+                            DownloadTaskSignal signal = DownloadTaskSignal.Create(DownloadResult.Canceled, "Task was canceled.", downloadedSize, totalSize);
                             task.ReceiveSignal(signal);
                             ReferencePool.Recyle(this);
                             break;
@@ -128,7 +135,7 @@ namespace HQFramework.Download
                             writeQueue.CompleteAdding();
                             await writeTask;
                             status = TaskStatus.Done;
-                            DownloadTaskSignal signal = DownloadTaskSignal.Create(true, null, downloadedSize, totalSize);
+                            DownloadTaskSignal signal = DownloadTaskSignal.Create(DownloadResult.Complete, null, downloadedSize, totalSize);
                             task.ReceiveSignal(signal);
                             ReferencePool.Recyle(this);
                             break;
@@ -144,12 +151,21 @@ namespace HQFramework.Download
                         }
                     }
                 }
+                catch (TaskCanceledException)
+                {
+                    writeQueue.CompleteAdding();
+                    await writeTask;
+                    status = TaskStatus.Canceled;
+                    DownloadTaskSignal signal = DownloadTaskSignal.Create(DownloadResult.Canceled, "Task was canceled.", downloadedSize, totalSize);
+                    task.ReceiveSignal(signal);
+                    ReferencePool.Recyle(this);
+                }
                 catch (Exception ex)
                 {
                     writeQueue.CompleteAdding();
                     await writeTask;
                     status = TaskStatus.Error;
-                    DownloadTaskSignal signal = DownloadTaskSignal.Create(false, ex.Message, downloadedSize, totalSize);
+                    DownloadTaskSignal signal = DownloadTaskSignal.Create(DownloadResult.Error, ex.Message, downloadedSize, totalSize);
                     task.ReceiveSignal(signal);
                     ReferencePool.Recyle(this);
                 }

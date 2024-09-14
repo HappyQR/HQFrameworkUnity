@@ -19,24 +19,28 @@ namespace HQFramework
             remove { onResume -= value; }
         }
 
-        public virtual void Pause()
+        public virtual bool Pause()
         {
             if (status == TaskStatus.InProgress)
             {
                 status = TaskStatus.Paused;
                 TaskInfo info = new TaskInfo(id, groupID, priority, status);
                 onPause?.Invoke(info);
+                return true;
             }
+            return false;
         }
 
-        public virtual void Resume()
+        public virtual bool Resume()
         {
             if (status == TaskStatus.Paused)
             {
                 status = TaskStatus.InProgress;
                 TaskInfo info = new TaskInfo(id, groupID, priority, status);
                 onResume?.Invoke(info);
+                return true;
             }
+            return false;
         }
 
         protected override void OnRecyle()

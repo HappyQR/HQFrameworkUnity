@@ -10,29 +10,37 @@ namespace HQFramework.Resource
 
         string BuiltinDir { get; }
 
-        string HotfixUrl { get; }
-
-        string HotfixManifestUrl { get; }
-
-        event Action<HotfixCheckCompleteEventArgs> HotfixCheckCompleteEvent;
-
-        event Action<HotfixCheckErrorEventArgs> HotfixCheckErrorEvent;
-
-        event Action<HotfixDownloadUpdateEventArgs> HotfixDownloadUpdateEvent;
-
-        event Action<HotfixDownloadErrorEventArgs> HotfixDownloadErrorEvent;
-
-        event Action<HotfixDownloadCompleteEventArgs> HotfixDownloadCompleteEvent;
-
         void SetHelper(IResourceHelper resourceHelper);
 
-        void CheckHotfix();
+        int LaunchHotfixCheck();
 
-        void StartHotfix();
+        int LaunchHotfix();
 
-        HotfixCheckCompleteEventArgs CheckModuleHotfix(int moduleID);
+        int ModuleHotfixCheck(int moduleID);
 
-        int StartModuleHotfix(int moduleID);
+        int ModuleHotfix(int moduleID);
+
+        void PauseHotfix(int hotfixID);
+
+        void ResumeHotfix(int hotfixID);
+
+        void CancelHotfix(int hotfixID);
+
+        void AddHotfixCheckErrorEvent(int hotfixID, Action<HotfixCheckErrorEventArgs> onHotfixCheckError);
+
+        void AddHotfixCheckCompleteEvent(int hotfixID, Action<HotfixCheckCompleteEventArgs> onHotfixCheckComplete);
+
+        void AddHotfixDownloadUpdateEvent(int hotfixID, Action<HotfixDownloadUpdateEventArgs> onHotfixUpdate);
+
+        void AddHotfixDownloadErrorEvent(int hotfixID, Action<HotfixDownloadErrorEventArgs> onHotfixError);
+
+        void AddHotfixDownloadPauseEvent(int hotfixID, Action<HotfixDownloadPauseEventArgs> onHotfixPause);
+
+        void AddHotfixDownloadResumeEvent(int hotfixID, Action<HotfixDownloadResumeEventArgs> onHotfixResume);
+
+        void AddHotfixDownloadCancelEvent(int hotfixID, Action<HotfixDownloadCancelEventArgs> onHotfixCancel);
+
+        void AddHotfixDownloadCompleteEvent(int hotfixID, Action<HotfixDownloadCompleteEventArgs> onHotfixComplete);
 
         void LoadAsset(uint crc, Type assetType, Action<object> callback);
 

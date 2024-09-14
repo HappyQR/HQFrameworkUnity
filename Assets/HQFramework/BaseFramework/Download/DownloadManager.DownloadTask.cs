@@ -57,7 +57,7 @@ namespace HQFramework.Download
             {
                 if (signal != null)
                 {
-                    if (signal.Succeeded)
+                    if (signal.Result == DownloadResult.Complete)
                     {
                         int deltaSize = signal.DownloadedSize - lastDownloadedSize;
                         DownloadUpdateEventArgs args = DownloadUpdateEventArgs.Create(id, groupID, url, filePath, deltaSize, signal.DownloadedSize, signal.TotalSize);
@@ -68,7 +68,13 @@ namespace HQFramework.Download
                         TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
                         onCompleted?.Invoke(taskInfo);
                     }
-                    else
+                    else if (signal.Result == DownloadResult.Canceled)
+                    {
+                        status = TaskStatus.Canceled;
+                        TaskInfo taskInfo = new TaskInfo(id, groupID, priority, status);
+                        onCancel?.Invoke(taskInfo);
+                    }
+                    else if (signal.Result == DownloadResult.Error)
                     {
                         status = TaskStatus.Error;
                         DownloadErrorEventArgs args = DownloadErrorEventArgs.Create(id, groupID, url, filePath, signal.ErrorMessage);
@@ -98,20 +104,22 @@ namespace HQFramework.Download
                 }
             }
 
-            public override void Pause()
+            public override bool Pause()
             {
                 if (worker != null && worker.Pause())
                 {
-                    base.Pause();
+                    return base.Pause();
                 }
+                return false;
             }
 
-            public override void Resume()
+            public override bool Resume()
             {
                 if (worker!= null && worker.Resume())
                 {
-                    base.Resume();
+                    return base.Resume();
                 }
+                return false;
             }
 
             public void ReceiveSignal(DownloadTaskSignal signal)

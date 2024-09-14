@@ -2,23 +2,23 @@ namespace HQFramework.Resource
 {
     public class HotfixDownloadErrorEventArgs : IReference
     {
-        public int ModuleID { get; private set; }
-        public string BundleName { get; private set; }
+        public int HotfixID { get; private set; }
+        public AssetBundleInfo BundleInfo { get; private set; }
         public string ErrorMessage { get; private set; }
 
-        public static HotfixDownloadErrorEventArgs Create(int moduleID, string bundleName, string errorMessage)
+        public static HotfixDownloadErrorEventArgs Create(int hotfixID, AssetBundleInfo bundleInfo, string errorMessage)
         {
             HotfixDownloadErrorEventArgs args = ReferencePool.Spawn<HotfixDownloadErrorEventArgs>();
-            args.ModuleID = moduleID;
-            args.BundleName = bundleName;
+            args.HotfixID = hotfixID;
+            args.BundleInfo = bundleInfo;
             args.ErrorMessage = errorMessage;
             return args;
         }
 
         void IReference.OnRecyle()
         {
-            ModuleID = -1;
-            BundleName = null;
+            HotfixID = -1;
+            BundleInfo = null;
             ErrorMessage = null;
         }
     }

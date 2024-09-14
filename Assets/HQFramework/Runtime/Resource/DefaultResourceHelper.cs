@@ -1,18 +1,20 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using HQFramework.Resource;
 using UnityEngine;
 
 namespace HQFramework.Runtime
 {
-    public class DefaultResourceHelper : IResourceHelper
+    internal class DefaultResourceHelper : IResourceHelper
     {
         private static readonly string resourceConfigFilePath = "ResourceConfig";
         private static readonly string manifestFileName = "AssetModuleManifest.json";
 
+        private ResourceConfig resourceConfig;
         private string localManifestFilePath;
 
-        public int HotfixDownloadGroupID => 1;
+        public int LauncherHotfixID => 1;
 
         public ResourceConfig LoadResourceConfig()
         {
@@ -26,6 +28,7 @@ namespace HQFramework.Runtime
             {
                 Directory.CreateDirectory(config.assetPersistentDir);
             }
+            this.resourceConfig = config;
             Resources.UnloadAsset(asset);
             return config;
         }
@@ -37,10 +40,24 @@ namespace HQFramework.Runtime
             return localManifest;
         }
 
-        public async Task OverrideLocalManifestAsync(AssetModuleManifest localManifest)
+        public void OverrideLocalManifest(AssetModuleManifest localManifest)
         {
             string manifestJson = SerializeManager.ObjectToJson(localManifest);
-            await File.WriteAllTextAsync(localManifestFilePath, manifestJson);
+            File.WriteAllText(localManifestFilePath, manifestJson);
+        }
+
+        public string GetBundleFilePath(AssetBundleInfo bundleInfo)
+        {
+            return Path.Combine(resourceConfig.assetPersistentDir, bundleInfo.moduleName, bundleInfo.bundleName);
+        }
+
+        public void DeleteAssetModule(AssetModuleInfo module)
+        {
+            string moduleDir = Path.Combine(resourceConfig.assetPersistentDir, module.moduleName);
+            if (Directory.Exists(moduleDir))
+            {
+                Directory.Delete(moduleDir, true);
+            }
         }
     }
 }

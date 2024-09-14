@@ -116,9 +116,9 @@ namespace HQFramework
                 T task = workingQueue.Dequeue();
                 if (task.ID == id)
                 {
-                    task.Pause();
+                    bool result = task.Pause();
                     workingQueue.Enqueue(task);
-                    return true;
+                    return result;
                 }
                 workingQueue.Enqueue(task);
             }
@@ -135,8 +135,10 @@ namespace HQFramework
                 T task = workingQueue.Dequeue();
                 if (task.GroupID == groupID)
                 {
-                    task.Pause();
-                    resultCount++;
+                    if (task.Pause())
+                    {
+                        resultCount++;
+                    }
                 }
                 workingQueue.Enqueue(task);
             }
@@ -152,9 +154,9 @@ namespace HQFramework
                 T task = workingQueue.Dequeue();
                 if (task.ID == id)
                 {
-                    task.Resume();
+                    bool result = task.Resume();
                     workingQueue.Enqueue(task);
-                    return true;
+                    return result;
                 }
                 workingQueue.Enqueue(task);
             }
@@ -171,8 +173,10 @@ namespace HQFramework
                 T task = workingQueue.Dequeue();
                 if (task.GroupID == groupID)
                 {
-                    task.Resume();
-                    resultCount++;
+                    if (task.Resume())
+                    {
+                        resultCount++;
+                    }
                 }
                 workingQueue.Enqueue(task);
             }

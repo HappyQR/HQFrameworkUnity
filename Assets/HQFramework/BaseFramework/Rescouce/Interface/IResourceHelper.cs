@@ -5,7 +5,11 @@ namespace HQFramework.Resource
 {
     public interface IResourceHelper
     {
-        int HotfixDownloadGroupID
+        /// <summary>
+        /// app launch hotfix id
+        /// </summary>
+        /// <value></value>
+        int LauncherHotfixID
         {
             get;
         }
@@ -14,6 +18,10 @@ namespace HQFramework.Resource
 
         Task<AssetModuleManifest> LoadAssetManifestAsync();
 
-        Task OverrideLocalManifestAsync(AssetModuleManifest localManifest);
+        void OverrideLocalManifest(AssetModuleManifest localManifest);
+
+        string GetBundleFilePath(AssetBundleInfo bundleInfo);
+
+        void DeleteAssetModule(AssetModuleInfo module);
     }
 }

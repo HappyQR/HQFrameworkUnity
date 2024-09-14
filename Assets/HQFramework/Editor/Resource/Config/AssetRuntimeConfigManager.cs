@@ -79,7 +79,6 @@ namespace HQFramework.Editor
             runtimeConfig.assetBuiltinDir = config.assetBuiltinDir;
             runtimeConfig.assetPersistentDir = config.assetPersistentDir;
             runtimeConfig.hotfixManifestUrl = config.hotfixManifestUrl;
-            runtimeConfig.hotfixUrl = config.hotfixUrl;
 
             string configJson = JsonUtilityEditor.ToJson(runtimeConfig);
             File.WriteAllText(runtimeSettingSavePath, configJson);

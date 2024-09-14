@@ -20,9 +20,9 @@ public class ResourceDecompressProcedure : ProcedureBase
         JsonLitHelper jsonLitHelper = new JsonLitHelper();
         SerializeManager.SetJsonHelper(jsonLitHelper);
 
-        DefaultResourceHelper helper = new DefaultResourceHelper();
-        resourceManager = HQFrameworkEngine.GetModule<IResourceManager>();
-        resourceManager.SetHelper(helper);
+        // DefaultResourceHelper helper = new DefaultResourceHelper();
+        // resourceManager = HQFrameworkEngine.GetModule<IResourceManager>();
+        // resourceManager.SetHelper(helper);
 
         coroutineManager = HQFrameworkEngine.GetModule<ICoroutineManager>();
         coroutineManager.StartCoroutine(DecompressBuiltinResource());

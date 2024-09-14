@@ -4,15 +4,15 @@ namespace HQFramework.Download
     {
         private class DownloadTaskSignal : IReference
         {
-            public bool Succeeded { get; private set; }
+            public DownloadResult Result { get; private set; }
             public string ErrorMessage { get; private set; }
             public int DownloadedSize { get; private set; }
             public int TotalSize { get; private set; }
 
-            public static DownloadTaskSignal Create(bool succeeded, string errorMessage, int downloadedSize, int totalSize)
+            public static DownloadTaskSignal Create(DownloadResult result, string errorMessage, int downloadedSize, int totalSize)
             {
                 DownloadTaskSignal signal = ReferencePool.Spawn<DownloadTaskSignal>();
-                signal.Succeeded = succeeded;
+                signal.Result = result;
                 signal.ErrorMessage = errorMessage;
                 signal.DownloadedSize = downloadedSize;
                 signal.TotalSize = totalSize;
@@ -21,7 +21,7 @@ namespace HQFramework.Download
 
             void IReference.OnRecyle()
             {
-                Succeeded = false;
+                Result = DownloadResult.None;
                 ErrorMessage = null;
                 DownloadedSize = 0;
             }

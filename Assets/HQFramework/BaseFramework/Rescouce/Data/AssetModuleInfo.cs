@@ -12,6 +12,7 @@ namespace HQFramework.Resource
         public int currentPatchVersion;
         public int minimalSupportedPatchVersion;
         public bool isBuiltin;
+        public string moduleUrlRelatedToHotfixUrlRoot;
         public string releaseNote;
         public int[] dependencies;
         public Dictionary<string, AssetBundleInfo> bundleDic;
