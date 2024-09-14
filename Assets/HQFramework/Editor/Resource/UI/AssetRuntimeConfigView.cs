@@ -100,11 +100,6 @@ namespace HQFramework.Editor
 
             if (config.hotfixMode != AssetHotfixMode.NoHotfix)
             {
-                GUILayout.Label("Hotfix URL:", headerStyle);
-                GUILayout.Space(5);
-                config.hotfixUrl = EditorGUILayout.TextField(config.hotfixUrl);
-                GUILayout.Space(10);
-
                 GUILayout.Label("Hotfix Manifest URL:", headerStyle);
                 GUILayout.Space(5);
                 config.hotfixManifestUrl = EditorGUILayout.TextField(config.hotfixManifestUrl);

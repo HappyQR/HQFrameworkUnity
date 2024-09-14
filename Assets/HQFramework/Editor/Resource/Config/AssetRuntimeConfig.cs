@@ -13,8 +13,6 @@ namespace HQFramework.Editor
 
         public string assetBuiltinDir;
 
-        public string hotfixUrl;
-
         public string hotfixManifestUrl;
     }
 }

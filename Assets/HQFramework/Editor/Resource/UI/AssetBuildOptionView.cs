@@ -89,8 +89,14 @@ namespace HQFramework.Editor
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Product Version: ", headerStyle);
+            GUILayout.Label("Current Product Version: ", headerStyle);
             GUILayout.Label(Application.version);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Current Resource Version: ", headerStyle);
+            GUILayout.Label(buildOption.resourceVersion.ToString());
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -152,10 +158,14 @@ namespace HQFramework.Editor
             EditorGUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Resource Version:", headerStyle);
+            GUILayout.Label("Next Build Resource Version:", headerStyle);
             GUILayout.Space(5);
             GUI.enabled = !buildOption.autoIncreaseResourceVersion;
-            buildOption.resourceVersion = EditorGUILayout.IntField(buildOption.resourceVersion, GUILayout.Width(100));
+            buildOption.nextVersion = EditorGUILayout.IntField(buildOption.nextVersion, GUILayout.Width(100));
+            if (buildOption.nextVersion < buildOption.resourceVersion)
+            {
+                buildOption.nextVersion = buildOption.resourceVersion;
+            }
             GUI.enabled = true;
             GUILayout.Space(5);
             buildOption.autoIncreaseResourceVersion = GUILayout.Toggle(buildOption.autoIncreaseResourceVersion, "Auto Increase");

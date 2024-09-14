@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System.Text;
 using System;
 
 namespace HQFramework.Editor
@@ -90,23 +89,6 @@ namespace HQFramework.Editor
             {
                 EditorApplication.delayCall += AssetBuildUtility.InspectAssetModules;
             }
-
-            // GUIContent btnUploadContent = EditorGUIUtility.IconContent("Update-Available");
-            // btnUploadContent.text = " Upgrade";
-            // if (GUILayout.Button(btnUploadContent, GUILayout.Height(45)))
-            // {
-            //     if (moduleList.Count == 0)
-            //         return;
-            //     bool result = EditorUtility.DisplayDialog($"Upgrade Assets Generic Version: {buildOption.resourceVersion}->{buildOption.resourceVersion + 1}",
-            //                                     "This operation will rebuild all assets module, clear the hotfix version and overide AssetModuleManifest.\n\nAre you sure to continue?",
-            //                                     "Yes, Upgrade.",
-            //                                     "No, Cancel");
-            //     if (result)
-            //     {
-            //         AssetBuildUtility.UpgradeAssetModuleGenericVersion();
-            //         EditorWindow.GetWindow<AssetBuildWindow>().Repaint();
-            //     }
-            // }
 
             GUI.enabled = true;
 

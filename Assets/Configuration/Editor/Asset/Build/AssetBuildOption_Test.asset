@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a729e49c2b4f4ea98c7ca3729902393, type: 3}
-  m_Name: AssetBuildOption_macOS
+  m_Name: AssetBuildOption_Test
   m_EditorClassIdentifier: 
-  optionTag: macOS
-  hotfixMode: 2
-  bundleOutputDir: ../Build/Assets
-  builtinDir: Assets
-  resourceVersion: 15
-  minimalSupportedVersion: 15
+  optionTag: Test
+  hotfixMode: 0
+  bundleOutputDir: 
+  builtinDir: 
+  resourceVersion: 0
+  nextVersion: 1
+  minimalSupportedVersion: 0
   autoIncreaseResourceVersion: 0
   platform: 2
   compressOption: 256

@@ -91,7 +91,7 @@ namespace HQFramework.Editor
 
             if (appIcon != null)
             {
-                GUI.DrawTexture(new Rect(480, 30, 80, 80), appIcon, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(new Rect(480, 35, 80, 80), appIcon, ScaleMode.ScaleToFit);
             }
 
             if (config == null)
@@ -115,6 +115,12 @@ namespace HQFramework.Editor
             GUILayout.Label("Product Version: ", headerStyle);
             config.productVersion = Application.version;
             GUILayout.Label(config.productVersion);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Internal Version: ", headerStyle);
+            GUILayout.Label(config.internalVersionCode.ToString());
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -166,10 +172,14 @@ namespace HQFramework.Editor
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Internal Version:", headerStyle);
+            GUILayout.Label("Next Build Version:", headerStyle);
             GUILayout.Space(5);
             GUI.enabled = !config.autoIncreaseBuildVersion;
-            config.internalVersionCode = EditorGUILayout.IntField(config.internalVersionCode, GUILayout.Width(100));
+            config.nextVersionCode = EditorGUILayout.IntField(config.nextVersionCode, GUILayout.Width(100));
+            if (config.nextVersionCode < config.internalVersionCode)
+            {
+                config.nextVersionCode = config.internalVersionCode;
+            }
             GUI.enabled = true;
             GUILayout.Space(5);
             config.autoIncreaseBuildVersion = GUILayout.Toggle(config.autoIncreaseBuildVersion, "Auto Increase");

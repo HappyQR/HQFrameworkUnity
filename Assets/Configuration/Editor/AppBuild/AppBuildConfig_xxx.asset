@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d0c35d6c45844e0381ac08732cc7646, type: 3}
-  m_Name: AppBuildConfig_Dev
+  m_Name: AppBuildConfig_xxx
   m_EditorClassIdentifier: 
-  tag: Dev
+  tag: xxx
   productName: HQFramework
   companyName: HappyQ
   runtimePlatform: StandaloneOSX
   productVersion: 1.0.0
-  versionTag: Beta
+  versionTag: 
   devBuild: 0
-  bundleOutputDir: ../Build/App/Dev
-  buildBundleName: test
-  internalVersionCode: 5
-  autoIncreaseBuildVersion: 1
+  bundleOutputDir: 
+  buildBundleName: 
+  internalVersionCode: 0
+  nextVersionCode: 0
+  autoIncreaseBuildVersion: 0
   minimalSupportedVersionCode: 0
-  releaseNote: first release.
+  releaseNote: 

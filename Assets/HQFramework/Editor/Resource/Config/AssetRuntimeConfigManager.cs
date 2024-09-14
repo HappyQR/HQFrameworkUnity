@@ -83,6 +83,7 @@ namespace HQFramework.Editor
             string configJson = JsonUtilityEditor.ToJson(runtimeConfig);
             File.WriteAllText(runtimeSettingSavePath, configJson);
             AssetDatabase.Refresh();
+            Debug.Log("Runtime Assets Config Generated!");
         }
     }
 }

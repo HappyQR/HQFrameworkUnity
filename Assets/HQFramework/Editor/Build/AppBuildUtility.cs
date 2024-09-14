@@ -35,7 +35,7 @@ namespace HQFramework.Editor
             {
                 if (config.autoIncreaseBuildVersion)
                 {
-                    config.internalVersionCode++;
+                    config.nextVersionCode++;
                 }
                 Debug.Log("Build App Successfully");
             }
@@ -53,7 +53,8 @@ namespace HQFramework.Editor
             info.runtimePlatform = config.runtimePlatform;
             info.productVersion = config.productVersion;
             info.versionTag = config.versionTag;
-            info.internalVersionCode = config.internalVersionCode;
+            info.internalVersionCode = config.nextVersionCode;
+            config.internalVersionCode = config.nextVersionCode;
             info.minimalSupportedVersionCode = config.minimalSupportedVersionCode;
             info.releaseNote = config.releaseNote;
 

@@ -14,6 +14,7 @@ namespace HQFramework.Editor
         public string bundleOutputDir;
         public string buildBundleName;
         public int internalVersionCode;
+        public int nextVersionCode;
         public bool autoIncreaseBuildVersion;
         public int minimalSupportedVersionCode;
         public string releaseNote;
