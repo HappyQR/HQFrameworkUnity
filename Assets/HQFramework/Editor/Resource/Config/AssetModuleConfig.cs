@@ -12,6 +12,7 @@ namespace HQFramework.Editor
         public UnityObject rootFolder;
         public bool isBuiltin;
         public int currentPatchVersion;
+        public int nextPatchVersion;
         public int minimalSupportedPatchVersion;
         public string description;
         public string releaseNote;

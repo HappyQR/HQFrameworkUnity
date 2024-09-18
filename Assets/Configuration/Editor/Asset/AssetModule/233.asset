@@ -17,7 +17,7 @@ MonoBehaviour:
   rootFolder: {fileID: 0}
   isBuiltin: 0
   currentPatchVersion: 1
-  minimalSupportedPatchVersion: 1
+  minimalSupportedPatchVersion: 288
   description: 
   releaseNote: 
   isBuild: 0

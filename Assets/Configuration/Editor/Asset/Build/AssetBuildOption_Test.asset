@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AssetBuildOption_Test
   m_EditorClassIdentifier: 
   optionTag: Test
-  hotfixMode: 0
+  hotfixMode: 2
   bundleOutputDir: 
   builtinDir: 
   resourceVersion: 0

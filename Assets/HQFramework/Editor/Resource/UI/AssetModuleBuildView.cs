@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System;
 
 namespace HQFramework.Editor
 {
-    public class AssetModuleBuildView : TabContentView
+    public partial class AssetModuleBuildView : TabContentView
     {
         private GUIContent btnUIContent;
         private GUIContent btnAddContent;
@@ -78,17 +77,51 @@ namespace HQFramework.Editor
 
             GUI.enabled = enableBuild;
 
-            btnBuildContent.text = " Build";
-            if (GUILayout.Button(btnBuildContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 20) / 2)))
-            {
-                EditorWindow.GetWindow<AssetModuleBuildWindow>().ShowWindow(moduleList);
-            }
-            GUIContent btnCheckContent = EditorGUIUtility.IconContent("d_DebuggerDisabled");
-            btnCheckContent.text = " Inspect";
+            GUIContent btnCheckContent = EditorGUIUtility.IconContent("TreeEditor.Trash");
+            btnCheckContent.text = " Clear Builds";
             if (GUILayout.Button(btnCheckContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 20) / 2)))
             {
-                EditorApplication.delayCall += AssetBuildUtility.InspectAssetModules;
+                bool result = EditorUtility.DisplayDialog("Delete All Asset Build History",
+                                                "This operation will delete all assets builds, Are you sure to continue?",
+                                                "Yes, Delete.",
+                                                "No, Cancel");
+                if (result)
+                {
+                    EditorApplication.delayCall += AssetBuildUtility.ClearBuildCache;
+                }
             }
+
+            btnBuildContent.text = " Build Assets";
+            if (GUILayout.Button(btnBuildContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 20) / 2)))
+            {
+                List<AssetModuleConfig> buildList = new List<AssetModuleConfig>();
+                bool includeBuiltin = false;
+                for (int i = 0; i < moduleList.Count; i++)
+                {
+                    if (moduleList[i].isBuild)
+                    {
+                        if (moduleList[i].isBuiltin)
+                        {
+                            includeBuiltin = true;
+                        }
+                        buildList.Add(moduleList[i]);
+                    }
+                }
+                if (buildOption.hotfixMode == Resource.AssetHotfixMode.SeparateHotfix && !includeBuiltin)
+                {
+                    EditorApplication.delayCall += () => AssetBuildUtility.BuildModulesWithoutBuiltin(buildList);
+                }
+                else
+                {
+                    EditorWindow.GetWindow<ConfirmWindow>().ShowWindow(buildList, buildOption);
+                }
+            }
+            // GUIContent btnCheckContent = EditorGUIUtility.IconContent("");
+            // btnCheckContent.text = " Inspect";
+            // if (GUILayout.Button(btnCheckContent, GUILayout.Height(45), GUILayout.Width((viewRect.width - 20) / 2)))
+            // {
+            //     EditorApplication.delayCall += AssetBuildUtility.InspectAssetModules;
+            // }
 
             GUI.enabled = true;
 
@@ -108,7 +141,7 @@ namespace HQFramework.Editor
                 GUILayout.Space(10);
                 if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                 {
-                    EditorWindow.GetWindow<AssetModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
+                    EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
                 }
                 GUILayout.EndHorizontal();
             }
@@ -136,7 +169,7 @@ namespace HQFramework.Editor
                 }
                 if (GUI.Button(rect, btnUIContent))
                 {
-                    // module.isBuild = !module.isBuild;
+                    module.isBuild = !module.isBuild;
                 }
 
                 GUI.Label(new Rect(5 + i % maxCountPerRow * 148, 150 + i / maxCountPerRow * 182, 140, 20), module.name, textUIStyle);
@@ -147,7 +180,10 @@ namespace HQFramework.Editor
                     selectedBtnStyle.contentOffset = new Vector2(110, -67);
                 }
 
-                GUI.Toggle(new Rect(10 + i % maxCountPerRow * 148, 7 + i / maxCountPerRow * 182, 130, 160), true, EditorGUIUtility.IconContent("Collab"), selectedBtnStyle);
+                if (module.isBuild)
+                {
+                    GUI.Toggle(new Rect(10 + i % maxCountPerRow * 148, 7 + i / maxCountPerRow * 182, 130, 160), true, EditorGUIUtility.IconContent("Collab"), selectedBtnStyle);
+                }
 
                 GUILayout.Space(5);
 
@@ -166,7 +202,7 @@ namespace HQFramework.Editor
                         GUILayout.Space(5);
                         if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                         {
-                            EditorWindow.GetWindow<AssetModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
+                            EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
                         }
                         GUILayout.EndHorizontal();
                     }
@@ -175,7 +211,7 @@ namespace HQFramework.Editor
                         // draw add button at the end
                         if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                         {
-                            EditorWindow.GetWindow<AssetModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
+                            EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.Space(10);
@@ -191,8 +227,15 @@ namespace HQFramework.Editor
             GenericMenu menu = new GenericMenu();
             menu.AddItem(new GUIContent("Edit"), false, () =>
             {
-                EditorWindow.GetWindow<AssetModuleEditWindow>().ShowWindow(module, null);
+                EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(module, null);
             });
+            if (buildOption.hotfixMode == Resource.AssetHotfixMode.SeparateHotfix && !module.isBuiltin)
+            {
+                menu.AddItem(new GUIContent("Hotfix"), false, () =>
+                {
+                    EditorWindow.GetWindow<HotfixEditWindow>().ShowWindow(module);
+                });
+            }
             menu.AddItem(new GUIContent("Delete"), false, () =>
             {
                 if (AssetModuleConfigManager.DeleteAssetModule(module))
@@ -206,171 +249,6 @@ namespace HQFramework.Editor
         private void OnCreateNewModule(AssetModuleConfig module)
         {
             moduleList.Add(module);
-        }
-    }
-
-    public class AssetModuleEditWindow : EditorWindow
-    {
-        private AssetModuleConfig config;
-        private Action<AssetModuleConfig> createCallback;
-        private bool createNewConfig;
-        private bool saveNewConfig;
-
-        private static readonly string tempDir = "Assets/Configuration/Editor/Asset/AssetModule/";
-
-        public void ShowWindow(AssetModuleConfig target, Action<AssetModuleConfig> createCallback)
-        {
-            config = target;
-            this.createCallback = createCallback;
-            if (config == null)
-            {
-                int id = AssetModuleConfigManager.GetNewModuleID();
-                AssetModuleConfig temp = ScriptableObject.CreateInstance<AssetModuleConfig>();
-                temp.id = id;
-                temp.currentPatchVersion = 1;
-                temp.minimalSupportedPatchVersion = 1;
-                string tempPath = tempDir + "temp.asset";
-                AssetDatabase.CreateAsset(temp, tempPath);
-                config = AssetDatabase.LoadAssetAtPath<AssetModuleConfig>(tempPath);
-                createNewConfig = true;
-            }
-            var window = GetWindow<AssetModuleEditWindow>();
-            window.minSize = window.maxSize = new Vector2(480, 360);
-            window.titleContent = new GUIContent("Create New Asset Module");
-            window.Show();
-        }
-
-        private void OnDisable()
-        {
-            if (createNewConfig && !saveNewConfig)
-            {
-                AssetDatabase.DeleteAsset(tempDir + "temp.asset");
-            }
-            else
-            {
-                if (config != null)
-                {
-                    EditorUtility.SetDirty(config);
-                    AssetDatabase.SaveAssetIfDirty(config);
-                }
-            }
-        }
-
-        private void OnGUI()
-        {
-            GUILayout.BeginArea(new Rect(10, 10, position.width - 20, position.height - 20));
-
-            GUIStyle headerStyle = "AM HeaderStyle";
-            GUILayout.BeginHorizontal();
-            GUILayout.Label($"Module ID : {config.id}", headerStyle);
-            if (!createNewConfig)
-            {
-                GUILayout.FlexibleSpace();
-                GUILayout.Label($"Create Time : {config.createTime:yyyy-MM-dd HH:mm:ss}");
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.Space(10);
-
-            GUILayout.Label("Module Name:", headerStyle);
-            GUILayout.Space(5);
-            config.moduleName = GUILayout.TextField(config.moduleName);
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Is Built-in:", headerStyle);
-            GUILayout.Space(5);
-            config.isBuiltin = GUILayout.Toggle(config.isBuiltin, "");
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            GUILayout.Space(10);
-
-            GUILayout.Label("Module Assets Root Folder:", headerStyle);
-            GUILayout.Space(5);
-            config.rootFolder = EditorGUILayout.ObjectField(GUIContent.none, config.rootFolder, typeof(DefaultAsset), false);
-            GUILayout.Space(10);
-
-            GUILayout.Label("Module Description:", headerStyle);
-            GUILayout.Space(5);
-            config.description = EditorGUILayout.TextArea(config.description, GUILayout.Height(120));
-            GUILayout.FlexibleSpace();
-
-            if (createNewConfig)
-            {
-                if (GUILayout.Button("Create New Module"))
-                {
-                    saveNewConfig = true;
-                    // Create New Module
-                    if (AssetModuleConfigManager.CreateNewAssetModule(config))
-                    {
-                        createCallback?.Invoke(config);
-                        Close();
-                    }
-                }
-            }
-
-            GUILayout.EndArea();
-        }
-    }
-
-    public class AssetModuleBuildWindow : EditorWindow
-    {
-        private List<AssetModuleConfig> modules;
-        private string releaseNote;
-        private Vector2 scrollPos;
-
-        public void ShowWindow(List<AssetModuleConfig> modules)
-        {
-            this.modules = modules;
-            AssetModuleBuildWindow window = GetWindow<AssetModuleBuildWindow>();
-            window.titleContent = new GUIContent("Build Assets");
-            window.maxSize = window.minSize = new Vector2(480, 420);
-            window.Show();
-        }
-
-        private void OnGUI()
-        {
-            GUILayout.BeginArea(new Rect(10, 10, position.width - 20, position.height - 20));
-            scrollPos = GUILayout.BeginScrollView(scrollPos);
-            scrollPos.x = 0;
-            GUIStyle headerStyle = "AM HeaderStyle";
-
-            GUILayout.Label("Include Modules:", headerStyle);
-            GUILayout.Space(5);
-            for (int i = 0; i < modules.Count; i++)
-            {
-                GUILayout.Label(modules[i].moduleName, "AssetLabel");
-                GUILayout.Space(3);
-            }
-            GUILayout.Space(30);
-
-            GUILayout.Label("Release Notes:", headerStyle);
-            GUILayout.Space(5);
-            releaseNote = EditorGUILayout.TextArea(releaseNote, GUILayout.Height(240));
-            GUILayout.FlexibleSpace();
-
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Cancel", GUILayout.Height(30)))
-            {
-                Close();
-            }
-            
-            if (GUILayout.Button("Build", GUILayout.Height(30)))
-            {
-                EditorApplication.delayCall += () => 
-                {
-                    AssetBuildUtility.BuildAssetModules(modules, releaseNote);
-                    Close();
-                };
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.EndScrollView();
-            GUILayout.EndArea();
-        }
-
-        private void OnDisable()
-        {
-            modules = null;
-            releaseNote = null;
         }
     }
 }

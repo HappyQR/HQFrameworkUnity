@@ -16,9 +16,9 @@ namespace HQFramework.Editor
 
         protected override void OnInitialized(out TabContentView[] contentList)
         {
-            GUIContent btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.SelectedIcon");
+            GUIContent btnBuildContent = EditorGUIUtility.IconContent("CustomTool");//BuildSettings.SelectedIcon
             btnBuildContent.text = " Assets Build";
-            GUIContent btnInspectorContent = EditorGUIUtility.IconContent("CustomTool");
+            GUIContent btnInspectorContent = EditorGUIUtility.IconContent("d_DebuggerDisabled");
             btnInspectorContent.text = " Assets Inspector";
             GUIContent btnTableContent = EditorGUIUtility.IconContent("UnityEditor.ConsoleWindow");
             btnTableContent.text = " Assets Table";

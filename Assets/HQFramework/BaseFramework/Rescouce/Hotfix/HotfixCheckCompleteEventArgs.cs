@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace HQFramework.Resource
 {
     public class HotfixCheckCompleteEventArgs

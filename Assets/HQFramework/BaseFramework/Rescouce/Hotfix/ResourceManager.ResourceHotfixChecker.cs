@@ -39,53 +39,6 @@ namespace HQFramework.Resource
                 return moduleID;
             }
 
-            private IEnumerator ModuleHotfixCheckInternal(int moduleID)
-            {
-                if (!resourceManager.remoteManifest.moduleDic.ContainsKey(moduleID))
-                {
-                    HotfixCheckErrorEventArgs args = new HotfixCheckErrorEventArgs(moduleID, "Module doesn't exists");
-                    InvokeErrorEvent(moduleID, args);
-                    yield break;
-                }
-                AssetModuleInfo remoteModule = resourceManager.remoteManifest.moduleDic[moduleID];
-                if (resourceManager.localManifest.moduleDic.ContainsKey(moduleID))
-                {
-                    AssetModuleInfo localModule = resourceManager.localManifest.moduleDic[moduleID];
-                    List<AssetBundleInfo> bundleList = DiffModule(localModule, remoteModule);
-                    if (bundleList.Count == 0)
-                    {
-                        HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, true, false, null, 0);
-                        InvokeCompleteEvent(moduleID, args);
-                    }
-                    else
-                    {
-                        resourceManager.separateHotfixContent.Add(remoteModule, bundleList);
-                        bool forceUpdate = localModule.currentPatchVersion < remoteModule.minimalSupportedPatchVersion;
-                        string releaseNote = remoteModule.releaseNote;
-                        int totalSize = 0;
-                        for (int i = 0; i < bundleList.Count; i++)
-                        {
-                            totalSize += bundleList[i].size;
-                        }
-                        HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, false, forceUpdate, releaseNote, totalSize);
-                        InvokeCompleteEvent(moduleID, args);
-                    }
-                }
-                else
-                {
-                    List<AssetBundleInfo> bundleList = remoteModule.bundleDic.Values.ToList();
-                    resourceManager.separateHotfixContent.Add(remoteModule, bundleList);
-                    string releaseNote = remoteModule.releaseNote;
-                    int totalSize = 0;
-                    for (int i = 0; i < bundleList.Count; i++)
-                    {
-                        totalSize += bundleList[i].size;
-                    }
-                    HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, false, true, releaseNote, totalSize);
-                    InvokeCompleteEvent(moduleID, args);
-                }
-            }
-
             public void AddHotfixCheckErrorEvent(int hotfixID, Action<HotfixCheckErrorEventArgs> onHotfixCheckError)
             {
                 if (errorEventDic.ContainsKey(hotfixID))
@@ -130,6 +83,53 @@ namespace HQFramework.Resource
                 {
                     HotfixCheckErrorEventArgs errorArgs = new HotfixCheckErrorEventArgs(hotfixID, ex.Message);
                     InvokeErrorEvent(hotfixID, errorArgs);
+                }
+            }
+
+            private IEnumerator ModuleHotfixCheckInternal(int moduleID)
+            {
+                if (!resourceManager.remoteManifest.moduleDic.ContainsKey(moduleID))
+                {
+                    HotfixCheckErrorEventArgs args = new HotfixCheckErrorEventArgs(moduleID, "Module doesn't exists");
+                    InvokeErrorEvent(moduleID, args);
+                    yield break;
+                }
+                AssetModuleInfo remoteModule = resourceManager.remoteManifest.moduleDic[moduleID];
+                if (resourceManager.localManifest.moduleDic.ContainsKey(moduleID))
+                {
+                    AssetModuleInfo localModule = resourceManager.localManifest.moduleDic[moduleID];
+                    List<AssetBundleInfo> bundleList = DiffModule(localModule, remoteModule);
+                    if (bundleList.Count == 0)
+                    {
+                        HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, true, false, null, 0);
+                        InvokeCompleteEvent(moduleID, args);
+                    }
+                    else
+                    {
+                        resourceManager.separateHotfixContent.Add(remoteModule, bundleList);
+                        bool forceUpdate = localModule.currentPatchVersion < remoteModule.minimalSupportedPatchVersion;
+                        string releaseNote = remoteModule.releaseNote;
+                        int totalSize = 0;
+                        for (int i = 0; i < bundleList.Count; i++)
+                        {
+                            totalSize += bundleList[i].size;
+                        }
+                        HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, false, forceUpdate, releaseNote, totalSize);
+                        InvokeCompleteEvent(moduleID, args);
+                    }
+                }
+                else
+                {
+                    List<AssetBundleInfo> bundleList = remoteModule.bundleDic.Values.ToList();
+                    resourceManager.separateHotfixContent.Add(remoteModule, bundleList);
+                    string releaseNote = remoteModule.releaseNote;
+                    int totalSize = 0;
+                    for (int i = 0; i < bundleList.Count; i++)
+                    {
+                        totalSize += bundleList[i].size;
+                    }
+                    HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, false, true, releaseNote, totalSize);
+                    InvokeCompleteEvent(moduleID, args);
                 }
             }
 

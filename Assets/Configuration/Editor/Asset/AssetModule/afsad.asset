@@ -16,7 +16,7 @@ MonoBehaviour:
   moduleName: afsad
   rootFolder: {fileID: 0}
   isBuiltin: 0
-  currentPatchVersion: 1
+  currentPatchVersion: 2
   minimalSupportedPatchVersion: 1
   description: 
   releaseNote: 

@@ -20,6 +20,6 @@ MonoBehaviour:
   minimalSupportedPatchVersion: 1
   description: 
   releaseNote: 
-  isBuild: 0
+  isBuild: 1
   autoIncreasePatchVersion: 0
   createTimeTicks: 638619553725972410
