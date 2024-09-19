@@ -8,6 +8,7 @@ namespace HQFramework.Editor
     {
         private class ModuleEditWindow : EditorWindow
         {
+            private AssetBuildOption buildOption;
             private AssetModuleConfig config;
             private Action<AssetModuleConfig> createCallback;
             private bool createNewConfig;
@@ -15,9 +16,10 @@ namespace HQFramework.Editor
 
             private static readonly string tempDir = "Assets/Configuration/Editor/Asset/AssetModule/";
 
-            public void ShowWindow(AssetModuleConfig target, Action<AssetModuleConfig> createCallback)
+            public void ShowWindow(AssetBuildOption buildOption, AssetModuleConfig target, Action<AssetModuleConfig> createCallback)
             {
                 config = target;
+                this.buildOption = buildOption;
                 this.createCallback = createCallback;
                 if (config == null)
                 {
@@ -26,6 +28,10 @@ namespace HQFramework.Editor
                     temp.id = id;
                     temp.currentPatchVersion = 1;
                     temp.minimalSupportedPatchVersion = 1;
+                    if (buildOption.hotfixMode == Resource.AssetHotfixMode.NoHotfix)
+                    {
+                        temp.isBuiltin = true;
+                    }
                     string tempPath = tempDir + "temp.asset";
                     AssetDatabase.CreateAsset(temp, tempPath);
                     config = AssetDatabase.LoadAssetAtPath<AssetModuleConfig>(tempPath);
@@ -66,9 +72,15 @@ namespace HQFramework.Editor
                 GUILayout.Space(10);
 
                 GUILayout.BeginHorizontal();
+                GUI.enabled = buildOption.hotfixMode != Resource.AssetHotfixMode.NoHotfix;
                 GUILayout.Label("Is Built-in:", headerStyle);
                 GUILayout.Space(5);
                 config.isBuiltin = GUILayout.Toggle(config.isBuiltin, "");
+                if (buildOption.hotfixMode == Resource.AssetHotfixMode.NoHotfix)
+                {
+                    config.isBuiltin = true;
+                }
+                GUI.enabled = true;
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 GUILayout.Space(10);

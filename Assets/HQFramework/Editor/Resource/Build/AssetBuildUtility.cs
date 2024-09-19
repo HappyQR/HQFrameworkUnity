@@ -15,7 +15,7 @@ namespace HQFramework.Editor
 
         }
 
-        public static void BuildModules(List<AssetModuleConfig> moduleList, string releaseNotes = null)
+        public static void BuildModules(List<AssetModuleConfig> moduleList)
         {
             AssetBuildOption buildOption = AssetBuildOptionManager.GetDefaultConfig();
             IAssetBuildPreprocessor preprocesser = new DefaultAssetBuildPreprocessor();

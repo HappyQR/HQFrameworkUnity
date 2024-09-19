@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace HQFramework.Editor
 {
-    public class AssetTableView : TabContentView
+    public class AssetCrcTableView : TabContentView
     {
         private string searchPattern = "";
         private Object rootFolder = null;
@@ -14,7 +14,7 @@ namespace HQFramework.Editor
         private List<AssetItemInfo> assetList;
         private Vector2 scrollPos;
 
-        public AssetTableView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
+        public AssetCrcTableView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
         {
         }
 

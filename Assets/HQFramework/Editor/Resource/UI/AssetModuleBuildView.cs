@@ -141,7 +141,7 @@ namespace HQFramework.Editor
                 GUILayout.Space(10);
                 if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                 {
-                    EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
+                    EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(buildOption, null, OnCreateNewModule);
                 }
                 GUILayout.EndHorizontal();
             }
@@ -202,7 +202,7 @@ namespace HQFramework.Editor
                         GUILayout.Space(5);
                         if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                         {
-                            EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
+                            EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(buildOption, null, OnCreateNewModule);
                         }
                         GUILayout.EndHorizontal();
                     }
@@ -211,7 +211,7 @@ namespace HQFramework.Editor
                         // draw add button at the end
                         if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                         {
-                            EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(null, OnCreateNewModule);
+                            EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(buildOption, null, OnCreateNewModule);
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.Space(10);
@@ -227,7 +227,7 @@ namespace HQFramework.Editor
             GenericMenu menu = new GenericMenu();
             menu.AddItem(new GUIContent("Edit"), false, () =>
             {
-                EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(module, null);
+                EditorWindow.GetWindow<ModuleEditWindow>().ShowWindow(buildOption, module, null);
             });
             if (buildOption.hotfixMode == Resource.AssetHotfixMode.SeparateHotfix && !module.isBuiltin)
             {

@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace HQFramework.Editor
 {
-    public class AssetUploadView : TabContentView
+    public class AssetPublishView : TabContentView
     {
-        public AssetUploadView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
+        public AssetPublishView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
         {
         }
     }

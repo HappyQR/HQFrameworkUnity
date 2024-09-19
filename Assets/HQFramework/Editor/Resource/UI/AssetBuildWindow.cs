@@ -26,17 +26,17 @@ namespace HQFramework.Editor
             btnConfigContent.text = " Build Settings";
             GUIContent btnRuntimeContent = EditorGUIUtility.IconContent("d_Profiler.Memory");
             btnRuntimeContent.text = " Runtime Settings";
-            GUIContent btnUploadContent = EditorGUIUtility.IconContent("d_CloudConnect");
-            btnUploadContent.text = " Assets Upload";
+            GUIContent btnPublishContent = EditorGUIUtility.IconContent("d_CloudConnect");
+            btnPublishContent.text = " Assets Publish";
 
             contentList = new TabContentView[]
             {
                 new AssetModuleBuildView(this, btnBuildContent),
                 new AssetInspectorView(this, btnInspectorContent),
-                new AssetTableView(this, btnTableContent),
+                new AssetCrcTableView(this, btnTableContent),
                 new AssetBuildOptionView(this, btnConfigContent),
                 new AssetRuntimeConfigView(this, btnRuntimeContent),
-                new AssetUploadView(this, btnUploadContent)
+                new AssetPublishView(this, btnPublishContent)
             };
         }
 

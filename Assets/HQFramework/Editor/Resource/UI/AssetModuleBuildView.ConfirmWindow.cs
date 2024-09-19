@@ -68,11 +68,11 @@ namespace HQFramework.Editor
 
                 if (GUILayout.Button("Build", GUILayout.Height(30)))
                 {
-                    EditorApplication.delayCall += () =>
-                    {
-                        AssetBuildUtility.BuildModules(modules, releaseNote);
-                        Close();
-                    };
+                    // EditorApplication.delayCall += () =>
+                    // {
+                    //     AssetBuildUtility.BuildModules(modules, releaseNote);
+                    //     Close();
+                    // };
                 }
                 GUILayout.EndHorizontal();
                 GUILayout.EndScrollView();
