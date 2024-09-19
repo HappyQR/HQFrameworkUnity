@@ -26,6 +26,8 @@ namespace HQFramework.Editor
             btnConfigContent.text = " Build Settings";
             GUIContent btnRuntimeContent = EditorGUIUtility.IconContent("d_Profiler.Memory");
             btnRuntimeContent.text = " Runtime Settings";
+            GUIContent btnArchiveContent = EditorGUIUtility.IconContent("SaveAs");
+            btnArchiveContent.text = " Assets Archive";
             GUIContent btnPublishContent = EditorGUIUtility.IconContent("d_CloudConnect");
             btnPublishContent.text = " Assets Publish";
 
@@ -36,6 +38,7 @@ namespace HQFramework.Editor
                 new AssetCrcTableView(this, btnTableContent),
                 new AssetBuildOptionView(this, btnConfigContent),
                 new AssetRuntimeConfigView(this, btnRuntimeContent),
+                new AssetArchiveView(this, btnArchiveContent),
                 new AssetPublishView(this, btnPublishContent)
             };
         }

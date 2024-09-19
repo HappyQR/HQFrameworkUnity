@@ -21,7 +21,6 @@ namespace HQFramework.Editor
             IAssetBuildPreprocessor preprocesser = new DefaultAssetBuildPreprocessor();
             IAssetBuildCompiler compiler = null;
             compiler.AssetBuildCacheDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, assetBuildCacheFolderName);
-            IAssetManifestGenerator generator = null;
 
             List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
             for (int i = 0; i < moduleList.Count; i++)
