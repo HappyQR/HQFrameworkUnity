@@ -6,8 +6,10 @@ using UnityEngine;
 
 namespace HQFramework.Editor
 {
-    public class AssetBuildUtility
+    public sealed class AssetBuildUtility
     {
+        private static readonly string assetBuildCacheFolderName = "AssetBuildCache";
+
         public static void BuildAllModules()
         {
 
@@ -15,21 +17,22 @@ namespace HQFramework.Editor
 
         public static void BuildModules(List<AssetModuleConfig> moduleList, string releaseNotes = null)
         {
-            
-        }
-
-        public static void BuildModulesWithoutBuiltin(List<AssetModuleConfig> moduleList)
-        {
             AssetBuildOption buildOption = AssetBuildOptionManager.GetDefaultConfig();
-            if (buildOption.hotfixMode != Resource.AssetHotfixMode.SeparateHotfix)
+            IAssetBuildPreprocessor preprocesser = new DefaultAssetBuildPreprocessor();
+            IAssetBuildCompiler compiler = null;
+            compiler.AssetBuildCacheDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir, assetBuildCacheFolderName);
+            IAssetManifestGenerator generator = null;
+
+            List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
+            for (int i = 0; i < moduleList.Count; i++)
             {
-                throw new InvalidOperationException("BuildModulesWithoutBuiltin() is just used in SeparateHotfix mode.");
+                builds.AddRange(preprocesser.PreProcessAssetModuleBuild(moduleList[i]));
             }
 
-            
+            AssetBundleManifest buildManifest = compiler.CompileAssets(builds.ToArray(), buildOption);
         }
 
-        public static void ClearBuildCache()
+        public static void ClearBuildHistory()
         {
             AssetBuildOption buildOption = AssetBuildOptionManager.GetDefaultConfig();
             string bundleOutputDir = Path.Combine(Application.dataPath, buildOption.bundleOutputDir);

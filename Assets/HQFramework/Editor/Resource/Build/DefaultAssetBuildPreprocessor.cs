@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace HQFramework.Editor
 {
-    public class DefaultAssetBuildPreprocesser : IAssetBuildPreprocesser
+    internal class DefaultAssetBuildPreprocessor : IAssetBuildPreprocessor
     {
         public AssetBundleBuild[] PreProcessAssetModuleBuild(AssetModuleConfig module)
         {

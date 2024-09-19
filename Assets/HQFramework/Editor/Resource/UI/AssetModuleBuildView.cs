@@ -87,7 +87,7 @@ namespace HQFramework.Editor
                                                 "No, Cancel");
                 if (result)
                 {
-                    EditorApplication.delayCall += AssetBuildUtility.ClearBuildCache;
+                    EditorApplication.delayCall += AssetBuildUtility.ClearBuildHistory;
                 }
             }
 
@@ -107,14 +107,14 @@ namespace HQFramework.Editor
                         buildList.Add(moduleList[i]);
                     }
                 }
-                if (buildOption.hotfixMode == Resource.AssetHotfixMode.SeparateHotfix && !includeBuiltin)
-                {
-                    EditorApplication.delayCall += () => AssetBuildUtility.BuildModulesWithoutBuiltin(buildList);
-                }
-                else
-                {
-                    EditorWindow.GetWindow<ConfirmWindow>().ShowWindow(buildList, buildOption);
-                }
+                // if (buildOption.hotfixMode == Resource.AssetHotfixMode.SeparateHotfix && !includeBuiltin)
+                // {
+                //     EditorApplication.delayCall += () => AssetBuildUtility.BuildModulesWithoutBuiltin(buildList);
+                // }
+                // else
+                // {
+                //     EditorWindow.GetWindow<ConfirmWindow>().ShowWindow(buildList, buildOption);
+                // }
             }
             // GUIContent btnCheckContent = EditorGUIUtility.IconContent("");
             // btnCheckContent.text = " Inspect";
