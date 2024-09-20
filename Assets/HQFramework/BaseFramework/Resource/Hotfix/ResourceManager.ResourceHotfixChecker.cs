@@ -99,7 +99,7 @@ namespace HQFramework.Resource
                 {
                     AssetModuleInfo localModule = resourceManager.localManifest.moduleDic[moduleID];
                     List<AssetBundleInfo> bundleList = DiffModule(localModule, remoteModule);
-                    if (bundleList.Count == 0)
+                    if (bundleList == null || bundleList.Count == 0)
                     {
                         HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, true, false, null, 0);
                         InvokeCompleteEvent(moduleID, args);
@@ -159,7 +159,7 @@ namespace HQFramework.Resource
                     {
                         AssetModuleInfo localModule = resourceManager.localManifest.moduleDic[remoteModule.id];
                         List<AssetBundleInfo> bundleList = DiffModule(localModule, remoteModule);
-                        if (bundleList.Count == 0)
+                        if (bundleList == null || bundleList.Count == 0)
                         {
                             continue;
                         }
@@ -181,6 +181,11 @@ namespace HQFramework.Resource
 
             private List<AssetBundleInfo> DiffModule(AssetModuleInfo localModule, AssetModuleInfo remoteModule)
             {
+                if (localModule.currentPatchVersion == remoteModule.currentPatchVersion)
+                {
+                    return null;
+                }
+                
                 List<AssetBundleInfo> bundleList = new List<AssetBundleInfo>();
                 foreach (AssetBundleInfo remoteBundle in remoteModule.bundleDic.Values)
                 {

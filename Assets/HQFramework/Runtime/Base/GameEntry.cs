@@ -7,14 +7,11 @@ namespace HQFramework.Runtime
 {
     public class GameEntry : MonoBehaviour
     {
-        [SerializeField]
         [Tooltip("The full type name of LogHelper")]
         public string logHelperTypeName;
 
-        [SerializeField]
         public string[] gameProcedures;
 
-        [SerializeField]
         public string entryProcedure;
 
         private delegate void HQFrameworkLifecyleMethod();

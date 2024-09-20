@@ -9,17 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8987c5eb5b69e452e8278c5a4409b53c, type: 3}
+  m_Script: {fileID: 11500000, guid: 9aa6e05b10339409fa76d58f8ff39087, type: 3}
   m_Name: Public
   m_EditorClassIdentifier: 
   id: 0
   moduleName: Public
   rootFolder: {fileID: 102900000, guid: d1588484680fe324e90e5ba9afcd9109, type: 3}
-  isBuiltin: 1
-  currentPatchVersion: 1
-  minimalSupportedPatchVersion: 1
-  description: Pulic Module
-  releaseNote: 
-  isBuild: 1
-  autoIncreasePatchVersion: 0
-  createTimeTicks: 638619553246450860
+  buildVersionCode: 0
+  devNotes: Public Module
+  isBuild: 0
+  createTimeTicks: 638624511493513120

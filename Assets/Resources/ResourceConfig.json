@@ -1,6 +1,6 @@
 {
     "hotfixMode": 1,
-    "assetPersistentDir": "",
-    "assetBuiltinDir": "",
-    "hotfixManifestUrl": ""
+    "assetPersistentDir": null,
+    "assetBuiltinDir": null,
+    "hotfixManifestUrl": null
 }
