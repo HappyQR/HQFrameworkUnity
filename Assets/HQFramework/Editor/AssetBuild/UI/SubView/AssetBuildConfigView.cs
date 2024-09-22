@@ -42,37 +42,11 @@ namespace HQFramework.Editor
                 {
                     selectedOptionIndex = i;
                     previousSelectedOptionIndex = i;
-                    break;
                 }
             }
             optionTagList[optionTagList.Length - 1] = "Add New...";
 
-            for (int i = 0; i < preprocessorTypeList.Length; i++)
-            {
-                if (preprocessorTypeList[i] == buildOption.preprocessorName)
-                {
-                    selectedPreprocessorTypeIndex = i;
-                    break;
-                }
-            }
-
-            for (int i = 0; i < compilerTypeList.Length; i++)
-            {
-                if (compilerTypeList[i] == buildOption.compilerName)
-                {
-                    selectedCompilerTypeIndex = i;
-                    break;
-                }
-            }
-
-            for (int i = 0; i < postprocessorTypeList.Length; i++)
-            {
-                if (postprocessorTypeList[i] == buildOption.postprocessorName)
-                {
-                    selectedPostprocessorTypeIndex = i;
-                    break;
-                }
-            }
+            OnSelectConfig();
         }
         
         public override void OnGUI()
@@ -103,6 +77,7 @@ namespace HQFramework.Editor
                 buildOption = optionList[selectedOptionIndex];
                 AssetBuildConfig.Default = buildOption;
                 previousSelectedOptionIndex = selectedOptionIndex;
+                OnSelectConfig();
             }
 
             GUILayout.EndHorizontal();
@@ -213,6 +188,36 @@ namespace HQFramework.Editor
             // }
             // GUILayout.EndHorizontal();
             GUILayout.EndArea();
+        }
+
+        private void OnSelectConfig()
+        {
+            for (int i = 0; i < preprocessorTypeList.Length; i++)
+            {
+                if (preprocessorTypeList[i] == buildOption.preprocessorName)
+                {
+                    selectedPreprocessorTypeIndex = i;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < compilerTypeList.Length; i++)
+            {
+                if (compilerTypeList[i] == buildOption.compilerName)
+                {
+                    selectedCompilerTypeIndex = i;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < postprocessorTypeList.Length; i++)
+            {
+                if (postprocessorTypeList[i] == buildOption.postprocessorName)
+                {
+                    selectedPostprocessorTypeIndex = i;
+                    break;
+                }
+            }
         }
 
         private void PopupNewOption()

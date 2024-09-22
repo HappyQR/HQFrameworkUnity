@@ -44,6 +44,9 @@ namespace HQFramework.Editor
                 GUILayout.EndHorizontal();
                 GUILayout.Space(10);
 
+                GUILayout.Label($"Next Build Code : {config.buildVersionCode}", headerStyle);
+                GUILayout.Space(10);
+
                 GUILayout.Label("Module Name:", headerStyle);
                 GUILayout.Space(5);
                 config.moduleName = GUILayout.TextField(config.moduleName);
@@ -55,7 +58,7 @@ namespace HQFramework.Editor
                 GUILayout.Space(15);
 
                 GUILayout.Label("Module Dev Notes:", headerStyle);
-                config.devNotes = EditorGUILayout.TextArea(config.devNotes, GUILayout.Height(150));
+                config.devNotes = EditorGUILayout.TextArea(config.devNotes, GUILayout.Height(130));
                 GUILayout.FlexibleSpace();
 
                 if (createNewConfig)

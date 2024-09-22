@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AssetRuntimeConfig_Release
   m_EditorClassIdentifier: 
   tag: Release
-  hotfixMode: 0
+  hotfixMode: 2
   assetPersistentDir: 
   assetBuiltinDir: 
   hotfixManifestUrl: 
