@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace HQFramework.Editor
@@ -7,25 +9,24 @@ namespace HQFramework.Editor
     {
         private List<AssetModuleConfig> moduleList;
 
-        public AssetModuleBuildInfo[] PostprocessModules(List<AssetModuleConfig> moduleConfigList, AssetBundleManifest buildManifest)
+        public AssetModuleBuildResult[] PostprocessModules(AssetCompileResult compileResult)
         {
-            this.moduleList = moduleConfigList;
-            return null;
-        }
+            List<AssetModuleBuildResult> buildResults = new List<AssetModuleBuildResult>();
 
-        protected string[] GetModuleBundles(AssetModuleConfig module, AssetBundleManifest buildManifest)
-        {
-            string[] allBundles = buildManifest.GetAllAssetBundles();
-            List<string> bundles = new List<string>();
-            string modulePrefix = module.moduleName.ToLower();
-            for (int i = 0; i < allBundles.Length; i++)
+            foreach (var moduleConfig in compileResult.moduleBundleDic.Keys)
             {
-                if (allBundles[i].StartsWith(modulePrefix))
-                {
-                    bundles.Add(allBundles[i]);
-                }
+                AssetModuleBuildResult buildInfo = new AssetModuleBuildResult();
+                buildInfo.moduleID = moduleConfig.id;
+                buildInfo.moduleName = moduleConfig.name;
+                buildInfo.buildVersionCode = moduleConfig.buildVersionCode;
+                buildInfo.devNotes = moduleConfig.devNotes;
+                buildInfo.buildTime = DateTime.Now;
+
+                buildResults.Add(buildInfo);
+                moduleConfig.buildVersionCode++;
             }
-            return bundles.ToArray();
+
+            return buildResults.ToArray();
         }
 
         protected AssetModuleConfig GetBundleModule(string bundleName)

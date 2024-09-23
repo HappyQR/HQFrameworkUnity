@@ -6,9 +6,9 @@ namespace HQFramework.Editor
 {
     public class DefaultAssetBuildPreprocessor : IAssetBuildPreprocessor
     {
-        public AssetBundleBuild[] PreprocessModules(List<AssetModuleConfig> moduleConfigList)
+        AssetPreprocessResult IAssetBuildPreprocessor.PreprocessModules(List<AssetModuleConfig> moduleConfigList)
         {
-            List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
+            AssetPreprocessResult preprocessResult = new AssetPreprocessResult();
             for (int i = 0; i < moduleConfigList.Count; i++)
             {
                 AssetDatabase.RemoveUnusedAssetBundleNames();
@@ -39,15 +39,15 @@ namespace HQFramework.Editor
                     assets = AssetDatabase.GetAssetPathsFromAssetBundle(bundleName);
                     if (assets != null && assets.Length > 0)
                     {
-                        AssetBundleBuild build = new AssetBundleBuild();
-                        build.assetBundleName = bundleName;
-                        build.assetNames = assets;
-                        builds.Add(build);
+                        AssetBundleBuildInfo build = new AssetBundleBuildInfo();
+                        build.bundleName = bundleName;
+                        build.bundleAssets = assets;
+                        preprocessResult.moduleBundleBuildsDic.Add(moduleConfigList[i], build);
                     }
                 }
             }
 
-            return builds.ToArray();
+            return preprocessResult;
         }
     }
 }

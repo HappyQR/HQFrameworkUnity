@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -6,16 +7,58 @@ namespace HQFramework.Editor
 {
     public class DefaultAssetBuildCompiler : IAssetBuildCompiler
     {
-        private static readonly string cacheFolderName = "AssetBuildCache";
+        public static readonly string cacheFolderName = "AssetBuildCache";
 
-        public AssetBundleManifest CompileAssets(AssetBundleBuild[] builds, AssetBuildConfig buildConfig)
+        public AssetCompileResult CompileAssets(AssetPreprocessResult preprocessResult, AssetBuildConfig buildConfig)
         {
             string buildCacheDir = Path.Combine(Application.dataPath, buildConfig.assetOutputDir, cacheFolderName);
             if (!Directory.Exists(buildCacheDir))
             {
                 Directory.CreateDirectory(buildCacheDir);
             }
-            return BuildPipeline.BuildAssetBundles(buildCacheDir, builds, (BuildAssetBundleOptions)buildConfig.compressOption, (BuildTarget)buildConfig.platform);
+            List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
+            foreach (var item in preprocessResult.moduleBundleBuildsDic.Values)
+            {
+                AssetBundleBuild build = new AssetBundleBuild();
+                build.assetBundleName = item.bundleName;
+                build.assetNames = item.bundleAssets;
+                builds.Add(build);
+            }
+            AssetBundleManifest buildManifest = BuildPipeline.BuildAssetBundles(buildCacheDir, builds.ToArray(), (BuildAssetBundleOptions)buildConfig.compressOption, (BuildTarget)buildConfig.platform);
+
+            AssetCompileResult compileResult = new AssetCompileResult();
+            foreach (var moduleConfig in preprocessResult.moduleBundleBuildsDic.Keys)
+            {
+                string[] bundles = GetModuleBundles(moduleConfig, buildManifest);
+                AssetBundleBuildResult[] bundleArr = new AssetBundleBuildResult[bundles.Length];
+                for (int i = 0; i < bundles.Length; i++)
+                {
+                    AssetBundleBuildResult bundleBuildResult = new AssetBundleBuildResult();
+                    bundleBuildResult.bundleName = bundles[i];
+                    bundleBuildResult.filePath = Path.Combine(buildCacheDir, bundles[i]);
+                    bundleBuildResult.md5 = Utility.Hash.ComputeHash(bundleBuildResult.filePath);
+                    bundleBuildResult.size = FileUtilityEditor.GetFileSize(bundleBuildResult.filePath);
+                    bundleBuildResult.dependencies = buildManifest.GetAllDependencies(bundles[i]);
+                    bundleArr[i] = bundleBuildResult;
+                }
+                compileResult.moduleBundleDic.Add(moduleConfig, bundleArr);
+            }
+            return compileResult;
+        }
+
+        private string[] GetModuleBundles(AssetModuleConfig module, AssetBundleManifest buildManifest)
+        {
+            string[] allBundles = buildManifest.GetAllAssetBundles();
+            List<string> bundles = new List<string>();
+            string modulePrefix = module.moduleName.ToLower();
+            for (int i = 0; i < allBundles.Length; i++)
+            {
+                if (allBundles[i].StartsWith(modulePrefix))
+                {
+                    bundles.Add(allBundles[i]);
+                }
+            }
+            return bundles.ToArray();
         }
     }
 }

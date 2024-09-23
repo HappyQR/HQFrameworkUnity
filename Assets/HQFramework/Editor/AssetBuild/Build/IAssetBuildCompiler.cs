@@ -1,10 +1,7 @@
-using UnityEditor;
-using UnityEngine;
-
 namespace HQFramework.Editor
 {
     public interface IAssetBuildCompiler
     {
-        AssetBundleManifest CompileAssets(AssetBundleBuild[] builds, AssetBuildConfig buildConfig);
+        AssetCompileResult CompileAssets(AssetPreprocessResult preprocessResult, AssetBuildConfig buildConfig);
     }
 }
