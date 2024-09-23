@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System.Text;
 
 namespace HQFramework.Editor
 {
@@ -8,14 +6,16 @@ namespace HQFramework.Editor
     {
         public static class ConfigSerializer
         {
-            public static void Serialize(object target, string filePath)
+            public static byte[] Serialize(object target)
             {
-
+                string jsonStr = JsonUtilityEditor.ToJson(target);
+                return Encoding.UTF8.GetBytes(jsonStr);
             }
 
-            public static T Deserialize<T>(string filePath) where T : class
+            public static T Deserialize<T>(byte[] data)
             {
-                return null;
+                string jsonStr = Encoding.UTF8.GetString(data);
+                return JsonUtilityEditor.ToObject<T>(jsonStr);
             }
         }
     }

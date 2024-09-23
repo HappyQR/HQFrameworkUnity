@@ -7,9 +7,10 @@ namespace HQFramework.Editor
     {
         private List<AssetModuleConfig> moduleList;
 
-        public void PostprocessModules(List<AssetModuleConfig> moduleConfigList, AssetBundleManifest buildManifest)
+        public AssetModuleBuildInfo[] PostprocessModules(List<AssetModuleConfig> moduleConfigList, AssetBundleManifest buildManifest)
         {
             this.moduleList = moduleConfigList;
+            return null;
         }
 
         protected string[] GetModuleBundles(AssetModuleConfig module, AssetBundleManifest buildManifest)

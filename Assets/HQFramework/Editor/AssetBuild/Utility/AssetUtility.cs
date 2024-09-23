@@ -25,7 +25,7 @@ namespace HQFramework.Editor
 
             AssetBundleBuild[] builds = preprocessor.PreprocessModules(moduleConfigList);
             AssetBundleManifest buildManifest = compiler.CompileAssets(builds, AssetBuildConfig.Default);
-            postprocessor.PostprocessModules(moduleConfigList, buildManifest);
+            AssetModuleBuildInfo[] buildResults = postprocessor.PostprocessModules(moduleConfigList, buildManifest);
         }
     }
 }

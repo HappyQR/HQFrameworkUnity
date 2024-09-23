@@ -1,21 +1,12 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace HQFramework.Editor
 {
-    public class AssetBuildHistoryData : MonoBehaviour
+    [Serializable]
+    public class AssetBuildHistoryData
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
+        //  key: module id, value: module build history list
+        public Dictionary<int, List<AssetModuleBuildInfo>> moduleBuildData;
     }
 }

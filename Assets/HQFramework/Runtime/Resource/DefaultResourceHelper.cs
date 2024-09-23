@@ -1,5 +1,4 @@
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using HQFramework.Resource;
 using UnityEngine;
@@ -48,12 +47,12 @@ namespace HQFramework.Runtime
 
         public string GetBundleFilePath(AssetBundleInfo bundleInfo)
         {
-            return Path.Combine(resourceConfig.assetPersistentDir, bundleInfo.moduleName, bundleInfo.bundleName);
+            return Path.Combine(resourceConfig.assetPersistentDir, bundleInfo.moduleID.ToString(), bundleInfo.md5);
         }
 
         public void DeleteAssetModule(AssetModuleInfo module)
         {
-            string moduleDir = Path.Combine(resourceConfig.assetPersistentDir, module.moduleName);
+            string moduleDir = Path.Combine(resourceConfig.assetPersistentDir, module.id.ToString());
             if (Directory.Exists(moduleDir))
             {
                 Directory.Delete(moduleDir, true);
