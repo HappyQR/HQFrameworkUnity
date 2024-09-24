@@ -17,12 +17,15 @@ namespace HQFramework.Editor
                 Directory.CreateDirectory(buildCacheDir);
             }
             List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
-            foreach (var item in preprocessResult.moduleBundleBuildsDic.Values)
+            foreach (var assetBundleBuildInfoList in preprocessResult.moduleBundleBuildsDic.Values)
             {
-                AssetBundleBuild build = new AssetBundleBuild();
-                build.assetBundleName = item.bundleName;
-                build.assetNames = item.bundleAssets;
-                builds.Add(build);
+                for (int i = 0; i < assetBundleBuildInfoList.Count; i++)
+                {
+                    AssetBundleBuild build = new AssetBundleBuild();
+                    build.assetBundleName = assetBundleBuildInfoList[i].bundleName;
+                    build.assetNames = assetBundleBuildInfoList[i].bundleAssets;
+                    builds.Add(build);
+                }
             }
             AssetBundleManifest buildManifest = BuildPipeline.BuildAssetBundles(buildCacheDir, builds.ToArray(), (BuildAssetBundleOptions)buildConfig.compressOption, (BuildTarget)buildConfig.platform);
 

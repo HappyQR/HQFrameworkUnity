@@ -6,6 +6,11 @@ namespace HQFramework.Editor
     public class AssetCompileResult
     {
         public Dictionary<AssetModuleConfig, AssetBundleBuildResult[]> moduleBundleDic;
+
+        public AssetCompileResult()
+        {
+            moduleBundleDic = new Dictionary<AssetModuleConfig, AssetBundleBuildResult[]>();
+        }
     }
 
     public class AssetBundleBuildResult

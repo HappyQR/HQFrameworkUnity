@@ -11,6 +11,7 @@ namespace HQFramework.Editor
             AssetPreprocessResult preprocessResult = new AssetPreprocessResult();
             for (int i = 0; i < moduleConfigList.Count; i++)
             {
+                List<AssetBundleBuildInfo> buildList = new List<AssetBundleBuildInfo>();
                 AssetDatabase.RemoveUnusedAssetBundleNames();
                 string[] subFolders = AssetDatabase.GetSubFolders(AssetDatabase.GetAssetPath(moduleConfigList[i].rootFolder));
                 for (int j = 0; j < subFolders.Length; j++)
@@ -42,8 +43,12 @@ namespace HQFramework.Editor
                         AssetBundleBuildInfo build = new AssetBundleBuildInfo();
                         build.bundleName = bundleName;
                         build.bundleAssets = assets;
-                        preprocessResult.moduleBundleBuildsDic.Add(moduleConfigList[i], build);
+                        buildList.Add(build);
                     }
+                }
+                if (buildList.Count > 0)
+                {
+                    preprocessResult.moduleBundleBuildsDic.Add(moduleConfigList[i], buildList);
                 }
             }
 

@@ -9,6 +9,11 @@ namespace HQFramework.Editor
     {
         //  key: module id, value: module build history list
         public Dictionary<int, List<AssetModuleBuildResult>> moduleBuildData;
+
+        public AssetModuleBuildHistoryData()
+        {
+            moduleBuildData = new Dictionary<int, List<AssetModuleBuildResult>>();
+        }
     }
     
     [Serializable]
@@ -19,7 +24,7 @@ namespace HQFramework.Editor
         public uint buildVersionCode;
         public string devNotes;
         public DateTime buildTime;
-        public Dictionary<AssetBundleInfo, string> bundlePathMap;
+        public Dictionary<string, AssetBundleInfo> bundlePathMap;
         public Dictionary<uint, AssetItemInfo> assetsDic;
         public int[] dependencies;
     }

@@ -209,8 +209,10 @@ namespace HQFramework.Editor
                     btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Android.Small");
                     break;
                 case BuildTargetPlatform.iOS:
-                case BuildTargetPlatform.VisionOS:
                     btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.iPhone.Small");
+                    break;
+                case BuildTargetPlatform.VisionOS:
+                    btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.VisionOS.Small");
                     break;
                 case BuildTargetPlatform.StandaloneOSX:
                     btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Standalone.Small");

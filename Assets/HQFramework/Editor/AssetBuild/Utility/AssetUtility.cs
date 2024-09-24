@@ -34,19 +34,21 @@ namespace HQFramework.Editor
 
         private static void SaveAssetBuilds(AssetModuleBuildResult[] buildResults)
         {
-            AssetModuleBuildHistoryData historyData = LoadBuildHistoryData();
-            for (int i = 0; i < buildResults.Length; i++)
-            {
-                AssetModuleBuildResult moduleBuild = buildResults[i];
-                if (historyData.moduleBuildData.ContainsKey(moduleBuild.moduleID))
-                {
-                    historyData.moduleBuildData[moduleBuild.moduleID].Add(moduleBuild);
-                }
-                else
-                {
-                    historyData.moduleBuildData.Add(moduleBuild.moduleID, new List<AssetModuleBuildResult>{ moduleBuild });
-                }
-            }
+            Debug.Log(JsonUtilityEditor.ToJson(buildResults));
+
+            // AssetModuleBuildHistoryData historyData = LoadBuildHistoryData();
+            // for (int i = 0; i < buildResults.Length; i++)
+            // {
+            //     AssetModuleBuildResult moduleBuild = buildResults[i];
+            //     if (historyData.moduleBuildData.ContainsKey(moduleBuild.moduleID))
+            //     {
+            //         historyData.moduleBuildData[moduleBuild.moduleID].Add(moduleBuild);
+            //     }
+            //     else
+            //     {
+            //         historyData.moduleBuildData.Add(moduleBuild.moduleID, new List<AssetModuleBuildResult>{ moduleBuild });
+            //     }
+            // }
 
             // save to local
         }
