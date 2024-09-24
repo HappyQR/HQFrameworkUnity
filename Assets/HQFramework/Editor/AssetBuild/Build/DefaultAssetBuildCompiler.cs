@@ -8,13 +8,22 @@ namespace HQFramework.Editor
     public class DefaultAssetBuildCompiler : IAssetBuildCompiler
     {
         public static readonly string cacheFolderName = "AssetBuildCache";
+        public static readonly string libraryFolderName = "Library";
+
+        private string buildCacheDir;
+        private string libraryDir;
 
         public AssetCompileResult CompileAssets(AssetPreprocessResult preprocessResult, AssetBuildConfig buildConfig)
         {
-            string buildCacheDir = Path.Combine(Application.dataPath, buildConfig.assetOutputDir, cacheFolderName);
+            buildCacheDir = Path.Combine(Application.dataPath, buildConfig.assetOutputDir, cacheFolderName);
+            libraryDir = Path.Combine(Application.dataPath, buildConfig.assetOutputDir, libraryFolderName);
             if (!Directory.Exists(buildCacheDir))
             {
                 Directory.CreateDirectory(buildCacheDir);
+            }
+            if (!Directory.Exists(libraryDir))
+            {
+                Directory.CreateDirectory(libraryDir);
             }
             List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
             foreach (var assetBundleBuildInfoList in preprocessResult.moduleBundleBuildsDic.Values)
@@ -38,9 +47,14 @@ namespace HQFramework.Editor
                 {
                     AssetBundleBuildResult bundleBuildResult = new AssetBundleBuildResult();
                     bundleBuildResult.bundleName = bundles[i];
-                    bundleBuildResult.filePath = Path.Combine(buildCacheDir, bundles[i]);
-                    bundleBuildResult.md5 = Utility.Hash.ComputeHash(bundleBuildResult.filePath);
-                    bundleBuildResult.size = FileUtilityEditor.GetFileSize(bundleBuildResult.filePath);
+                    string bundleOriginFilePath = Path.Combine(buildCacheDir, bundles[i]);
+                    string md5 = Utility.Hash.ComputeHash(bundleOriginFilePath);
+                    string bundleDestFilePath = Path.Combine(libraryDir, md5);
+                    int fileSize = FileUtilityEditor.GetFileSize(bundleOriginFilePath);
+                    File.Copy(bundleOriginFilePath, bundleDestFilePath, true);
+                    bundleBuildResult.filePath = bundleDestFilePath;
+                    bundleBuildResult.md5 = md5;
+                    bundleBuildResult.size = fileSize;
                     bundleBuildResult.dependencies = buildManifest.GetAllDependencies(bundles[i]);
                     bundleArr[i] = bundleBuildResult;
                 }

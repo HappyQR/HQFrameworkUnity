@@ -27,7 +27,7 @@ namespace HQFramework.Editor
                 moduleBuildResult.moduleName = moduleConfig.name;
                 moduleBuildResult.buildVersionCode = moduleConfig.buildVersionCode;
                 moduleBuildResult.devNotes = moduleConfig.devNotes;
-                moduleBuildResult.buildTime = DateTime.Now;
+                moduleBuildResult.buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 moduleBuildResult.bundlePathMap = new Dictionary<string, AssetBundleInfo>();
                 moduleBuildResult.assetsDic = new Dictionary<uint, AssetItemInfo>();
                 HashSet<int> dependencySet = new HashSet<int>();

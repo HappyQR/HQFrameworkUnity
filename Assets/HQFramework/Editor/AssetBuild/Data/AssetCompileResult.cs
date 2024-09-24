@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using HQFramework.Resource;
 
 namespace HQFramework.Editor
 {

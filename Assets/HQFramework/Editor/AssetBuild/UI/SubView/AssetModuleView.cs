@@ -66,7 +66,7 @@ namespace HQFramework.Editor
                         buildList.Add(moduleList[i]);
                     }
                 }
-                EditorApplication.delayCall += () => AssetUtility.BuildAssetModules(buildList);
+                EditorApplication.delayCall += () => AssetBuilder.BuildAssetModules(buildList);
             }
 
             GUI.enabled = true;

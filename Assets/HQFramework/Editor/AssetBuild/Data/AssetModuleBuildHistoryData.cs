@@ -23,7 +23,7 @@ namespace HQFramework.Editor
         public string moduleName;
         public uint buildVersionCode;
         public string devNotes;
-        public DateTime buildTime;
+        public string buildTime;
         public Dictionary<string, AssetBundleInfo> bundlePathMap;
         public Dictionary<uint, AssetItemInfo> assetsDic;
         public int[] dependencies;
