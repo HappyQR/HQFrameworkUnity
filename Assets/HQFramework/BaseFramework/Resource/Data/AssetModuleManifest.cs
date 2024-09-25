@@ -11,7 +11,6 @@ namespace HQFramework.Resource
         public string runtimePlatform;
         public int resourceVersion;
         public int minimalSupportedVersion;
-        public string hotfixUrlRoot;
         public string releaseNote;
         public bool isBuiltinManifest;
         public Dictionary<int, AssetModuleInfo> moduleDic;

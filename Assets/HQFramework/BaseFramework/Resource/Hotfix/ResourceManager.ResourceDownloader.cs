@@ -91,10 +91,9 @@ namespace HQFramework.Resource
                     AssetModuleInfo module = moduleBundleListPair.Key;
                     List<AssetBundleInfo> bundleList = moduleBundleListPair.Value;
 
-                    string moduleUrlRoot = Path.Combine(resourceManager.remoteManifest.hotfixUrlRoot, module.moduleUrlRelatedToHotfixUrlRoot);
                     for (int i = 0; i < bundleList.Count; i++)
                     {
-                        string url = Path.Combine(moduleUrlRoot, bundleList[i].bundleUrlRelatedToModule);
+                        string url = Path.Combine(module.moduleUrlRoot, bundleList[i].bundleUrlRelatedToModule);
                         string filePath = resourceManager.GetBundleFilePath(bundleList[i]);
                         DownloadItem item = DownloadItem.Create(hotfixID, url, filePath, bundleList[i]);
                         AddDownloadItem(item);
@@ -108,10 +107,9 @@ namespace HQFramework.Resource
                 int hotfixID = resourceManager.resourceHelper.LauncherHotfixID + module.id;
                 DownloadGroup downloadGroup = new DownloadGroup();
                 downloadGroupDic.Add(hotfixID, downloadGroup);
-                string moduleUrlRoot = Path.Combine(resourceManager.remoteManifest.hotfixUrlRoot, module.moduleUrlRelatedToHotfixUrlRoot);
                 for (int i = 0; i < bundleList.Count; i++)
                 {
-                    string url = Path.Combine(moduleUrlRoot, bundleList[i].bundleUrlRelatedToModule);
+                    string url = Path.Combine(module.moduleUrlRoot, bundleList[i].bundleUrlRelatedToModule);
                     string filePath = resourceManager.GetBundleFilePath(bundleList[i]);
                     DownloadItem item = DownloadItem.Create(hotfixID, url, filePath, bundleList[i]);
                     AddDownloadItem(item);
@@ -287,7 +285,6 @@ namespace HQFramework.Resource
                         resourceManager.localManifest.resourceVersion = resourceManager.remoteManifest.resourceVersion;
                         resourceManager.localManifest.minimalSupportedVersion = resourceManager.remoteManifest.minimalSupportedVersion;
                         resourceManager.localManifest.releaseNote = resourceManager.remoteManifest.releaseNote;
-                        resourceManager.localManifest.hotfixUrlRoot = resourceManager.remoteManifest.hotfixUrlRoot;
                         resourceManager.localManifest.isBuiltinManifest = false;
                         resourceManager.necessaryHotfixContent.Clear();
                         resourceManager.necessaryHotfixContent = null;

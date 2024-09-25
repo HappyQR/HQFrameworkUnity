@@ -42,8 +42,6 @@ namespace HQFramework.Editor
                     bundleInfo.md5 = bundleBuildResults[i].md5;
                     bundleInfo.size = bundleBuildResults[i].size;
                     bundleInfo.dependencies = bundleBuildResults[i].dependencies;
-                    
-                    bundleInfo.bundleUrlRelatedToModule = bundleInfo.bundleName;
                     moduleBuildResult.bundlePathMap.Add(bundleBuildResults[i].filePath, bundleInfo);
 
                     for (int j = 0; j < bundleInfo.dependencies.Length; j++)

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   moduleName: 2333
-  rootFolder: {fileID: 0}
+  rootFolder: {fileID: 102900000, guid: 4b9214540e4c10044805a9b38affab92, type: 3}
   buildVersionCode: 0
   devNotes: 
-  isBuild: 0
+  isBuild: 1
   createTimeTicks: 638624515858225120
