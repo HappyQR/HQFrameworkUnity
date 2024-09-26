@@ -46,7 +46,7 @@ namespace HQFramework.Editor
             string filePath = Path.Combine(ArchiveDir, archiveDataFileName);
             if (!File.Exists(filePath))
             {
-                return null;
+                return new AssetArchiveData();
             }
             byte[] bytes = await File.ReadAllBytesAsync(filePath);
             return AssetUtility.ConfigSerializer.Deserialize<AssetArchiveData>(bytes);

@@ -29,7 +29,14 @@ namespace HQFramework.Editor
             AssetArchiveInfo archiveInfo = new AssetArchiveInfo();
             archiveInfo.archiveNotes = archiveNotes;
             archiveInfo.archiveTime = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-            archiveInfo.archiveVersionCode = data.assetArchiveList[data.assetArchiveList.Count - 1].archiveVersionCode + 1;
+            if (data.assetArchiveList.Count > 0)
+            {
+                archiveInfo.archiveVersionCode = data.assetArchiveList[data.assetArchiveList.Count - 1].archiveVersionCode + 1;
+            }
+            else
+            {
+                archiveInfo.archiveVersionCode = 0;
+            }
             archiveInfo.moduleBuildResultDic = new Dictionary<int, AssetModuleBuildResult>();
             for (int i = 0; i < moduleBuildResults.Count; i++)
             {
