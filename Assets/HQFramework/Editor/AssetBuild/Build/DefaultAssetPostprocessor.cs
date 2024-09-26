@@ -24,7 +24,7 @@ namespace HQFramework.Editor
             {
                 AssetModuleBuildResult moduleBuildResult = new AssetModuleBuildResult();
                 moduleBuildResult.moduleID = moduleConfig.id;
-                moduleBuildResult.moduleName = moduleConfig.name;
+                moduleBuildResult.moduleName = moduleConfig.moduleName;
                 moduleBuildResult.buildVersionCode = moduleConfig.buildVersionCode;
                 moduleBuildResult.devNotes = moduleConfig.devNotes;
                 moduleBuildResult.buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

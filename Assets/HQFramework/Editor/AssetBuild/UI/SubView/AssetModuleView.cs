@@ -118,7 +118,7 @@ namespace HQFramework.Editor
                     module.isBuild = !module.isBuild;
                 }
 
-                GUI.Label(new Rect(5 + i % maxCountPerRow * 148, 150 + i / maxCountPerRow * 182, 140, 20), module.name, textModuleNameStyle);
+                GUI.Label(new Rect(5 + i % maxCountPerRow * 148, 150 + i / maxCountPerRow * 182, 140, 20), module.moduleName, textModuleNameStyle);
 
                 if (selectedModuleStyle == null)
                 {
