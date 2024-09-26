@@ -141,6 +141,11 @@ namespace HQFramework.Editor
             currentContentView?.OnEnable();
         }
 
+        protected virtual void OnDisable()
+        {
+            currentContentView?.OnDisable();
+        }
+
         protected abstract void OnInitialized(out TabContentView[] contentList);
     }
 

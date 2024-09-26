@@ -32,9 +32,6 @@ namespace HQFramework.Editor
             optionList = AssetBuildConfig.GetConfigList();
             buildOption = AssetBuildConfig.Default;
             optionTagList = new string[optionList.Count + 1];
-            preprocessorTypeList = CollectSubTypesInAppDomain(typeof(IAssetBuildPreprocessor));
-            compilerTypeList = CollectSubTypesInAppDomain(typeof(IAssetBuildCompiler));
-            postprocessorTypeList = CollectSubTypesInAppDomain(typeof(IAssetBuildPostprocessor));
             for (int i = 0; i < optionList.Count; i++)
             {
                 optionTagList[i] = optionList[i].optionTag;
@@ -46,6 +43,7 @@ namespace HQFramework.Editor
             }
             optionTagList[optionTagList.Length - 1] = "Add New...";
 
+            CollectBuildActors();
             OnSelectConfig();
         }
         
@@ -241,22 +239,39 @@ namespace HQFramework.Editor
             });
         }
 
-        private string[] CollectSubTypesInAppDomain(Type superType)
+        private void CollectBuildActors()
         {
-            List<string> result = new List<string>();
+            List<string> preprocessorTypes = new List<string>();
+            List<string> postprocessorTypes = new List<string>();
+            List<string> compilerTypes = new List<string>();
+
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             for (int i = 0; i < assemblies.Length; i++)
             {
                 Type[] types = assemblies[i].GetTypes();
                 for (int j = 0; j < types.Length; j++)
                 {
-                    if (superType.IsAssignableFrom(types[j]) && !types[j].IsAbstract && !types[j].IsInterface)
+                    if (!types[j].IsAbstract && !types[j].IsInterface)
                     {
-                        result.Add(types[j].FullName);
+                        if (typeof(IAssetBuildPreprocessor).IsAssignableFrom(types[j]))
+                        {
+                            preprocessorTypes.Add(types[j].FullName);
+                        }
+                        else if (typeof(IAssetBuildCompiler).IsAssignableFrom(types[j]))
+                        {
+                            compilerTypes.Add(types[j].FullName);
+                        }
+                        else if (typeof(IAssetBuildPostprocessor).IsAssignableFrom(types[j]))
+                        {
+                            postprocessorTypes.Add(types[j].FullName);
+                        }
                     }
                 }
             }
-            return result.ToArray();
+
+            preprocessorTypeList = preprocessorTypes.ToArray();
+            compilerTypeList = compilerTypes.ToArray();
+            postprocessorTypeList = postprocessorTypes.ToArray();
         }
 
         public override void OnDisable()

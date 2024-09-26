@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b8bfea428cd24fdb9ff002d3360adb1, type: 3}
   m_Name: AssetFrameworkConfig
   m_EditorClassIdentifier: 
-  defaultBuildConfig: {fileID: 11400000, guid: d3303f7c42de7488c97c24266a6009c1, type: 2}
+  defaultBuildConfig: {fileID: 0}
   defaultRuntimeConfig: {fileID: 11400000, guid: be675d2e76d744c109323663579bfa9b,
     type: 2}
