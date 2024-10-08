@@ -13,5 +13,12 @@ MonoBehaviour:
   m_Name: AssetFrameworkConfig
   m_EditorClassIdentifier: 
   defaultBuildConfig: {fileID: 0}
-  defaultRuntimeConfig: {fileID: 11400000, guid: be675d2e76d744c109323663579bfa9b,
-    type: 2}
+  defaultRuntimeConfig: {fileID: 0}
+  defaultArchiveConfig: {fileID: 0}
+  defaultPublishConfig: {fileID: 0}
+  assetModuleConfigs: []
+  assetBuildConfigs:
+  - {fileID: 0}
+  assetArchiveConfigs: []
+  assetPublishConfigs: []
+  assetRuntimeConfigs: []

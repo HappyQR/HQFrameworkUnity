@@ -21,8 +21,8 @@ namespace HQFramework.Editor
         public override void OnEnable()
         {
             previousSelectedConfigIndex = -1;
-            configList = AssetRuntimeConfig.GetConfigList();
-            config = AssetRuntimeConfig.Default;
+            configList = AssetConfigManager.GetRuntimeConfigs();
+            config = AssetConfigManager.CurrentRuntimeConfig;
             configTagList = new string[configList.Count + 1];
             for (int i = 0; i < configList.Count; i++)
             {
@@ -62,7 +62,7 @@ namespace HQFramework.Editor
             else if (previousSelectedConfigIndex != selectedConfigIndex)
             {
                 config = configList[selectedConfigIndex];
-                AssetRuntimeConfig.Default = config;
+                AssetConfigManager.CurrentRuntimeConfig = config;
                 previousSelectedConfigIndex = selectedConfigIndex;
             }
 
@@ -112,7 +112,7 @@ namespace HQFramework.Editor
             content.text = " Generate Assets Runtime Settings";
             if (GUILayout.Button(content, GUILayout.Height(45)))
             {
-                EditorApplication.delayCall += () => AssetRuntimeConfig.GenerateRuntimeSettings(config);
+                EditorApplication.delayCall += () => AssetConfigManager.GenerateRuntimeSettings(config);
             }
 
             GUILayout.EndArea();
@@ -133,9 +133,9 @@ namespace HQFramework.Editor
         {
             CreateNewWindow.Show((tag) =>
             {
-                config = AssetRuntimeConfig.CreateNewConfig(tag);
-                configList = AssetRuntimeConfig.GetConfigList();
-                AssetRuntimeConfig.Default = config;
+                config = AssetConfigManager.CreateNewRuntimeConfig(tag);
+                configList = AssetConfigManager.GetRuntimeConfigs();
+                AssetConfigManager.CurrentRuntimeConfig = config;
                 configTagList = new string[configList.Count + 1];
                 for (int i = 0; i < configList.Count; i++)
                 {

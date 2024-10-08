@@ -39,11 +39,11 @@ namespace HQFramework.Editor
         public AssetArchiveConfig defaultArchiveConfig;
         public AssetPublishConfig defaultPublishConfig;
 
-        public List<AssetModuleConfig> assetModuleConfigs;
-        public List<AssetBuildConfig> assetBuildConfigs;
-        public List<AssetArchiveConfig> assetArchiveConfigs;
-        public List<AssetPublishConfig> assetPublishConfigs;
-        public List<AssetRuntimeConfig> assetRuntimeConfigs;
+        public List<AssetModuleConfig> assetModuleConfigs = new List<AssetModuleConfig>();
+        public List<AssetBuildConfig> assetBuildConfigs = new List<AssetBuildConfig>();
+        public List<AssetArchiveConfig> assetArchiveConfigs = new List<AssetArchiveConfig>();
+        public List<AssetPublishConfig> assetPublishConfigs = new List<AssetPublishConfig>();
+        public List<AssetRuntimeConfig> assetRuntimeConfigs = new List<AssetRuntimeConfig>();
 
         public void Save()
         {

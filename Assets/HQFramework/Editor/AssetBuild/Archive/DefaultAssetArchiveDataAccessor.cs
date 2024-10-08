@@ -15,7 +15,7 @@ namespace HQFramework.Editor
         {
             get
             {
-                string dir = Path.Combine(Application.dataPath, AssetBuildConfig.Default.assetOutputDir, archiveFolderName);
+                string dir = Path.Combine(Application.dataPath, AssetConfigManager.CurrentBuildConfig.assetOutputDir, archiveFolderName);
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);

@@ -29,8 +29,8 @@ namespace HQFramework.Editor
         public override void OnEnable()
         {
             previousSelectedOptionIndex = -1;
-            optionList = AssetBuildConfig.GetConfigList();
-            buildOption = AssetBuildConfig.Default;
+            optionList = AssetConfigManager.GetBuildConfigs();
+            buildOption = AssetConfigManager.CurrentBuildConfig;
             optionTagList = new string[optionList.Count + 1];
             for (int i = 0; i < optionList.Count; i++)
             {
@@ -73,7 +73,7 @@ namespace HQFramework.Editor
             else if (previousSelectedOptionIndex != selectedOptionIndex)
             {
                 buildOption = optionList[selectedOptionIndex];
-                AssetBuildConfig.Default = buildOption;
+                AssetConfigManager.CurrentBuildConfig = buildOption;
                 previousSelectedOptionIndex = selectedOptionIndex;
                 OnSelectConfig();
             }
@@ -222,9 +222,9 @@ namespace HQFramework.Editor
         {
             CreateNewWindow.Show((tag) =>
             {
-                buildOption = AssetBuildConfig.CreateNewConfig(tag);
-                optionList = AssetBuildConfig.GetConfigList();
-                AssetBuildConfig.Default = buildOption;
+                buildOption = AssetConfigManager.CreateNewBuildConfig(tag);
+                optionList = AssetConfigManager.GetBuildConfigs();
+                AssetConfigManager.CurrentBuildConfig = buildOption;
                 optionTagList = new string[optionList.Count + 1];
                 for (int i = 0; i < optionList.Count; i++)
                 {
@@ -281,11 +281,6 @@ namespace HQFramework.Editor
             preprocessorTypeList = null;
             compilerTypeList = null;
             postprocessorTypeList = null;
-            if (buildOption != null)
-            {
-                EditorUtility.SetDirty(buildOption);
-                AssetDatabase.SaveAssetIfDirty(buildOption);
-            }
         }
     }
 }

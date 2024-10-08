@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace HQFramework.Editor
 {
-    public class AssetArchiveConfig
+    public class AssetArchiveConfig : ScriptableObject
     {
-        
+        public string tag;
     }
 }

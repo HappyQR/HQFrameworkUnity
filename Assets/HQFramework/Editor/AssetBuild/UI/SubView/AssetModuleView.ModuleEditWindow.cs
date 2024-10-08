@@ -9,21 +9,11 @@ namespace HQFramework.Editor
         private class ModuleEditWindow : EditorWindow
         {
             private AssetModuleConfig config;
-            private Action<AssetModuleConfig> createCallback;
-            private bool createNewConfig;
 
-            public static void ShowWindow(AssetModuleConfig target, Action<AssetModuleConfig> createCallback)
+            public static void ShowWindow(AssetModuleConfig target)
             {
                 var window = GetWindow<ModuleEditWindow>();
                 window.config = target;
-                window.createCallback = createCallback;
-                if (window.config == null)
-                {
-                    int id = AssetModuleConfig.GetNewModuleID();
-                    window.config = ScriptableObject.CreateInstance<AssetModuleConfig>();
-                    window.config.id = id;
-                    window.createNewConfig = true;
-                }
                 window.minSize = window.maxSize = new Vector2(480, 380);
                 window.titleContent = new GUIContent("Asset Module Edit");
                 window.Show();
@@ -36,11 +26,8 @@ namespace HQFramework.Editor
                 GUIStyle headerStyle = "AM HeaderStyle";
                 GUILayout.BeginHorizontal();
                 GUILayout.Label($"Module ID : {config.id}", headerStyle);
-                if (!createNewConfig)
-                {
-                    GUILayout.FlexibleSpace();
-                    GUILayout.Label($"Create Time : {config.createTime:yyyy-MM-dd HH:mm:ss}");
-                }
+                GUILayout.FlexibleSpace();
+                GUILayout.Label($"Create Time : {config.createTime}");
                 GUILayout.EndHorizontal();
                 GUILayout.Space(10);
 
@@ -61,30 +48,9 @@ namespace HQFramework.Editor
                 config.devNotes = EditorGUILayout.TextArea(config.devNotes, GUILayout.Height(130));
                 GUILayout.FlexibleSpace();
 
-                if (createNewConfig)
+                if (GUILayout.Button("Save", GUILayout.Height(35)))
                 {
-                    if (GUILayout.Button("Create New Module", GUILayout.Height(35)))
-                    {
-                        if (string.IsNullOrEmpty(config.moduleName))
-                        {
-                            Debug.LogError("Module Name is empty!");
-                        }
-                        else
-                        {
-                            AssetModuleConfig.CreateNewConfig(config);
-                            createCallback?.Invoke(config);
-                            Close();
-                        }
-                    }
-                }
-                else
-                {
-                    if (GUILayout.Button("Save", GUILayout.Height(35)))
-                    {
-                        EditorUtility.SetDirty(config);
-                        AssetDatabase.SaveAssetIfDirty(config);
-                        Close();
-                    }
+                    Close();
                 }
 
                 GUILayout.EndArea();

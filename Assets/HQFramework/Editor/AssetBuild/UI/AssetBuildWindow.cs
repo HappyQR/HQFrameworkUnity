@@ -48,5 +48,11 @@ namespace HQFramework.Editor
             base.OnTabPanelGUI();
             GUILayout.FlexibleSpace();
         }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            AssetConfigManager.Save();
+        }
     }
 }

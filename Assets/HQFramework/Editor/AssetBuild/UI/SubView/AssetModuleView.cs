@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -27,7 +26,7 @@ namespace HQFramework.Editor
             textModuleNameStyle = new GUIStyle();
             textModuleNameStyle.alignment = TextAnchor.MiddleCenter;
             textModuleNameStyle.normal.textColor = Color.yellow;
-            moduleList = AssetModuleConfig.GetConfigList();
+            moduleList = AssetConfigManager.GetModuleConfigs();
         }
 
         public override void OnGUI()
@@ -87,7 +86,7 @@ namespace HQFramework.Editor
                 GUILayout.Space(10);
                 if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                 {
-                    OpenModuleEditWindow(null);
+                    OpenModuleCreateWindow();
                 }
                 GUILayout.EndHorizontal();
             }
@@ -148,7 +147,7 @@ namespace HQFramework.Editor
                         GUILayout.Space(5);
                         if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                         {
-                            OpenModuleEditWindow(null);
+                            OpenModuleCreateWindow();
                         }
                         GUILayout.EndHorizontal();
                     }
@@ -157,7 +156,7 @@ namespace HQFramework.Editor
                         // draw add button at the end
                         if (GUILayout.Button(btnAddContent, GUILayout.Width(140), GUILayout.Height(170)))
                         {
-                            OpenModuleEditWindow(null);
+                            OpenModuleCreateWindow();
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.Space(10);
@@ -177,7 +176,7 @@ namespace HQFramework.Editor
             });
             menu.AddItem(new GUIContent("Delete"), false, () =>
             {
-                if (AssetModuleConfig.DeleteConfig(module))
+                if (AssetConfigManager.DeleteModuleConfig(module))
                 {
                     moduleList.Remove(module);
                 }
@@ -187,7 +186,12 @@ namespace HQFramework.Editor
 
         private void OpenModuleEditWindow(AssetModuleConfig module)
         {
-            EditorApplication.delayCall += () => ModuleEditWindow.ShowWindow(module, OnCreateNewModule);
+            EditorApplication.delayCall += () => ModuleEditWindow.ShowWindow(module);
+        }
+
+        private void OpenModuleCreateWindow()
+        {
+            EditorApplication.delayCall += () => CreateNewWindow.ShowWindow(OnCreateNewModule);
         }
 
         private void OnCreateNewModule(AssetModuleConfig module)
@@ -199,11 +203,11 @@ namespace HQFramework.Editor
         {
             GUIContent btnBuildContent = null;
 
-            if (AssetBuildConfig.Default == null)
+            if (AssetConfigManager.CurrentBuildConfig == null)
             {
                 return null;
             }
-            switch (AssetBuildConfig.Default.platform)
+            switch (AssetConfigManager.CurrentBuildConfig.platform)
             {
                 case BuildTargetPlatform.Android:
                     btnBuildContent = EditorGUIUtility.IconContent("BuildSettings.Android.Small");
