@@ -1,18 +1,25 @@
+using System.Collections.Generic;
 using System;
-using UnityEngine;
-
-using UnityObject = UnityEngine.Object;
 
 namespace HQFramework.Editor
 {
-    public class AssetModuleConfig : ScriptableObject
+    [Serializable]
+    public class AssetModuleConfig
     {
         public int id;
         public string moduleName;
-        public UnityObject rootFolder;
-        public uint buildVersionCode;
-        public string devNotes;
         public bool isBuild;
         public string createTime;
+        public uint buildVersionCode;
+        public string devNotes;
+        public List<AssetBundleConfig> bundleConfigList;
+    }
+
+    [Serializable]
+    public class AssetBundleConfig
+    {
+        public uint id;
+        public string bundleName;
+        public List<string> assetItemList;
     }
 }

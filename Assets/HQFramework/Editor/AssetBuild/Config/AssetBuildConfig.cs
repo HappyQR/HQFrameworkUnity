@@ -1,18 +1,25 @@
-using UnityEngine;
+using System;
 
 namespace HQFramework.Editor
 {
-    public class AssetBuildConfig : ScriptableObject
+    [Serializable]
+    public class AssetBuildConfig
     {
-        public string optionTag;
+        public string tag;
+
+        // Asset Build
+        public string assetOutputDir;
         public string preprocessorName;
         public string compilerName;
         public string postprocessorName;
-        public string assetOutputDir;
         public BuildTargetPlatform platform;
         public CompressOption compressOption;
+        public bool enableEncryption; // TODO: will be implemented in the future.
 
-        // public bool enableEncryption;
+        // Asset Archive
+        
+
+        // Asset Publish
     }
 
     public enum BuildTargetPlatform

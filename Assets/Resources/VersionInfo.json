@@ -3,8 +3,8 @@
     "companyName": "HappyQ",
     "runtimePlatform": "StandaloneOSX",
     "productVersion": "1.0.0",
-    "versionTag": "",
+    "versionTag": null,
     "internalVersionCode": 0,
     "minimalSupportedVersionCode": 0,
-    "releaseNote": ""
+    "releaseNote": null
 }
