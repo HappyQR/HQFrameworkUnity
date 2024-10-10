@@ -8,7 +8,6 @@ namespace HQFramework.Editor
     {
         public int id;
         public string moduleName;
-        public bool isBuild;
         public string createTime;
         public uint buildVersionCode;
         public string devNotes;
