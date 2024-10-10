@@ -17,7 +17,6 @@ namespace HQFramework.Editor
     [Serializable]
     public class AssetBundleConfig
     {
-        public uint id;
         public string bundleName;
         public List<string> assetItemList;
     }

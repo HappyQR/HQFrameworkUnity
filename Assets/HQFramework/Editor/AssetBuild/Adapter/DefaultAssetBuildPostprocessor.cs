@@ -1,76 +1,67 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using HQFramework.Resource;
 
 namespace HQFramework.Editor
 {
     public class DefaultAssetBuildPostprocessor : IAssetBuildPostprocessor
     {
-        public AssetPostprocessData PostprocessAssetModules(AssetCompileData compileData)
-        {
-            throw new System.NotImplementedException();
-        }
-
         private List<AssetModuleConfig> moduleList;
 
-        public AssetModuleBuildResultInfo[] PostprocessModules(AssetCompileResult compileResult)
+        public AssetPostprocessData PostprocessAssetModules(AssetCompileData compileData)
         {
-            List<AssetModuleBuildResultInfo> buildResults = new List<AssetModuleBuildResultInfo>();
             moduleList = new List<AssetModuleConfig>();
-            foreach (var moduleConfig in compileResult.moduleBundleDic.Keys)
+            foreach (AssetModuleConfig item in compileData.dataDic.Keys)
             {
-                moduleList.Add(moduleConfig);
+                moduleList.Add(item);
             }
-
-            foreach (var moduleConfig in compileResult.moduleBundleDic.Keys)
+            AssetPostprocessData postprocessData = new AssetPostprocessData();
+            foreach (KeyValuePair<AssetModuleConfig, List<AssetBundleCompileInfo>> item in compileData.dataDic)
             {
-                AssetModuleBuildResultInfo moduleBuildResult = new AssetModuleBuildResultInfo();
-                moduleBuildResult.moduleID = moduleConfig.id;
-                moduleBuildResult.moduleName = moduleConfig.moduleName;
-                moduleBuildResult.buildVersionCode = moduleConfig.buildVersionCode;
-                moduleBuildResult.devNotes = moduleConfig.devNotes;
-                moduleBuildResult.buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                moduleBuildResult.bundlePathMap = new Dictionary<string, AssetBundleInfo>();
-                moduleBuildResult.assetsDic = new Dictionary<uint, AssetItemInfo>();
-                HashSet<int> dependencySet = new HashSet<int>();
-
-                AssetBundleBuildResultInfo[] bundleBuildResults = compileResult.moduleBundleDic[moduleConfig];
-                for (int i = 0; i < bundleBuildResults.Length; i++)
+                AssetModuleCompileInfo moduleCompileInfo = new AssetModuleCompileInfo();
+                moduleCompileInfo.moduleID = item.Key.id;
+                moduleCompileInfo.moduleName = item.Key.moduleName;
+                moduleCompileInfo.buildVersionCode = item.Key.buildVersionCode;
+                moduleCompileInfo.devNotes = item.Key.devNotes;
+                moduleCompileInfo.buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                moduleCompileInfo.bundleList = item.Value;
+                moduleCompileInfo.assetsDic = new Dictionary<uint, AssetItemInfo>();
+                for (int i = 0; i < item.Key.bundleConfigList.Count; i++)
                 {
-                    AssetBundleInfo bundleInfo = new AssetBundleInfo();
-                    bundleInfo.moduleID = moduleConfig.id;
-                    bundleInfo.moduleName = moduleConfig.moduleName;
-                    bundleInfo.bundleName = bundleBuildResults[i].bundleName;
-                    bundleInfo.md5 = bundleBuildResults[i].md5;
-                    bundleInfo.size = bundleBuildResults[i].size;
-                    bundleInfo.dependencies = bundleBuildResults[i].dependencies;
-                    moduleBuildResult.bundlePathMap.Add(bundleBuildResults[i].filePath, bundleInfo);
-
-                    for (int j = 0; j < bundleInfo.dependencies.Length; j++)
+                    AssetBundleConfig bundleConfig = item.Key.bundleConfigList[i];
+                    for (int j = 0; j < bundleConfig.assetItemList.Count; j++)
                     {
-                        AssetModuleConfig dependenceModule = GetBundleModule(bundleInfo.dependencies[j]);
-                        if (dependenceModule != moduleConfig)
+                        string assetPath = bundleConfig.assetItemList[j];
+                        AssetItemInfo assetItem = new AssetItemInfo();
+                        assetItem.crc = Utility.CRC32.ComputeCrc32(assetPath);
+                        assetItem.assetPath = assetPath;
+                        assetItem.assetName = Path.GetFileName(assetPath);
+                        assetItem.bundleName = bundleConfig.bundleName;
+                        assetItem.moduleID = item.Key.id;
+                        moduleCompileInfo.assetsDic.Add(assetItem.crc, assetItem);
+                    }
+                }
+
+                HashSet<int> dependencySet = new HashSet<int>();
+                for (int i = 0; i < item.Value.Count; i++)
+                {
+                    AssetBundleCompileInfo bundleCompileInfo = item.Value[i];
+                    for (int j = 0; j < bundleCompileInfo.dependencies.Length; j++)
+                    {
+                        AssetModuleConfig dependenceModule = GetBundleModule(bundleCompileInfo.dependencies[j]);
+                        if (dependenceModule.id != item.Key.id)
                         {
                             dependencySet.Add(dependenceModule.id);
                         }
                     }
-
-                    string[] assetsPathArr = AssetDatabase.GetAssetPathsFromAssetBundle(bundleInfo.bundleName);
-                    for (int j = 0; j < assetsPathArr.Length; j++)
-                    {
-                        AssetItemInfo assetItem = new AssetItemInfo();
-                        assetItem.assetPath = assetsPathArr[j];
-                        assetItem.assetName = Path.GetFileName(assetsPathArr[j]);
-                        assetItem.bundleName = bundleInfo.bundleName;
-                        assetItem.moduleID = moduleConfig.id;
-                        assetItem.crc = Utility.CRC32.ComputeCrc32(assetsPathArr[j]);
-                        moduleBuildResult.assetsDic.Add(assetItem.crc, assetItem);
-                    }
                 }
-                moduleBuildResult.dependencies = dependencySet.ToArray();
-                buildResults.Add(moduleBuildResult);
-                moduleConfig.buildVersionCode++;
-            }
+                moduleCompileInfo.dependencies = dependencySet.ToArray();
 
-            return buildResults.ToArray();
+                postprocessData.dataList.Add(moduleCompileInfo);
+            }
+            return postprocessData;
         }
 
         protected AssetModuleConfig GetBundleModule(string bundleName)

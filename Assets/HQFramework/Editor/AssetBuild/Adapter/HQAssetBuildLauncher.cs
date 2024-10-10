@@ -36,10 +36,12 @@ namespace HQFramework.Editor
             for (int i = 0; i < moduleConfigAgentList.Count; i++)
             {
                 moduleConfigList.Add(GetModuleFromAgent(moduleConfigAgentList[i]));
+                moduleConfigAgentList[i].buildVersionCode++;
             }
 
             AssetPostprocessData result = AssetBuildController.BuildAssetModules(moduleConfigList, outputDir, buildConfig.platform, buildConfig.compressOption);
             bool saved = await dataManager.AddAssetModuleCompileInfosAsync(result.dataList);
+            configManager.Save();
             Debug.Log(saved ? "Asset Modules Build Successfully!" : "Asset Modules Build Error..");
         }
 
@@ -125,7 +127,6 @@ namespace HQFramework.Editor
                     string bundleName = $"{moduleAgent.moduleName}_{dirName}.bundle".ToLower();
                     AssetBundleConfig bundleConfig = new AssetBundleConfig();
                     bundleConfig.bundleName = bundleName;
-                    bundleConfig.id = Utility.CRC32.ComputeCrc32(bundleName);
                     bundleConfig.assetItemList = assetItemList;
                     config.bundleConfigList.Add(bundleConfig);
                 }
