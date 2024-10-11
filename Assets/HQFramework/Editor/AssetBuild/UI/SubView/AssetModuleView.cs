@@ -26,6 +26,7 @@ namespace HQFramework.Editor
             textModuleNameStyle = new GUIStyle();
             textModuleNameStyle.alignment = TextAnchor.MiddleCenter;
             textModuleNameStyle.normal.textColor = Color.yellow;
+
             moduleList = HQAssetBuildLauncher.GetModuleConfigs();
         }
 
@@ -50,7 +51,7 @@ namespace HQFramework.Editor
                                                 "No, Cancel");
                 if (result)
                 {
-                    
+                    // TODO: delete build history
                 }
             }
 

@@ -17,7 +17,7 @@ namespace HQFramework.Editor
             {
                 var window = GetWindow<CreateNewWindow>();
                 window.parentView = parent;
-                window.minSize = window.maxSize = new Vector2(480, 360);
+                window.minSize = window.maxSize = new Vector2(450, 340);
                 window.titleContent = new GUIContent("Create New Module");
                 window.Show();
             }

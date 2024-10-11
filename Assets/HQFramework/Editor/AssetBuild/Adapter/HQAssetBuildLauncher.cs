@@ -27,8 +27,22 @@ namespace HQFramework.Editor
             }
         }
 
+        public static async Task Initialize()
+        {
+            configManager.LoadAssetConfig();
+            while (!configManager.Initialized)
+            {
+                await Task.Yield();
+            }
+        }
+
         public static async void BuildAssetModules(List<AssetModuleConfigAgent> moduleConfigAgentList)
         {
+            if (moduleConfigAgentList == null || moduleConfigAgentList.Count == 0)
+            {
+                return;
+            }
+
             AssetBuildConfig buildConfig = CurrentBuildConfig;
             string outputDir = Path.Combine(Application.dataPath, buildConfig.assetOutputDir);
             Type preprocessorType = Type.GetType(buildConfig.preprocessorName);
@@ -56,6 +70,11 @@ namespace HQFramework.Editor
 
         public static async void ArchiveAssetModules(List<AssetModuleCompileInfo> compileInfoList, string archiveTag, string archiveNotes)
         {
+            if (compileInfoList == null || compileInfoList.Count == 0)
+            {
+                return;
+            }
+
             AssetArchiveData archiveData = AssetArchiveController.ArchiveAssetModules(compileInfoList, archiveTag, archiveNotes);
             bool saved = await dataManager.AddAssetArchiveAsync(archiveData);
             Debug.Log(saved ? "Asset Modules Archive Successfully!" : "Asset Modules Archive Error..");

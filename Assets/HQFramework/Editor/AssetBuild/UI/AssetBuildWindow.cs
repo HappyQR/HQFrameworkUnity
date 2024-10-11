@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,7 +15,12 @@ namespace HQFramework.Editor
             window.Show();
         }
 
-        protected override void OnInitialized(out TabContentView[] contentList)
+        protected override Task OnInitialize()
+        {
+            return HQAssetBuildLauncher.Initialize();
+        }
+
+        protected override void InitializeContent(out TabContentView[] contentList)
         {
             GUIContent btnBuildContent = EditorGUIUtility.IconContent("CustomTool");//BuildSettings.SelectedIcon
             btnBuildContent.text = " Assets Build";

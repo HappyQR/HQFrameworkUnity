@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -42,7 +43,6 @@ namespace HQFramework.Editor
                 }
             }
             configTagList[configTagList.Length - 1] = "Add New...";
-
             CollectBuildActors();
             OnSelectConfig();
         }

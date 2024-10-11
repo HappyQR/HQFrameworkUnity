@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.Threading.Tasks;
 
 namespace HQFramework.Editor
 {
@@ -21,6 +22,9 @@ namespace HQFramework.Editor
 
         private void OnGUI()
         {
+            if (contentList == null)
+                return;
+
             GUIStyle tabBackground = "RL Background";
             tabBackground.padding = new RectOffset(1, 2, 10, 5);
             tabPanelRect = new Rect(0, 0, tabPanelWidth, position.height);
@@ -104,7 +108,7 @@ namespace HQFramework.Editor
             }
         }
 
-        protected virtual void OnEnable()
+        protected virtual async void OnEnable()
         {
             GUIStyleState normalState = new GUIStyleState();
             normalState.background = Texture2D.blackTexture;
@@ -125,11 +129,9 @@ namespace HQFramework.Editor
             selectedTab.contentOffset = Vector2.right * 10;
             selectedTab.normal = selectedState;
 
-            OnInitialized(out contentList);
-            if (contentList == null)
-            {
-                throw new NullReferenceException();
-            }
+            await OnInitialize();
+
+            InitializeContent(out contentList);
             if (currentContentView == null)
             {
                 if (contentList.Length > 0)
@@ -145,8 +147,9 @@ namespace HQFramework.Editor
         {
             currentContentView?.OnDisable();
         }
-
-        protected abstract void OnInitialized(out TabContentView[] contentList);
+        
+        protected abstract Task OnInitialize();
+        protected abstract void InitializeContent(out TabContentView[] contentList);
     }
 
     public abstract class TabContentView

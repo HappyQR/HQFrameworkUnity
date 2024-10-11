@@ -22,30 +22,7 @@ namespace HQFramework.Editor
         private AssetBuildConfig currentBuildConfig;
         private HQAssetConfig assetConfig;
 
-        private HQAssetConfig AssetConfig
-        {
-            get
-            {
-                if (assetConfig == null)
-                {
-                    string dir = Path.GetDirectoryName(hqAssetConfigPath);
-                    string absDir = FileUtilityEditor.GetPhysicalPath(dir);
-                    if (!Directory.Exists(absDir))
-                    {
-                        Directory.CreateDirectory(absDir);
-                        AssetDatabase.Refresh();
-                    }
-                    assetConfig = AssetDatabase.LoadAssetAtPath<HQAssetConfig>(hqAssetConfigPath);
-                    if (assetConfig == null)
-                    {
-                        assetConfig = ScriptableObject.CreateInstance<HQAssetConfig>();
-                        AssetDatabase.CreateAsset(assetConfig, hqAssetConfigPath);
-                        assetConfig = AssetDatabase.LoadAssetAtPath<HQAssetConfig>(hqAssetConfigPath);
-                    }
-                }
-                return assetConfig;
-            }
-        }
+        public bool Initialized => assetConfig != null;
 
         public AssetBuildConfig CurrentBuildConfig
         {
@@ -79,6 +56,30 @@ namespace HQFramework.Editor
                 currentBuildConfig = value;
                 defaultBuildConfigTag = value.tag;
                 EditorPrefs.SetString(defaultBuildConfigKey, defaultBuildConfigTag);
+            }
+        }
+
+        public void LoadAssetConfig()
+        {
+            string dir = Path.GetDirectoryName(hqAssetConfigPath);
+            string absDir = FileUtilityEditor.GetPhysicalPath(dir);
+            if (!Directory.Exists(absDir))
+            {
+                Directory.CreateDirectory(absDir);
+                AssetDatabase.Refresh();
+            }
+            if (assetConfig == null)
+            {
+                EditorApplication.delayCall += () =>
+                {
+                    assetConfig = AssetDatabase.LoadAssetAtPath<HQAssetConfig>(hqAssetConfigPath);
+                    if (assetConfig == null)
+                    {
+                        assetConfig = ScriptableObject.CreateInstance<HQAssetConfig>();
+                        AssetDatabase.CreateAsset(assetConfig, hqAssetConfigPath);
+                        assetConfig = AssetDatabase.LoadAssetAtPath<HQAssetConfig>(hqAssetConfigPath);
+                    }
+                };
             }
         }
 
@@ -164,7 +165,7 @@ namespace HQFramework.Editor
         {
             if (buildConfigList == null)
             {
-                buildConfigList = AssetConfig.buildConfigList;
+                buildConfigList = assetConfig.buildConfigList;
             }
             return buildConfigList;
         }
@@ -173,15 +174,15 @@ namespace HQFramework.Editor
         {
             if (moduleConfigAgentList == null)
             {
-                moduleConfigAgentList = AssetConfig.moduleConfigList;
+                moduleConfigAgentList = assetConfig.moduleConfigList;
             }
             return moduleConfigAgentList;
         }
 
         public void Dispose()
         {
-            EditorUtility.SetDirty(AssetConfig);
-            AssetDatabase.SaveAssetIfDirty(AssetConfig);
+            EditorUtility.SetDirty(assetConfig);
+            AssetDatabase.SaveAssetIfDirty(assetConfig);
 
             assetConfig = null;
             currentBuildConfig = null;

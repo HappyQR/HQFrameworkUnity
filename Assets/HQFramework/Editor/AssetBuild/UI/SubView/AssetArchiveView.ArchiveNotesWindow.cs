@@ -26,17 +26,14 @@ namespace HQFramework.Editor
                 GUILayout.BeginArea(new Rect(10, 10, position.width - 20, position.height - 20));
                 GUIStyle headerStyle = "AM HeaderStyle";
 
-                GUILayout.BeginHorizontal();
-                GUILayout.Space(10);
-                GUILayout.Label("Archive Tag : ");
+                GUILayout.Label("Archive Tag : ", headerStyle);
+                GUILayout.Space(5);
                 archiveTag = EditorGUILayout.TextField(archiveTag);
-                GUILayout.Space(10);
-                GUILayout.EndHorizontal();
 
                 GUILayout.Space(10);
                 GUILayout.Label("Archive Notes: ", headerStyle);
-                GUILayout.Space(20);
-                archiveNotes = EditorGUILayout.TextArea(archiveNotes, GUILayout.Height(200));
+                GUILayout.Space(5);
+                archiveNotes = EditorGUILayout.TextArea(archiveNotes, GUILayout.Height(180));
                 GUILayout.FlexibleSpace();
 
                 GUILayout.BeginHorizontal();
