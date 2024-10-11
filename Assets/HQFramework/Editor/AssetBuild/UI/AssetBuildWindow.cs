@@ -50,7 +50,7 @@ namespace HQFramework.Editor
         protected override void OnDisable()
         {
             base.OnDisable();
-            HQAssetBuildLauncher.SaveConfigs();
+            HQAssetBuildLauncher.Dispose();
         }
     }
 }

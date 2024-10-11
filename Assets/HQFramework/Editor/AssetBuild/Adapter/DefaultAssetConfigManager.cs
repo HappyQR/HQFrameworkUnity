@@ -103,7 +103,6 @@ namespace HQFramework.Editor
             config.platform = (BuildTargetPlatform)EditorUserBuildSettings.activeBuildTarget;
             config.compressOption = CompressOption.LZ4;
             buildConfigList.Add(config);
-            Save();
             return config;
         }
 
@@ -128,7 +127,6 @@ namespace HQFramework.Editor
             agent.rootFolder = rootFolder;
             agent.isBuild = true;
             moduleConfigAgentList.Add(agent);
-            Save();
             return agent;
         }
 
@@ -139,7 +137,6 @@ namespace HQFramework.Editor
                 if (buildConfigList[i].tag == tag)
                 {
                     buildConfigList.RemoveAt(i);
-                    Save();
                     return true;
                 }
             }
@@ -157,7 +154,6 @@ namespace HQFramework.Editor
                     {
                         DeleteModuleBuildData(id);
                     }
-                    Save();
                     return true;
                 }
             }
@@ -182,13 +178,15 @@ namespace HQFramework.Editor
             return moduleConfigAgentList;
         }
 
-        public void Save()
+        public void Dispose()
         {
-            AssetConfig.buildConfigList = buildConfigList;
-            AssetConfig.moduleConfigList = moduleConfigAgentList;
-
             EditorUtility.SetDirty(AssetConfig);
             AssetDatabase.SaveAssetIfDirty(AssetConfig);
+
+            assetConfig = null;
+            currentBuildConfig = null;
+            moduleConfigAgentList = null;
+            buildConfigList = null;
         }
 
         private void DeleteModuleBuildData(int moduleID)

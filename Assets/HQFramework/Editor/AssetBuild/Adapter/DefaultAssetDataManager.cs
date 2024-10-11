@@ -99,5 +99,11 @@ namespace HQFramework.Editor
 
             return compileInfoList;
         }
+
+        public void Dispose()
+        {
+            archiveDataList = null;
+            compileInfoList = null;
+        }
     }
 }

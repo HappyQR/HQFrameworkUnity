@@ -237,8 +237,6 @@ namespace HQFramework.Editor
             preprocessorTypeList = null;
             compilerTypeList = null;
             postprocessorTypeList = null;
-
-            HQAssetBuildLauncher.SaveConfigs();
         }
     }
 }

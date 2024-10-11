@@ -8,7 +8,7 @@ using UnityEngine;
 namespace HQFramework.Editor
 {
     /// <summary>
-    /// Main entry of asset build module in HQFramework
+    /// Main entry of asset build module in HQFramework.
     /// </summary>
     public sealed class HQAssetBuildLauncher
     {
@@ -51,7 +51,6 @@ namespace HQFramework.Editor
 
             AssetPostprocessData result = AssetBuildController.BuildAssetModules(moduleConfigList, outputDir, buildConfig.platform, buildConfig.compressOption);
             bool saved = await dataManager.AddAssetModuleCompileInfosAsync(result.dataList);
-            configManager.Save();
             Debug.Log(saved ? "Asset Modules Build Successfully!" : "Asset Modules Build Error..");
         }
 
@@ -102,9 +101,10 @@ namespace HQFramework.Editor
             return configManager.GetModuleConfigs();
         }
 
-        public static void SaveConfigs()
+        public static void Dispose()
         {
-            configManager.Save();
+            configManager.Dispose();
+            dataManager.Dispose();
         }
 
         private static AssetModuleConfig GetModuleFromAgent(AssetModuleConfigAgent moduleAgent)

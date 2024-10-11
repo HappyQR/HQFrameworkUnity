@@ -230,7 +230,6 @@ namespace HQFramework.Editor
         public override void OnDisable()
         {
             moduleList = null;
-            HQAssetBuildLauncher.SaveConfigs();
         }
     }
 }
