@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace HQFramework.Editor
 {
@@ -12,7 +13,7 @@ namespace HQFramework.Editor
         {
             get
             {
-                string archiveDir = Path.Combine(HQAssetBuildLauncher.CurrentBuildConfig.assetOutputDir, "Archive");
+                string archiveDir = Path.Combine(Application.dataPath, HQAssetBuildLauncher.CurrentBuildConfig.assetOutputDir, "Archive");
                 if (!Directory.Exists(archiveDir))
                 {
                     Directory.CreateDirectory(archiveDir);
@@ -25,7 +26,7 @@ namespace HQFramework.Editor
         {
             get
             {
-                string archiveDir = Path.Combine(HQAssetBuildLauncher.CurrentBuildConfig.assetOutputDir, "Archive");
+                string archiveDir = Path.Combine(Application.dataPath, HQAssetBuildLauncher.CurrentBuildConfig.assetOutputDir, "Archive");
                 if (!Directory.Exists(archiveDir))
                 {
                     Directory.CreateDirectory(archiveDir);

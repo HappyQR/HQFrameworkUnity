@@ -15,7 +15,7 @@ namespace HQFramework.Editor
         }
 
         private static readonly string defaultBuildConfigKey = "hqframework_default_build_config";
-        private static readonly string hqAssetConfigPath = "Assets/Configuration/Editor/Asset/HQAssetConfig.asset";
+        private static readonly string hqAssetConfigPath = "Assets/Configuration/Editor/AssetBuild/HQAssetConfig.asset";
         private List<AssetModuleConfigAgent> moduleConfigAgentList;
         private List<AssetBuildConfig> buildConfigList;
         private string defaultBuildConfigTag;
@@ -43,7 +43,6 @@ namespace HQFramework.Editor
                         assetConfig = AssetDatabase.LoadAssetAtPath<HQAssetConfig>(hqAssetConfigPath);
                     }
                 }
-
                 return assetConfig;
             }
         }
@@ -99,6 +98,7 @@ namespace HQFramework.Editor
             }
 
             AssetBuildConfig config = new AssetBuildConfig();
+            config.assetOutputDir = "../Build/Assets";
             config.tag = tag;
             config.platform = (BuildTargetPlatform)EditorUserBuildSettings.activeBuildTarget;
             config.compressOption = CompressOption.LZ4;
@@ -113,7 +113,7 @@ namespace HQFramework.Editor
             {
                 moduleConfigAgentList = GetModuleConfigs();
             }
-            AssetModuleConfigAgent agent = ScriptableObject.CreateInstance<AssetModuleConfigAgent>();
+            AssetModuleConfigAgent agent = new AssetModuleConfigAgent();
             if (moduleConfigAgentList.Count == 0)
             {
                 agent.id = 0;

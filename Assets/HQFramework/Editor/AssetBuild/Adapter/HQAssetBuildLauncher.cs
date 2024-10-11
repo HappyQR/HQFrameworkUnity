@@ -15,7 +15,17 @@ namespace HQFramework.Editor
         private static DefaultAssetConfigManager configManager = new DefaultAssetConfigManager();
         private static DefaultAssetDataManager dataManager = new DefaultAssetDataManager();
 
-        public static AssetBuildConfig CurrentBuildConfig => configManager.CurrentBuildConfig;
+        public static AssetBuildConfig CurrentBuildConfig
+        {
+            get
+            {
+                return configManager.CurrentBuildConfig;
+            }
+            set
+            {
+                configManager.CurrentBuildConfig = value;
+            }
+        }
 
         public static async void BuildAssetModules(List<AssetModuleConfigAgent> moduleConfigAgentList)
         {

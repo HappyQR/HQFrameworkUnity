@@ -1,8 +1,9 @@
-using UnityEngine;
+using System;
 
 namespace HQFramework.Editor
 {
-    public class AssetModuleConfigAgent : ScriptableObject
+    [Serializable]
+    public class AssetModuleConfigAgent
     {
         public int id;
         public string moduleName;
