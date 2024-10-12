@@ -40,10 +40,12 @@ namespace HQFramework.Resource
                 public int totalSize;
                 public int downloadedSize;
                 public int itemCount;
+                public Queue<DownloadItem> downloadedQueue = new Queue<DownloadItem>();
             }
 
             private readonly ResourceManager resourceManager;
             private readonly IDownloadManager downloadManager;
+            private readonly string tempDownloadDir;
 
             private Dictionary<int, DownloadItem> downloadDic; // key: downloadID
             private Dictionary<int, DownloadGroup> downloadGroupDic; // key: downloadGroupID
@@ -59,6 +61,11 @@ namespace HQFramework.Resource
             {
                 this.resourceManager = resourceManager;
                 this.downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
+                this.tempDownloadDir = Path.Combine(resourceManager.config.assetPersistentDir, "temp_download_cache");
+                if (!Directory.Exists(tempDownloadDir))
+                {
+                    Directory.CreateDirectory(tempDownloadDir);
+                }
 
                 downloadDic = new Dictionary<int, DownloadItem>();
                 downloadGroupDic = new Dictionary<int, DownloadGroup>();
@@ -94,7 +101,7 @@ namespace HQFramework.Resource
                     for (int i = 0; i < bundleList.Count; i++)
                     {
                         string url = Path.Combine(module.moduleUrlRoot, bundleList[i].bundleUrlRelatedToModule);
-                        string filePath = resourceManager.GetBundleFilePath(bundleList[i]);
+                        string filePath = GetBundleDownloadPath(bundleList[i]);
                         DownloadItem item = DownloadItem.Create(hotfixID, url, filePath, bundleList[i]);
                         AddDownloadItem(item);
                     }
@@ -110,7 +117,7 @@ namespace HQFramework.Resource
                 for (int i = 0; i < bundleList.Count; i++)
                 {
                     string url = Path.Combine(module.moduleUrlRoot, bundleList[i].bundleUrlRelatedToModule);
-                    string filePath = resourceManager.GetBundleFilePath(bundleList[i]);
+                    string filePath = GetBundleDownloadPath(bundleList[i]);
                     DownloadItem item = DownloadItem.Create(hotfixID, url, filePath, bundleList[i]);
                     AddDownloadItem(item);
                 }
@@ -121,7 +128,7 @@ namespace HQFramework.Resource
             {
                 downloadGroupDic[item.hotfixID].totalSize += item.bundleInfo.size;
                 downloadGroupDic[item.hotfixID].itemCount++;
-                int downloadID = downloadManager.AddDownload(item.url, item.filePath, false, item.hotfixID);
+                int downloadID = downloadManager.AddDownload(item.url, item.filePath, true, item.hotfixID);
                 downloadManager.AddDownloadErrorEvent(downloadID, OnDownloadError);
                 downloadManager.AddDownloadCompleteEvent(downloadID, OnDownloadComplete);
                 downloadManager.AddDownloadUpdateEvent(downloadID, OnDownloadUpdate);
@@ -262,52 +269,62 @@ namespace HQFramework.Resource
                 downloadGroupDic[item.hotfixID].itemCount--;
                 // do the hash check
                 string localHash = Utility.Hash.ComputeHash(item.filePath);
-                if (localHash == item.bundleInfo.md5)
+                if (localHash != item.bundleInfo.md5)
                 {
-                    // hash check passed
-                    if (downloadGroupDic[item.hotfixID].itemCount > 0)
-                    {
-                        // continue.
-                        return;
-                    }
-                    //this group's download complete.
-                    downloadGroupDic.Remove(item.hotfixID);
-                    if (item.hotfixID == resourceManager.resourceHelper.LauncherHotfixID) // launcher hotfix complete.
-                    {
-                        DeleteObsoleteModules();
-                        foreach (AssetModuleInfo remoteModule in resourceManager.necessaryHotfixContent.Keys)
-                        {
-                            MergeRemoteModuleToLocalManifest(remoteModule);
-                        }
-                        resourceManager.localManifest.productName = resourceManager.remoteManifest.productName;
-                        resourceManager.localManifest.productVersion = resourceManager.remoteManifest.productVersion;
-                        resourceManager.localManifest.runtimePlatform = resourceManager.remoteManifest.runtimePlatform;
-                        resourceManager.localManifest.resourceVersion = resourceManager.remoteManifest.resourceVersion;
-                        resourceManager.localManifest.minimalSupportedVersion = resourceManager.remoteManifest.minimalSupportedVersion;
-                        resourceManager.localManifest.releaseNote = resourceManager.remoteManifest.releaseNote;
-                        resourceManager.localManifest.isBuiltinManifest = false;
-                        resourceManager.necessaryHotfixContent.Clear();
-                        resourceManager.necessaryHotfixContent = null;
-                    }
-                    else                                                                // separate hotfix complete.
-                    {
-                        AssetModuleInfo remoteModule = resourceManager.remoteManifest.moduleDic[item.bundleInfo.moduleID];
-                        MergeRemoteModuleToLocalManifest(remoteModule);
-                        resourceManager.separateHotfixContent.Remove(remoteModule);
-                    }
-
-                    if (completeEventDic.ContainsKey(item.hotfixID))
-                    {
-                        HotfixDownloadCompleteEventArgs args = HotfixDownloadCompleteEventArgs.Create(item.hotfixID);
-                        completeEventDic[item.hotfixID]?.Invoke(args);
-                        ReferencePool.Recyle(args);
-                        ClearHotfix(item.hotfixID);
-                    }
-                }
-                else
-                {
-                    // redownload
+                    // download again
                     AddDownloadItem(item);
+                    return;
+                }
+
+                // bundle item download complete
+                DownloadGroup group = downloadGroupDic[item.hotfixID];
+                group.downloadedQueue.Enqueue(item);
+                if (group.itemCount > 0)
+                {
+                    // continue download the rest of bundles
+                    return;
+                }
+                // this group's download complete
+                while (group.downloadedQueue.Count > 0)
+                {
+                    DownloadItem downloadItem = group.downloadedQueue.Dequeue();
+                    string destBundlePath = resourceManager.GetBundleFilePath(downloadItem.bundleInfo);
+                    File.Copy(downloadItem.filePath, destBundlePath);
+                    File.Delete(downloadItem.filePath);
+                }
+                downloadGroupDic.Remove(item.hotfixID);
+
+                // override local manifest
+                if (item.hotfixID == resourceManager.resourceHelper.LauncherHotfixID) // launcher hotfix complete.
+                {
+                    DeleteObsoleteModules();
+                    foreach (AssetModuleInfo remoteModule in resourceManager.necessaryHotfixContent.Keys)
+                    {
+                        MergeRemoteModuleToLocalManifest(remoteModule);
+                    }
+                    resourceManager.localManifest.productName = resourceManager.remoteManifest.productName;
+                    resourceManager.localManifest.productVersion = resourceManager.remoteManifest.productVersion;
+                    resourceManager.localManifest.runtimePlatform = resourceManager.remoteManifest.runtimePlatform;
+                    resourceManager.localManifest.resourceVersion = resourceManager.remoteManifest.resourceVersion;
+                    resourceManager.localManifest.minimalSupportedVersion = resourceManager.remoteManifest.minimalSupportedVersion;
+                    resourceManager.localManifest.releaseNote = resourceManager.remoteManifest.releaseNote;
+                    resourceManager.localManifest.isBuiltinManifest = false;
+                    resourceManager.necessaryHotfixContent.Clear();
+                    resourceManager.necessaryHotfixContent = null;
+                }
+                else                                                                // separate hotfix complete.
+                {
+                    AssetModuleInfo remoteModule = resourceManager.remoteManifest.moduleDic[item.bundleInfo.moduleID];
+                    MergeRemoteModuleToLocalManifest(remoteModule);
+                    resourceManager.separateHotfixContent.Remove(remoteModule);
+                }
+
+                if (completeEventDic.ContainsKey(item.hotfixID))
+                {
+                    HotfixDownloadCompleteEventArgs args = HotfixDownloadCompleteEventArgs.Create(item.hotfixID);
+                    completeEventDic[item.hotfixID]?.Invoke(args);
+                    ReferencePool.Recyle(args);
+                    ClearHotfix(item.hotfixID);
                 }
 
                 if (downloadDic.Count == 0) // hotfix complete.
@@ -357,6 +374,11 @@ namespace HQFramework.Resource
                 {
                     resourceManager.localManifest.moduleDic.Remove(obsoleteModuleList[i]);
                 }
+            }
+
+            private string GetBundleDownloadPath(AssetBundleInfo bundleInfo)
+            {
+                return Path.Combine(tempDownloadDir, bundleInfo.md5);
             }
 
             private void ClearHotfix(int hotfixID)
