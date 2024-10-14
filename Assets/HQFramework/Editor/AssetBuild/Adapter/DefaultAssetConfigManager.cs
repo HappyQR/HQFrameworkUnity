@@ -8,12 +8,6 @@ namespace HQFramework.Editor
 {
     public class DefaultAssetConfigManager
     {
-        private class HQAssetConfig : ScriptableObject
-        {
-            public List<AssetBuildConfig> buildConfigList = new List<AssetBuildConfig>();
-            public List<AssetModuleConfigAgent> moduleConfigList = new List<AssetModuleConfigAgent>();
-        }
-
         private static readonly string defaultBuildConfigKey = "hqframework_default_build_config";
         private static readonly string hqAssetConfigPath = "Assets/Configuration/Editor/AssetBuild/HQAssetConfig.asset";
         private List<AssetModuleConfigAgent> moduleConfigAgentList;

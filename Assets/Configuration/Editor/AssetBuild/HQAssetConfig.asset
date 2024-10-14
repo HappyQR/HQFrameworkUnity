@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 8b1d4782031de474cb899e95f1b8ce6a, type: 3}
   m_Name: HQAssetConfig
   m_EditorClassIdentifier: HQFramework.Editor:HQFramework.Editor:DefaultAssetConfigManager/HQAssetConfig
   buildConfigList:
@@ -24,14 +24,27 @@ MonoBehaviour:
   moduleConfigList:
   - id: 0
     moduleName: Public
-    createTime: 2024-10-11 17:31:40
-    buildVersionCode: 12
-    devNotes: 'xxx
+    createTime: 2024-10-14 16:44:38
+    buildVersionCode: 0
+    devNotes: 'absbna
 
-      xx
 
-      xxxx
+      snansm\
+
 
       x'
     rootFolder: {fileID: 102900000, guid: d1588484680fe324e90e5ba9afcd9109, type: 3}
+    isBuild: 1
+  - id: 1
+    moduleName: Portal
+    createTime: 2024-10-14 16:44:54
+    buildVersionCode: 0
+    devNotes: 'xx
+
+
+      xxxx
+
+
+      portal'
+    rootFolder: {fileID: 102900000, guid: 4b9214540e4c10044805a9b38affab92, type: 3}
     isBuild: 1
