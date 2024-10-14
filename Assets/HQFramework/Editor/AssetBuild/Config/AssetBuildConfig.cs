@@ -1,4 +1,5 @@
 using System;
+using HQFramework.Resource;
 
 namespace HQFramework.Editor
 {
@@ -20,6 +21,8 @@ namespace HQFramework.Editor
         
 
         // Asset Publish
+        public AssetHotfixMode hotfixMode;
+        
     }
 
     public enum BuildTargetPlatform

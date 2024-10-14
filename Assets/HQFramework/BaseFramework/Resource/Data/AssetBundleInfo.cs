@@ -6,7 +6,6 @@ namespace HQFramework.Resource
     [Serializable]
     public class AssetBundleInfo
     {
-        public uint bundleID;
         public int moduleID;
         public string moduleName;
         public string bundleName;
