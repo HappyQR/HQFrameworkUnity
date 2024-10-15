@@ -8,7 +8,7 @@ namespace HQFramework.Editor
         public int id;
         public string moduleName;
         public string createTime;
-        public uint buildVersionCode;
+        public int buildVersionCode;
         public string devNotes;
 
         public UnityEngine.Object rootFolder;

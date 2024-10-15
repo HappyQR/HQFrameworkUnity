@@ -5,7 +5,7 @@ namespace HQFramework.Editor
 {
     /// <summary>
     /// 1. configure the release notes(general, each module)
-    /// 2. generate the asset module manifest
+    /// 2. generate the asset module manifest(built-in manifest and remote manifest)
     /// 3. configure the built-in module and copy the built-in assets to package
     /// </summary>
     public sealed class AssetPublishController
