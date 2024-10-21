@@ -10,7 +10,7 @@ namespace HQFramework.Editor
     /// </summary>
     public sealed class AssetPublishController
     {
-        public AssetPublishData PreprocessAssetArchive(AssetArchiveData archiveData, Dictionary<int, bool> builtinMap, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, string tag)
+        public static AssetPublishData PreprocessAssetArchive(AssetArchiveData archiveData, Dictionary<int, bool> builtinMap, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, string tag)
         {
             AssetPublishData result = new AssetPublishData();
             result.tag = tag;
@@ -50,7 +50,7 @@ namespace HQFramework.Editor
             return result;
         }
 
-        public bool PublishAssets(AssetPublishData publishData)
+        public static bool PublishAssets(AssetPublishData publishData)
         {
             return false;
         }
