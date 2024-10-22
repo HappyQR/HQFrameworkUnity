@@ -101,7 +101,7 @@ namespace HQFramework.Editor
             return config;
         }
 
-        public AssetModuleConfigAgent AddModuleConfig(string moduleName, UnityEngine.Object rootFolder, string devNotes)
+        public AssetModuleConfigAgent AddModuleConfig(string moduleName, bool isBuiltin, UnityEngine.Object rootFolder, string devNotes)
         {
             if (moduleConfigAgentList == null)
             {
@@ -121,6 +121,7 @@ namespace HQFramework.Editor
             agent.devNotes = devNotes;
             agent.rootFolder = rootFolder;
             agent.isBuild = true;
+            agent.isBuiltin = isBuiltin;
             moduleConfigAgentList.Add(agent);
             return agent;
         }

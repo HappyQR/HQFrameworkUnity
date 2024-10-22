@@ -9,6 +9,7 @@ namespace HQFramework.Editor
         {
             private string moduleName;
             private string devNotes;
+            private bool isBuiltin;
             private UnityEngine.Object rootFolder;
 
             private AssetModuleView parentView;
@@ -33,13 +34,22 @@ namespace HQFramework.Editor
                 moduleName = GUILayout.TextField(moduleName);
                 GUILayout.Space(10);
 
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Is Built-in:", headerStyle);
+                GUILayout.Space(5);
+                isBuiltin = GUILayout.Toggle(isBuiltin, "");
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                GUILayout.Space(10);
+
                 GUILayout.Label("Module Assets Root Folder:", headerStyle);
                 GUILayout.Space(5);
                 rootFolder = EditorGUILayout.ObjectField(GUIContent.none, rootFolder, typeof(DefaultAsset), false);
                 GUILayout.Space(15);
 
                 GUILayout.Label("Module Dev Notes:", headerStyle);
-                devNotes = EditorGUILayout.TextArea(devNotes, GUILayout.Height(130));
+                GUILayout.Space(5);
+                devNotes = EditorGUILayout.TextArea(devNotes, GUILayout.Height(120));
                 GUILayout.FlexibleSpace();
 
                 if (GUILayout.Button("Create New Module", GUILayout.Height(35)))
@@ -50,7 +60,7 @@ namespace HQFramework.Editor
                     }
                     else
                     {
-                        AssetModuleConfigAgent config = HQAssetBuildLauncher.CreateModuleConfig(moduleName, rootFolder, devNotes);
+                        AssetModuleConfigAgent config = HQAssetBuildLauncher.CreateModuleConfig(moduleName, isBuiltin, rootFolder, devNotes);
                         parentView.moduleList = HQAssetBuildLauncher.GetModuleConfigs();
                         Close();
                     }

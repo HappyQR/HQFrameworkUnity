@@ -95,9 +95,9 @@ namespace HQFramework.Editor
             return configManager.AddBuildConfig(tag);
         }
 
-        public static AssetModuleConfigAgent CreateModuleConfig(string moduleName, UnityEngine.Object rootFolder, string devNotes)
+        public static AssetModuleConfigAgent CreateModuleConfig(string moduleName, bool isBuiltin, UnityEngine.Object rootFolder, string devNotes)
         {
-            return configManager.AddModuleConfig(moduleName, rootFolder, devNotes);
+            return configManager.AddModuleConfig(moduleName, isBuiltin, rootFolder, devNotes);
         }
 
         public static bool DeleteBuildConfig(string tag)
@@ -133,6 +133,7 @@ namespace HQFramework.Editor
             config.moduleName = moduleAgent.moduleName;
             config.buildVersionCode = moduleAgent.buildVersionCode;
             config.createTime = moduleAgent.createTime;
+            config.isBuiltin = moduleAgent.isBuiltin;
             config.devNotes = moduleAgent.devNotes;
             config.bundleConfigList = new List<AssetBundleConfig>();
             string[] subFolders = AssetDatabase.GetSubFolders(AssetDatabase.GetAssetPath(moduleAgent.rootFolder));

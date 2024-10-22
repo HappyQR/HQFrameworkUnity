@@ -10,7 +10,12 @@ namespace HQFramework.Editor
     /// </summary>
     public sealed class AssetPublishController
     {
-        public static AssetPublishData PreprocessAssetArchive(AssetArchiveData archiveData, Dictionary<int, bool> builtinMap, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, string tag)
+        public static AssetPublishData PreprocessAssetArchivePreHotfix(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, string tag)
+        {
+            return null;
+        }
+
+        public static AssetPublishData PreprocessAssetArchiveSeparateHotfix(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, string tag)
         {
             AssetPublishData result = new AssetPublishData();
             result.tag = tag;
@@ -26,7 +31,6 @@ namespace HQFramework.Editor
                 module.moduleName = compileInfo.moduleName;
                 module.currentPatchVersion = compileInfo.buildVersionCode;
                 module.minimalSupportedPatchVersion = moduleMinimalSupportedVersionDic[compileInfo.moduleID];
-                module.isBuiltin = builtinMap[compileInfo.moduleID];
                 module.releaseNote = moduleReleaseNotesDic[compileInfo.moduleID];
                 module.dependencies = compileInfo.dependencies;
                 module.assetsDic = compileInfo.assetsDic;

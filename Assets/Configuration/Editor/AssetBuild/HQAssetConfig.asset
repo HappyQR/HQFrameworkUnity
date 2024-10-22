@@ -26,6 +26,7 @@ MonoBehaviour:
   - id: 0
     moduleName: Public
     createTime: 2024-10-14 16:44:38
+    isBuiltin: 1
     buildVersionCode: 0
     devNotes: 'absbna
 
@@ -35,10 +36,11 @@ MonoBehaviour:
 
       x'
     rootFolder: {fileID: 102900000, guid: d1588484680fe324e90e5ba9afcd9109, type: 3}
-    isBuild: 1
+    isBuild: 0
   - id: 1
     moduleName: Portal
     createTime: 2024-10-14 16:44:54
+    isBuiltin: 0
     buildVersionCode: 0
     devNotes: 'xx
 

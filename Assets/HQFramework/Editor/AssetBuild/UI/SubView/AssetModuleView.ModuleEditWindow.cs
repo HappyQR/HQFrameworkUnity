@@ -13,7 +13,7 @@ namespace HQFramework.Editor
             {
                 var window = GetWindow<ModuleEditWindow>();
                 window.config = target;
-                window.minSize = window.maxSize = new Vector2(480, 380);
+                window.minSize = window.maxSize = new Vector2(480, 400);
                 window.titleContent = new GUIContent("Asset Module Edit");
                 window.Show();
             }
@@ -33,6 +33,14 @@ namespace HQFramework.Editor
                 GUILayout.Label($"Next Build Code : {config.buildVersionCode}", headerStyle);
                 GUILayout.Space(10);
 
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Is Built-in:", headerStyle);
+                GUILayout.Space(5);
+                config.isBuiltin = GUILayout.Toggle(config.isBuiltin, "");
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                GUILayout.Space(10);
+
                 GUILayout.Label("Module Name:", headerStyle);
                 GUILayout.Space(5);
                 config.moduleName = GUILayout.TextField(config.moduleName);
@@ -44,7 +52,8 @@ namespace HQFramework.Editor
                 GUILayout.Space(15);
 
                 GUILayout.Label("Module Dev Notes:", headerStyle);
-                config.devNotes = EditorGUILayout.TextArea(config.devNotes, GUILayout.Height(130));
+                GUILayout.Space(5);
+                config.devNotes = EditorGUILayout.TextArea(config.devNotes, GUILayout.Height(120));
                 GUILayout.FlexibleSpace();
 
                 if (GUILayout.Button("Save", GUILayout.Height(35)))

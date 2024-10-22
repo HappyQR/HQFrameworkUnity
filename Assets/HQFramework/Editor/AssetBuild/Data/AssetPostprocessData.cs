@@ -15,6 +15,7 @@ namespace HQFramework.Editor
         public int moduleID;
         public string moduleName;
         public int buildVersionCode;
+        public bool isBuiltin;
         public string devNotes;
         public string buildTime;
         public List<AssetBundleCompileInfo> bundleList;

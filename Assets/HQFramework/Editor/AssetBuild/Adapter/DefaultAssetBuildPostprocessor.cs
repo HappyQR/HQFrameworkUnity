@@ -24,6 +24,7 @@ namespace HQFramework.Editor
                 moduleCompileInfo.moduleID = item.Key.id;
                 moduleCompileInfo.moduleName = item.Key.moduleName;
                 moduleCompileInfo.buildVersionCode = item.Key.buildVersionCode;
+                moduleCompileInfo.isBuiltin = item.Key.isBuiltin;
                 moduleCompileInfo.devNotes = item.Key.devNotes;
                 moduleCompileInfo.buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 moduleCompileInfo.bundleList = item.Value;
