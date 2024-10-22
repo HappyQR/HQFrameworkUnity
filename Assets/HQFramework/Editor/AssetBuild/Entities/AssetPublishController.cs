@@ -10,12 +10,14 @@ namespace HQFramework.Editor
     /// </summary>
     public sealed class AssetPublishController
     {
-        public static AssetPublishData PreprocessAssetArchivePreHotfix(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, string tag)
+        private static IAssetPublishHelper publishHelper;
+
+        public static void SetHelper(IAssetPublishHelper helper)
         {
-            return null;
+            publishHelper = helper;
         }
 
-        public static AssetPublishData PreprocessAssetArchiveSeparateHotfix(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, string tag)
+        public static AssetPublishData PreprocessAssetArchive(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, string tag)
         {
             AssetPublishData result = new AssetPublishData();
             result.tag = tag;
@@ -29,6 +31,7 @@ namespace HQFramework.Editor
                 AssetModuleInfo module = new AssetModuleInfo();
                 module.id = compileInfo.moduleID;
                 module.moduleName = compileInfo.moduleName;
+                module.isBuiltin = compileInfo.isBuiltin;
                 module.currentPatchVersion = compileInfo.buildVersionCode;
                 module.minimalSupportedPatchVersion = moduleMinimalSupportedVersionDic[compileInfo.moduleID];
                 module.releaseNote = moduleReleaseNotesDic[compileInfo.moduleID];
@@ -45,9 +48,10 @@ namespace HQFramework.Editor
                     bundleInfo.md5 = bundleCompileInfo.md5;
                     bundleInfo.size = bundleCompileInfo.size;
                     bundleInfo.dependencies = bundleCompileInfo.dependencies;
-
+                    bundleInfo.bundleUrlRelatedToModule = publishHelper.GetBundleRelatedUrl(bundleInfo, module);
                     module.bundleDic.Add(bundleInfo.bundleName, bundleInfo);
                 }
+                module.moduleUrlRoot = publishHelper.GetModuleUrlRoot(module);
                 result.moduleDic.Add(module.id, module);
             }
 
