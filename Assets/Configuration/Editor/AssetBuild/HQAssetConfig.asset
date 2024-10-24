@@ -22,6 +22,8 @@ MonoBehaviour:
     compressOption: 256
     enableEncryption: 0
     hotfixMode: 0
+    publishHelperName: 
+    hotfixManifestUrl: 
   moduleConfigList:
   - id: 0
     moduleName: Public
@@ -36,7 +38,7 @@ MonoBehaviour:
 
       x'
     rootFolder: {fileID: 102900000, guid: d1588484680fe324e90e5ba9afcd9109, type: 3}
-    isBuild: 0
+    isBuild: 1
   - id: 1
     moduleName: Portal
     createTime: 2024-10-14 16:44:54

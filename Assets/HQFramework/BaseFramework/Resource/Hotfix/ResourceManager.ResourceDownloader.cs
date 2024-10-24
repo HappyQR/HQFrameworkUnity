@@ -61,7 +61,7 @@ namespace HQFramework.Resource
             {
                 this.resourceManager = resourceManager;
                 this.downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
-                this.tempDownloadDir = Path.Combine(resourceManager.config.assetPersistentDir, "temp_download_cache");
+                this.tempDownloadDir = Path.Combine(resourceManager.PersistentDir, "temp_download_cache");
                 if (!Directory.Exists(tempDownloadDir))
                 {
                     Directory.CreateDirectory(tempDownloadDir);

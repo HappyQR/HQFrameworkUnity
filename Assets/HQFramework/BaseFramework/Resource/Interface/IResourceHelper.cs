@@ -14,7 +14,25 @@ namespace HQFramework.Resource
             get;
         }
         
-        ResourceConfig LoadResourceConfig();
+        AssetHotfixMode HotfixMode
+        {
+            get;
+        }
+
+        string AssetsPersistentDir
+        {
+            get;
+        }
+
+        string AssetsBuiltinDir
+        {
+            get;
+        }
+
+        string HotfixManifestUrl
+        {
+            get;
+        }
 
         Task<AssetModuleManifest> LoadAssetManifestAsync();
 

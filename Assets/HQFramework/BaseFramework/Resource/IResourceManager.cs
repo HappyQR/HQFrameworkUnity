@@ -4,8 +4,6 @@ namespace HQFramework.Resource
 {
     public interface IResourceManager
     {
-        AssetHotfixMode HotfixMode { get; }
-
         string PersistentDir { get; }
 
         string BuiltinDir { get; }

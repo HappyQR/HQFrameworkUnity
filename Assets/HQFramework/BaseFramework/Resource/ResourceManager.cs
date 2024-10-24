@@ -5,7 +5,6 @@ namespace HQFramework.Resource
 {
     internal sealed partial class ResourceManager : HQModuleBase, IResourceManager
     {
-        private ResourceConfig config;
         private IResourceHelper resourceHelper;
         private ResourceHotfixChecker hotfixChecker;
         private ResourceDownloader resourceDownloader;
@@ -19,9 +18,8 @@ namespace HQFramework.Resource
         private Dictionary<string, string> bundleFilePathDic;
 
         public override byte Priority => byte.MaxValue;
-        public AssetHotfixMode HotfixMode => config.hotfixMode;
-        public string PersistentDir => config.assetPersistentDir;
-        public string BuiltinDir => config.assetBuiltinDir;
+        public string PersistentDir => resourceHelper.AssetsPersistentDir;
+        public string BuiltinDir => resourceHelper.AssetsBuiltinDir;
 
         protected override void OnInitialize()
         {
@@ -36,12 +34,11 @@ namespace HQFramework.Resource
         public void SetHelper(IResourceHelper resourceHelper)
         {
             this.resourceHelper = resourceHelper;
-            config = resourceHelper.LoadResourceConfig();
         }
 
         public int LaunchHotfixCheck()
         {
-            if (config.hotfixMode == AssetHotfixMode.NoHotfix)
+            if (resourceHelper.HotfixMode == AssetHotfixMode.NoHotfix)
             {
                 throw new InvalidOperationException("You can't use CheckHotfix under NoHotfix mode.");
             }
@@ -55,7 +52,7 @@ namespace HQFramework.Resource
 
         public int ModuleHotfixCheck(int moduleID)
         {
-            if (config.hotfixMode != AssetHotfixMode.SeparateHotfix)
+            if (resourceHelper.HotfixMode != AssetHotfixMode.SeparateHotfix)
             {
                 throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
             }
@@ -75,7 +72,7 @@ namespace HQFramework.Resource
 
         public int LaunchHotfix()
         {
-            if (config.hotfixMode == AssetHotfixMode.NoHotfix)
+            if (resourceHelper.HotfixMode == AssetHotfixMode.NoHotfix)
             {
                 throw new InvalidOperationException("You can't use CheckHotfix under NoHotfix mode.");
             }
@@ -92,7 +89,7 @@ namespace HQFramework.Resource
 
         public int ModuleHotfix(int moduleID)
         {
-            if (config.hotfixMode != AssetHotfixMode.SeparateHotfix)
+            if (resourceHelper.HotfixMode != AssetHotfixMode.SeparateHotfix)
             {
                 throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
             }

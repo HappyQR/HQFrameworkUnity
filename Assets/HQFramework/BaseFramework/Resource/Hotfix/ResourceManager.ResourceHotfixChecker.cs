@@ -74,7 +74,7 @@ namespace HQFramework.Resource
                 {
                     using HttpClient client = new HttpClient();
                     client.Timeout = TimeSpan.FromSeconds(hotfixTimeout);
-                    string remoteManifestJson = await client.GetStringAsync(resourceManager.config.hotfixManifestUrl);
+                    string remoteManifestJson = await client.GetStringAsync(resourceManager.resourceHelper.HotfixManifestUrl);
                     resourceManager.remoteManifest = SerializeManager.JsonToObject<AssetModuleManifest>(remoteManifestJson);
                     HotfixCheckCompleteEventArgs args = LaunchAssetsHotfix();
                     InvokeCompleteEvent(hotfixID, args);
@@ -147,7 +147,7 @@ namespace HQFramework.Resource
                 resourceManager.necessaryHotfixContent = new Dictionary<AssetModuleInfo, List<AssetBundleInfo>>();
                 foreach (AssetModuleInfo remoteModule in resourceManager.remoteManifest.moduleDic.Values)
                 {
-                    if (resourceManager.config.hotfixMode == AssetHotfixMode.SeparateHotfix && !remoteModule.isBuiltin)
+                    if (resourceManager.resourceHelper.HotfixMode == AssetHotfixMode.SeparateHotfix && !remoteModule.isBuiltin)
                     {
                         continue;
                     }
