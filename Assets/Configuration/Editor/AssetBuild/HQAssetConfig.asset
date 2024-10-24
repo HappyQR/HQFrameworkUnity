@@ -21,15 +21,13 @@ MonoBehaviour:
     platform: 2
     compressOption: 256
     enableEncryption: 0
-    hotfixMode: 0
-    publishHelperName: 
-    hotfixManifestUrl: 
+    publishHelperName: HQFramework.Editor.DefaultAssetPublishHelper
   moduleConfigList:
   - id: 0
     moduleName: Public
     createTime: 2024-10-14 16:44:38
     isBuiltin: 1
-    buildVersionCode: 0
+    buildVersionCode: 1
     devNotes: 'absbna
 
 
@@ -43,7 +41,7 @@ MonoBehaviour:
     moduleName: Portal
     createTime: 2024-10-14 16:44:54
     isBuiltin: 0
-    buildVersionCode: 0
+    buildVersionCode: 1
     devNotes: 'xx
 
 

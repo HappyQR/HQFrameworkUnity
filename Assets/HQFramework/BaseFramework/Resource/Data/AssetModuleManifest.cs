@@ -8,7 +8,6 @@ namespace HQFramework.Resource
     {
         public string productName;
         public string productVersion;
-        public string runtimePlatform;
         public int resourceVersion;
         public int minimalSupportedVersion;
         public string releaseNote;

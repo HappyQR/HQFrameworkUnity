@@ -304,7 +304,6 @@ namespace HQFramework.Resource
                     }
                     resourceManager.localManifest.productName = resourceManager.remoteManifest.productName;
                     resourceManager.localManifest.productVersion = resourceManager.remoteManifest.productVersion;
-                    resourceManager.localManifest.runtimePlatform = resourceManager.remoteManifest.runtimePlatform;
                     resourceManager.localManifest.resourceVersion = resourceManager.remoteManifest.resourceVersion;
                     resourceManager.localManifest.minimalSupportedVersion = resourceManager.remoteManifest.minimalSupportedVersion;
                     resourceManager.localManifest.releaseNote = resourceManager.remoteManifest.releaseNote;

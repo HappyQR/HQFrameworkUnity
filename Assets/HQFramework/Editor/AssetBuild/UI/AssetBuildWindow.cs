@@ -35,6 +35,7 @@ namespace HQFramework.Editor
             GUIContent btnConfigContent = EditorGUIUtility.IconContent("SettingsIcon");
             btnConfigContent.text = " Build Settings";
             // GUIContent btnRuntimeContent = EditorGUIUtility.IconContent("d_Profiler.Memory");
+            // "d_RotateTool On"
 
             contentList = new TabContentView[]
             {

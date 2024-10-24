@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using HQFramework.Resource;
 using UnityEditor;
 using UnityEngine;
 
@@ -88,6 +89,19 @@ namespace HQFramework.Editor
         public static Task<List<AssetModuleCompileInfo>> GetAssetModuleCompileHistoryAsync()
         {
             return dataManager.GetAssetModuleCompileHistoryAsync();
+        }
+
+        public static async void PublishAssetArchive(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
+        {
+            Type publishHelperType = Type.GetType(CurrentBuildConfig.publishHelperName);
+            IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
+            AssetPublishController.SetHelper(publishHelper);
+            AssetModuleManifest result = await AssetPublishController.PublishAssets(archiveData, releaseNote, resourceVersion, minimalSupportedPatchVersion, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, uploadCallback, endCallback);
+            if (result != null)
+            {
+                string jsonStr = JsonUtilityEditor.ToJson(result);
+                Debug.Log($"Publish Successfully!\n{jsonStr}");
+            }
         }
 
         public static AssetBuildConfig CreateBuildConfig(string tag)

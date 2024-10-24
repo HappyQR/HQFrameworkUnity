@@ -5,10 +5,16 @@ namespace HQFramework.Editor
 {
     public interface IAssetPublishHelper
     {
+        AssetModuleManifest GetBasicManifest();
+
         string GetBundleRelatedUrl(AssetBundleInfo bundleInfo, AssetModuleInfo moduleInfo);
 
         string GetModuleUrlRoot(AssetModuleInfo moduleInfo);
 
-        Task<bool> UploadFile(string filePath, string relatedUrl);
+        Task<AssetModuleManifest> GetRemoteManifestAsync();
+
+        Task<bool> UploadBundleAsync(AssetBundleUploadItem item);
+
+        Task<bool> UploadManifestAsync(AssetModuleManifest manifest);
     }
 }

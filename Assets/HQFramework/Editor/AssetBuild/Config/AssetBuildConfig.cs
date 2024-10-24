@@ -21,9 +21,7 @@ namespace HQFramework.Editor
         
 
         // Asset Publish
-        public AssetHotfixMode hotfixMode;
         public string publishHelperName;
-        public string hotfixManifestUrl;
     }
 
     public enum BuildTargetPlatform

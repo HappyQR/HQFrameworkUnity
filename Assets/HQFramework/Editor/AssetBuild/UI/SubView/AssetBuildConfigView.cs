@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,6 +20,8 @@ namespace HQFramework.Editor
         private int selectedCompilerTypeIndex;
         private string[] postprocessorTypeList;
         private int selectedPostprocessorTypeIndex;
+        private string[] publishHelperTypeList;
+        private int selectedPublishHelperTypeIndex;
         private Vector2 scrollPos;
 
         public AssetBuildConfigView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
@@ -118,6 +119,15 @@ namespace HQFramework.Editor
             }
             GUILayout.Space(10);
 
+            GUILayout.Label("Select a Asset Publish Helper:", headerStyle);
+            GUILayout.Space(5);
+            selectedPublishHelperTypeIndex = EditorGUILayout.Popup(selectedPublishHelperTypeIndex, publishHelperTypeList);
+            if (postprocessorTypeList.Length > 0)
+            {
+                currentBuildConfig.publishHelperName = publishHelperTypeList[selectedPublishHelperTypeIndex];
+            }
+            GUILayout.Space(10);
+
             GUILayout.Label("Select a Compression Function:", headerStyle);
             GUILayout.Space(5);
             currentBuildConfig.compressOption = (CompressOption)EditorGUILayout.EnumPopup(currentBuildConfig.compressOption);
@@ -169,6 +179,15 @@ namespace HQFramework.Editor
                     break;
                 }
             }
+
+            for (int i = 0; i < publishHelperTypeList.Length; i++)
+            {
+                if (publishHelperTypeList[i] == currentBuildConfig.publishHelperName)
+                {
+                    selectedPublishHelperTypeIndex = i;
+                    break;
+                }
+            }
         }
 
         private void PopupNewOption()
@@ -200,6 +219,7 @@ namespace HQFramework.Editor
             List<string> preprocessorTypes = new List<string>();
             List<string> postprocessorTypes = new List<string>();
             List<string> compilerTypes = new List<string>();
+            List<string> publishHelperTypes = new List<string>();
 
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             for (int i = 0; i < assemblies.Length; i++)
@@ -221,6 +241,10 @@ namespace HQFramework.Editor
                         {
                             postprocessorTypes.Add(types[j].FullName);
                         }
+                        else if (typeof(IAssetPublishHelper).IsAssignableFrom(types[j]))
+                        {
+                            publishHelperTypes.Add(types[j].FullName);
+                        }
                     }
                 }
             }
@@ -228,6 +252,7 @@ namespace HQFramework.Editor
             preprocessorTypeList = preprocessorTypes.ToArray();
             compilerTypeList = compilerTypes.ToArray();
             postprocessorTypeList = postprocessorTypes.ToArray();
+            publishHelperTypeList = publishHelperTypes.ToArray();
         }
 
         public override void OnDisable()
