@@ -18,12 +18,13 @@ namespace HQFramework.Editor
             publishHelper = helper;
         }
 
-        public static async Task<AssetModuleManifest> PublishAssets(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
+        public static async Task<AssetModuleManifest> PublishAssets(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
         {
-            AssetPublishData publishData = PreprocessAssetArchive(archiveData, releaseNote, resourceVersion, minimalSupportedPatchVersion, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic);
+            AssetPublishData publishData = PreprocessAssetArchive(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic);
             AssetModuleManifest localManifest = publishHelper.GetBasicManifest();
+            localManifest.versionCode = publishData.versionCode;
             localManifest.resourceVersion = publishData.resourceVersion;
-            localManifest.minimalSupportedVersion = publishData.minimalSupportedVersion;
+            localManifest.minimalSupportedVersionCode = publishData.minimalSupportedVersionCode;
             localManifest.releaseNote = publishData.releaseNote;
             localManifest.isBuiltinManifest = false;
             localManifest.moduleDic = publishData.moduleDic;
@@ -88,11 +89,12 @@ namespace HQFramework.Editor
             return result ? localManifest : null;
         }
 
-        private static AssetPublishData PreprocessAssetArchive(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic)
+        private static AssetPublishData PreprocessAssetArchive(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic)
         {
             AssetPublishData result = new AssetPublishData();
+            result.versionCode = versionCode;
             result.resourceVersion = resourceVersion;
-            result.minimalSupportedVersion = minimalSupportedPatchVersion;
+            result.minimalSupportedVersionCode = minimalSupportedVersionCode;
             result.releaseNote = releaseNote;
             result.moduleDic = new Dictionary<int, AssetModuleInfo>();
             result.bundleFileMap = new Dictionary<string, string>();

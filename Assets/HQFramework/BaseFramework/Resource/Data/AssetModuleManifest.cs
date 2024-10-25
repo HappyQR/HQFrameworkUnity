@@ -8,8 +8,9 @@ namespace HQFramework.Resource
     {
         public string productName;
         public string productVersion;
-        public int resourceVersion;
-        public int minimalSupportedVersion;
+        public string resourceVersion;
+        public int versionCode;
+        public int minimalSupportedVersionCode;
         public string releaseNote;
         public bool isBuiltinManifest;
         public Dictionary<int, AssetModuleInfo> moduleDic;

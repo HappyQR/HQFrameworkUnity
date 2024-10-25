@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using HQFramework.Resource;
 using UnityEngine;
 
 namespace HQFramework.Editor
@@ -9,6 +10,7 @@ namespace HQFramework.Editor
     {
         private static readonly string moduleCompileDataFileName = "BuildHistory.data";
         private static readonly string assetArchiveFileName = "Archives.data";
+        private static readonly string publishDataFileName = "Publish.data";
         private string archiveFilePath
         {
             get
@@ -35,8 +37,22 @@ namespace HQFramework.Editor
             }
         }
 
+        private string publishDataFilePath
+        {
+            get
+            {
+                string archiveDir = Path.Combine(Application.dataPath, HQAssetBuildLauncher.CurrentBuildConfig.assetOutputDir, "Archive");
+                if (!Directory.Exists(archiveDir))
+                {
+                    Directory.CreateDirectory(archiveDir);
+                }
+                return Path.Combine(archiveDir, publishDataFileName);
+            }
+        }
+
         private List<AssetArchiveData> archiveDataList;
         private List<AssetModuleCompileInfo> compileInfoList;
+        private List<AssetModuleManifest> publishDataList;
 
         public async Task<bool> AddAssetArchiveAsync(AssetArchiveData archive)
         {
@@ -59,6 +75,18 @@ namespace HQFramework.Editor
             compileInfoList.AddRange(compileInfos);
             byte[] data = AssetUtility.ConfigSerializer.Serialize(compileInfoList);
             await File.WriteAllBytesAsync(compileDataFilePath, data);
+            return true;
+        }
+
+        public async Task<bool> AddPublishDataAsync(AssetModuleManifest publishData)
+        {
+            if (publishDataList == null)
+            {
+                publishDataList = await GetAssetPublishHistoryAsync();
+            }
+            publishDataList.Add(publishData);
+            byte[] data = AssetUtility.ConfigSerializer.Serialize(publishDataList);
+            await File.WriteAllBytesAsync(publishDataFilePath, data);
             return true;
         }
 
@@ -98,6 +126,25 @@ namespace HQFramework.Editor
             }
 
             return compileInfoList;
+        }
+
+        public async Task<List<AssetModuleManifest>> GetAssetPublishHistoryAsync()
+        {
+            if (publishDataList != null)
+            {
+                return publishDataList;
+            }
+            else if (!File.Exists(publishDataFilePath))
+            {
+                publishDataList = new List<AssetModuleManifest>();
+            }
+            else
+            {
+                byte[] data = await File.ReadAllBytesAsync(publishDataFilePath);
+                publishDataList = AssetUtility.ConfigSerializer.Deserialize<List<AssetModuleManifest>>(data);
+            }
+
+            return publishDataList;
         }
 
         public void Dispose()

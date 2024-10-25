@@ -7,9 +7,9 @@ namespace HQFramework.Editor
     [Serializable]
     public class AssetPublishData
     {
-        public bool uploaded;
-        public int resourceVersion;
-        public int minimalSupportedVersion;
+        public string resourceVersion;
+        public int versionCode;
+        public int minimalSupportedVersionCode;
         public string releaseNote;
         public Dictionary<int, AssetModuleInfo> moduleDic;
         public Dictionary<string, string> bundleFileMap;

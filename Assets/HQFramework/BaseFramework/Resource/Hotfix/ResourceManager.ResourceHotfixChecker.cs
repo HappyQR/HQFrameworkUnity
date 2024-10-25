@@ -136,13 +136,13 @@ namespace HQFramework.Resource
             private HotfixCheckCompleteEventArgs LaunchAssetsHotfix()
             {
                 int hotfixID = resourceManager.resourceHelper.LauncherHotfixID;
-                if (!resourceManager.localManifest.isBuiltinManifest && resourceManager.localManifest.resourceVersion == resourceManager.remoteManifest.resourceVersion)
+                if (!resourceManager.localManifest.isBuiltinManifest && resourceManager.localManifest.versionCode == resourceManager.remoteManifest.versionCode)
                 {
                     HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(hotfixID, true, false, null, 0);
                     return args;
                 }
 
-                bool forceUpdate = resourceManager.localManifest.resourceVersion < resourceManager.remoteManifest.minimalSupportedVersion;
+                bool forceUpdate = resourceManager.localManifest.versionCode < resourceManager.remoteManifest.minimalSupportedVersionCode;
                 string releaseNote = resourceManager.remoteManifest.releaseNote;
                 resourceManager.necessaryHotfixContent = new Dictionary<AssetModuleInfo, List<AssetBundleInfo>>();
                 foreach (AssetModuleInfo remoteModule in resourceManager.remoteManifest.moduleDic.Values)

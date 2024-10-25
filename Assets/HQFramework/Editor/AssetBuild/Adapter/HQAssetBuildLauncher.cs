@@ -91,16 +91,25 @@ namespace HQFramework.Editor
             return dataManager.GetAssetModuleCompileHistoryAsync();
         }
 
-        public static async void PublishAssetArchive(AssetArchiveData archiveData, string releaseNote, int resourceVersion, int minimalSupportedPatchVersion, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
+        public static Task<List<AssetModuleManifest>> GetAssetPublishHistoryAsync()
+        {
+            return dataManager.GetAssetPublishHistoryAsync();
+        }
+
+        public static async void PublishAssetArchive(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
         {
             Type publishHelperType = Type.GetType(CurrentBuildConfig.publishHelperName);
             IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
             AssetPublishController.SetHelper(publishHelper);
-            AssetModuleManifest result = await AssetPublishController.PublishAssets(archiveData, releaseNote, resourceVersion, minimalSupportedPatchVersion, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, uploadCallback, endCallback);
+            AssetModuleManifest result = await AssetPublishController.PublishAssets(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, uploadCallback, endCallback);
             if (result != null)
             {
-                string jsonStr = JsonUtilityEditor.ToJson(result);
-                Debug.Log($"Publish Successfully!\n{jsonStr}");
+                bool saved = await dataManager.AddPublishDataAsync(result);
+                if (saved)
+                {
+                    string jsonStr = JsonUtilityEditor.ToJson(result);
+                    Debug.Log($"Publish Successfully!\n{jsonStr}");
+                }
             }
         }
 
