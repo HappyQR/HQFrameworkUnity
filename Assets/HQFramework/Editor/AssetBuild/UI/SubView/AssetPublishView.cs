@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Codice.CM.Client.Gui;
 using HQFramework.Resource;
 using UnityEditor;
 using UnityEngine;
@@ -23,7 +22,6 @@ namespace HQFramework.Editor
         private Vector2 modulesScrollPos;
 
         private int pageIndex = 1;
-        private int pageCount = 4;
 
         private string releaseNote;
         private string resourceVersion;
@@ -208,9 +206,17 @@ namespace HQFramework.Editor
                 AssetModuleCompileInfo module = moduleList[i];
                 GUILayout.BeginHorizontal(backgroundStyle, GUILayout.Height(150));
                 GUILayout.BeginVertical(GUILayout.Width(200));
+                GUILayout.BeginHorizontal(GUILayout.Height(65));
                 GUIContent moduleContent = EditorGUIUtility.IconContent("d_UnityLogo");
-                moduleContent.text = $" {module.moduleName}\n id: {module.moduleID}";
-                GUILayout.Box(moduleContent, moduleTitleStyle, GUILayout.Height(65));
+                moduleContent.tooltip = module.devNotes;
+                GUILayout.Box(moduleContent, moduleTitleStyle, GUILayout.Width(65));
+                GUILayout.Space(5);
+                GUILayout.BeginVertical();
+                GUILayout.Space(12);
+                GUILayout.Label(module.moduleName, moduleTitleStyle, GUILayout.Height(20f));
+                GUILayout.Label($"ID: {module.moduleID}", moduleTitleStyle, GUILayout.Height(20f));
+                GUILayout.EndVertical();
+                GUILayout.EndHorizontal();
                 GUILayout.Space(5);
                 StringBuilder str = new StringBuilder();
                 str.Append("[");
@@ -234,11 +240,9 @@ namespace HQFramework.Editor
                 GUILayout.EndVertical();
 
                 GUILayout.BeginVertical();
-                GUILayout.BeginHorizontal();
+                GUILayout.Space(2);
                 GUILayout.Label("Release Notes: ", headerStyle);
-                GUILayout.FlexibleSpace();
-                GUILayout.EndHorizontal();
-                GUILayout.Space(5);
+                GUILayout.Space(3);
                 moduleReleaseNotesDic[module.moduleID] = EditorGUILayout.TextArea(moduleReleaseNotesDic[module.moduleID], GUILayout.ExpandHeight(true));
                 GUILayout.EndVertical();               
                 GUILayout.EndHorizontal();
@@ -278,7 +282,7 @@ namespace HQFramework.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Publish", GUILayout.Width(150), GUILayout.Height(45)))
             {
-
+                
             }
             GUILayout.EndHorizontal();
             GUILayout.Space(10);

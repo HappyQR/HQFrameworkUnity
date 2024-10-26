@@ -12,9 +12,9 @@ namespace HQFramework.Editor
         private Vector2 scrollPos;
         private Dictionary<int, int> selectedModuleDic;
         private List<List<GUIContent>> moduleBuildBtnContentList;
-        private GUIStyle moduleTitleStyle;
         private GUIStyle normalBtnStyle;
         private GUIStyle selectedBtnStyle;
+        private GUIStyle middleAlignmentStyle;
 
         public AssetArchiveView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
         {
@@ -24,12 +24,12 @@ namespace HQFramework.Editor
         {
             GUIStyleState normalState = new GUIStyleState();
             normalState.background = Texture2D.blackTexture;
-            normalState.textColor = new Color(1, 1, 1, 0.6f);
-            moduleTitleStyle = new GUIStyle();
-            moduleTitleStyle.fontSize = 14;
-            moduleTitleStyle.alignment = TextAnchor.MiddleLeft;
-            moduleTitleStyle.contentOffset = new Vector2(10, 25);
-            moduleTitleStyle.normal = normalState;
+            normalState.textColor = new Color(1, 1, 1, 0.75f);
+            middleAlignmentStyle = new GUIStyle();
+            middleAlignmentStyle.fontSize = 11;
+            middleAlignmentStyle.fontStyle = FontStyle.Bold;
+            middleAlignmentStyle.alignment = TextAnchor.MiddleCenter;
+            middleAlignmentStyle.normal = normalState;
 
             moduleList = new List<List<AssetModuleCompileInfo>>();
             moduleBuildBtnContentList = new List<List<GUIContent>>();
@@ -130,10 +130,15 @@ namespace HQFramework.Editor
         {
             GUIStyle backgroundStyle = "DD Background";
             GUILayout.BeginHorizontal(backgroundStyle, GUILayout.Height(80));
-
+            GUILayout.BeginVertical(GUILayout.Width(100));
+            GUILayout.Space(5);
             GUIContent moduleContent = EditorGUIUtility.IconContent("d_UnityLogo");
-            moduleContent.text = $" {moduleBuildResultList[0].moduleName}\n id: {moduleBuildResultList[0].moduleID}";
-            GUILayout.Box(moduleContent, moduleTitleStyle, GUILayout.Width(100), GUILayout.Height(30));
+            GUILayout.Box(moduleContent, middleAlignmentStyle, GUILayout.Height(35));
+            GUILayout.Space(5);
+            GUILayout.Label($"ID: {moduleBuildResultList[0].moduleID}", middleAlignmentStyle);
+            GUILayout.Space(2);
+            GUILayout.Label(moduleBuildResultList[0].moduleName, middleAlignmentStyle);
+            GUILayout.EndVertical();
             DrawDivider();
             GUILayout.Space(3);
 

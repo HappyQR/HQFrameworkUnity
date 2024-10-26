@@ -107,7 +107,7 @@ namespace HQFramework.Resource
                     else
                     {
                         resourceManager.separateHotfixContent.Add(remoteModule, bundleList);
-                        bool forceUpdate = localModule.currentPatchVersion < remoteModule.minimalSupportedPatchVersion;
+                        bool forceUpdate = localModule.currentPatchVersion > remoteModule.currentPatchVersion || localModule.currentPatchVersion < remoteModule.minimalSupportedPatchVersion;
                         string releaseNote = remoteModule.releaseNote;
                         int totalSize = 0;
                         for (int i = 0; i < bundleList.Count; i++)
@@ -142,7 +142,7 @@ namespace HQFramework.Resource
                     return args;
                 }
 
-                bool forceUpdate = resourceManager.localManifest.versionCode < resourceManager.remoteManifest.minimalSupportedVersionCode;
+                bool forceUpdate = resourceManager.localManifest.versionCode > resourceManager.remoteManifest.versionCode || resourceManager.localManifest.versionCode < resourceManager.remoteManifest.minimalSupportedVersionCode;
                 string releaseNote = resourceManager.remoteManifest.releaseNote;
                 resourceManager.necessaryHotfixContent = new Dictionary<AssetModuleInfo, List<AssetBundleInfo>>();
                 foreach (AssetModuleInfo remoteModule in resourceManager.remoteManifest.moduleDic.Values)
