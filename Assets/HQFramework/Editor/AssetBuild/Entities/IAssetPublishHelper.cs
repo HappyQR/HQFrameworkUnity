@@ -11,6 +11,8 @@ namespace HQFramework.Editor
 
         string GetModuleUrlRoot(AssetModuleInfo moduleInfo);
 
+        void PackBuiltinModule(AssetModuleCompileInfo moduleCompileInfo);
+
         Task<AssetModuleManifest> GetRemoteManifestAsync();
 
         Task<bool> UploadBundleAsync(AssetBundleUploadItem item);

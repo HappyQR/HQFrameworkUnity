@@ -1,5 +1,4 @@
 using System;
-using HQFramework.Resource;
 
 namespace HQFramework.Editor
 {
@@ -18,7 +17,7 @@ namespace HQFramework.Editor
         public bool enableEncryption; // TODO: will be implemented in the future.
 
         // Asset Archive
-        
+        public string assetBuiltinDir;
 
         // Asset Publish
         public string publishHelperName;

@@ -1,0 +1,227 @@
+{
+    "productName": "HQFramework",
+    "productVersion": "1.0.0",
+    "resourceVersion": "0.0.0",
+    "versionCode": 0,
+    "minimalSupportedVersionCode": 0,
+    "releaseNote": null,
+    "isBuiltinManifest": true,
+    "moduleDic": {
+        "0": {
+            "id": 0,
+            "moduleName": "Public",
+            "description": null,
+            "currentPatchVersion": 22,
+            "minimalSupportedPatchVersion": 0,
+            "isBuiltin": true,
+            "moduleUrlRoot": "Public",
+            "releaseNote": null,
+            "dependencies": [
+                1
+            ],
+            "bundleDic": {
+                "public_audios.bundle": {
+                    "moduleID": 0,
+                    "moduleName": "Public",
+                    "bundleName": "public_audios.bundle",
+                    "md5": "66805d81a87f2e330ebce84258eb45b0",
+                    "size": 3411750,
+                    "dependencies": [
+                    ],
+                    "bundleUrlRelatedToModule": "public_audios.bundle"
+                },
+                "public_entities.bundle": {
+                    "moduleID": 0,
+                    "moduleName": "Public",
+                    "bundleName": "public_entities.bundle",
+                    "md5": "5ad65499999b5e45d8d413cc1b553045",
+                    "size": 4903,
+                    "dependencies": [
+                        "portal_textures.bundle",
+                        "public_audios.bundle",
+                        "public_materials.bundle",
+                        "public_textures.bundle"
+                    ],
+                    "bundleUrlRelatedToModule": "public_entities.bundle"
+                },
+                "public_materials.bundle": {
+                    "moduleID": 0,
+                    "moduleName": "Public",
+                    "bundleName": "public_materials.bundle",
+                    "md5": "45f8869cebe6086e25dfdcd23b359817",
+                    "size": 105288,
+                    "dependencies": [
+                        "portal_textures.bundle",
+                        "public_textures.bundle"
+                    ],
+                    "bundleUrlRelatedToModule": "public_materials.bundle"
+                },
+                "public_textures.bundle": {
+                    "moduleID": 0,
+                    "moduleName": "Public",
+                    "bundleName": "public_textures.bundle",
+                    "md5": "ce50a6d2f996c3b02dd06e801d94a702",
+                    "size": 1865885,
+                    "dependencies": [
+                    ],
+                    "bundleUrlRelatedToModule": "public_textures.bundle"
+                }
+            },
+            "assetsDic": {
+                "1302820860": {
+                    "crc": 1302820860,
+                    "assetPath": "Assets/GameAssets/Public/Audios/ocean_waves.mp3",
+                    "assetName": "ocean_waves.mp3",
+                    "moduleID": 0,
+                    "bundleName": "public_audios.bundle"
+                },
+                "2295566929": {
+                    "crc": 2295566929,
+                    "assetPath": "Assets/GameAssets/Public/Entities/ColorCube.prefab",
+                    "assetName": "ColorCube.prefab",
+                    "moduleID": 0,
+                    "bundleName": "public_entities.bundle"
+                },
+                "2751167640": {
+                    "crc": 2751167640,
+                    "assetPath": "Assets/GameAssets/Public/Entities/Cube.prefab",
+                    "assetName": "Cube.prefab",
+                    "moduleID": 0,
+                    "bundleName": "public_entities.bundle"
+                },
+                "2267558176": {
+                    "crc": 2267558176,
+                    "assetPath": "Assets/GameAssets/Public/Entities/Knot.prefab",
+                    "assetName": "Knot.prefab",
+                    "moduleID": 0,
+                    "bundleName": "public_entities.bundle"
+                },
+                "486730043": {
+                    "crc": 486730043,
+                    "assetPath": "Assets/GameAssets/Public/Materials/BaseTex.mat",
+                    "assetName": "BaseTex.mat",
+                    "moduleID": 0,
+                    "bundleName": "public_materials.bundle"
+                },
+                "3847567185": {
+                    "crc": 3847567185,
+                    "assetPath": "Assets/GameAssets/Public/Materials/CubeMat.mat",
+                    "assetName": "CubeMat.mat",
+                    "moduleID": 0,
+                    "bundleName": "public_materials.bundle"
+                },
+                "105775552": {
+                    "crc": 105775552,
+                    "assetPath": "Assets/GameAssets/Public/Materials/New Material.mat",
+                    "assetName": "New Material.mat",
+                    "moduleID": 0,
+                    "bundleName": "public_materials.bundle"
+                },
+                "1174429789": {
+                    "crc": 1174429789,
+                    "assetPath": "Assets/GameAssets/Public/Materials/TransparentTex.mat",
+                    "assetName": "TransparentTex.mat",
+                    "moduleID": 0,
+                    "bundleName": "public_materials.bundle"
+                },
+                "893393118": {
+                    "crc": 893393118,
+                    "assetPath": "Assets/GameAssets/Public/Textures/skybox22.jpg",
+                    "assetName": "skybox22.jpg",
+                    "moduleID": 0,
+                    "bundleName": "public_textures.bundle"
+                }
+            }
+        },
+        "1": {
+            "id": 1,
+            "moduleName": "Portal",
+            "description": null,
+            "currentPatchVersion": 22,
+            "minimalSupportedPatchVersion": 0,
+            "isBuiltin": false,
+            "moduleUrlRoot": "Portal",
+            "releaseNote": null,
+            "dependencies": [
+            ],
+            "bundleDic": {
+                "portal_atlas.bundle": {
+                    "moduleID": 1,
+                    "moduleName": "Portal",
+                    "bundleName": "portal_atlas.bundle",
+                    "md5": "f7545854bb8c79cdf6ce6f5b98a37fb7",
+                    "size": 123866,
+                    "dependencies": [
+                    ],
+                    "bundleUrlRelatedToModule": "portal_atlas.bundle"
+                },
+                "portal_textures.bundle": {
+                    "moduleID": 1,
+                    "moduleName": "Portal",
+                    "bundleName": "portal_textures.bundle",
+                    "md5": "b9a1455165cf871c946bc3ef4af465d7",
+                    "size": 1875265,
+                    "dependencies": [
+                    ],
+                    "bundleUrlRelatedToModule": "portal_textures.bundle"
+                }
+            },
+            "assetsDic": {
+                "3336601375": {
+                    "crc": 3336601375,
+                    "assetPath": "Assets/GameAssets/Portal/Atlas/AirDrop.png",
+                    "assetName": "AirDrop.png",
+                    "moduleID": 1,
+                    "bundleName": "portal_atlas.bundle"
+                },
+                "250436372": {
+                    "crc": 250436372,
+                    "assetPath": "Assets/GameAssets/Portal/Textures/skybox22.jpg",
+                    "assetName": "skybox22.jpg",
+                    "moduleID": 1,
+                    "bundleName": "portal_textures.bundle"
+                },
+                "2771692734": {
+                    "crc": 2771692734,
+                    "assetPath": "Assets/GameAssets/Portal/Textures/transparent_texture.png",
+                    "assetName": "transparent_texture.png",
+                    "moduleID": 1,
+                    "bundleName": "portal_textures.bundle"
+                }
+            }
+        },
+        "2": {
+            "id": 2,
+            "moduleName": "CustomHome",
+            "description": null,
+            "currentPatchVersion": 10,
+            "minimalSupportedPatchVersion": 0,
+            "isBuiltin": false,
+            "moduleUrlRoot": "CustomHome",
+            "releaseNote": null,
+            "dependencies": [
+            ],
+            "bundleDic": {
+                "customhome_textures.bundle": {
+                    "moduleID": 2,
+                    "moduleName": "CustomHome",
+                    "bundleName": "customhome_textures.bundle",
+                    "md5": "53ef23e0449e74c4c8f5afbd879b6a18",
+                    "size": 824724,
+                    "dependencies": [
+                    ],
+                    "bundleUrlRelatedToModule": "customhome_textures.bundle"
+                }
+            },
+            "assetsDic": {
+                "4147710873": {
+                    "crc": 4147710873,
+                    "assetPath": "Assets/GameAssets/CustomHome/Textures/skywalkSkybox.png",
+                    "assetName": "skywalkSkybox.png",
+                    "moduleID": 2,
+                    "bundleName": "customhome_textures.bundle"
+                }
+            }
+        }
+    }
+}

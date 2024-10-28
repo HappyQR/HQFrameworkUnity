@@ -18,6 +18,47 @@ namespace HQFramework.Editor
             publishHelper = helper;
         }
 
+        public static AssetModuleManifest PackBuiltinAssets(List<AssetModuleCompileInfo> moduleCompileInfoList)
+        {
+            if (moduleCompileInfoList == null || moduleCompileInfoList.Count == 0)
+                return null;
+            AssetModuleManifest manifest = publishHelper.GetBasicManifest();
+            manifest.isBuiltinManifest = true;
+            manifest.resourceVersion = "0.0.0";
+            manifest.moduleDic = new Dictionary<int, AssetModuleInfo>();
+            for (int i = 0; i < moduleCompileInfoList.Count; i++)
+            {
+                AssetModuleCompileInfo compileInfo = moduleCompileInfoList[i];
+                AssetModuleInfo module = new AssetModuleInfo();
+                module.id = compileInfo.moduleID;
+                module.moduleName = compileInfo.moduleName;
+                module.isBuiltin = compileInfo.isBuiltin;
+                module.currentPatchVersion = compileInfo.buildVersionCode;
+                module.dependencies = compileInfo.dependencies;
+                module.assetsDic = compileInfo.assetsDic;
+                module.bundleDic = new Dictionary<string, AssetBundleInfo>();
+                for (int j = 0; j < compileInfo.bundleList.Count; j++)
+                {
+                    AssetBundleCompileInfo bundleCompileInfo = compileInfo.bundleList[j];
+                    AssetBundleInfo bundleInfo = new AssetBundleInfo();
+                    bundleInfo.moduleID = compileInfo.moduleID;
+                    bundleInfo.moduleName = compileInfo.moduleName;
+                    bundleInfo.bundleName = bundleCompileInfo.bundleName;
+                    bundleInfo.md5 = bundleCompileInfo.md5;
+                    bundleInfo.size = bundleCompileInfo.size;
+                    bundleInfo.dependencies = bundleCompileInfo.dependencies;
+                    bundleInfo.bundleUrlRelatedToModule = publishHelper.GetBundleRelatedUrl(bundleInfo, module);
+                    module.bundleDic.Add(bundleInfo.bundleName, bundleInfo);
+                }
+                module.moduleUrlRoot = publishHelper.GetModuleUrlRoot(module);
+                manifest.moduleDic.Add(module.id, module);
+
+                publishHelper.PackBuiltinModule(compileInfo);
+            }
+
+            return manifest;
+        }
+
         public static async Task<AssetModuleManifest> PublishAssets(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
         {
             AssetPublishData publishData = PreprocessAssetArchive(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic);

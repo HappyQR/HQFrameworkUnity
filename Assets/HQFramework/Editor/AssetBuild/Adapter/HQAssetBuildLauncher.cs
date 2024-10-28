@@ -143,6 +143,37 @@ namespace HQFramework.Editor
             return configManager.GetModuleConfigs();
         }
 
+        public static bool IsBuiltinModule(int moduleID)
+        {
+            List<AssetModuleConfigAgent> agents = GetModuleConfigs();
+            for (int i = 0; i < agents.Count; i++)
+            {
+                if (agents[i].id == moduleID)
+                {
+                    return agents[i].isBuiltin;
+                }
+            }
+            return false;
+        }
+
+        public static void GenerateBuiltinArchive(List<AssetModuleCompileInfo> moduleCompileInfoList)
+        {
+            Type publishHelperType = Type.GetType(CurrentBuildConfig.publishHelperName);
+            IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
+            AssetPublishController.SetHelper(publishHelper);
+
+            AssetModuleManifest builtinManifest = AssetPublishController.PackBuiltinAssets(moduleCompileInfoList);
+            if (builtinManifest != null)
+            {
+                string manifestFilePath = Path.Combine(Application.streamingAssetsPath, CurrentBuildConfig.assetBuiltinDir, "AssetModuleManifest.json");
+                string jsonStr = JsonUtilityEditor.ToJson(builtinManifest);
+                File.WriteAllText(manifestFilePath, jsonStr);
+                Debug.Log($"Built-in Archive Succeeded.\n{jsonStr}");
+
+                AssetDatabase.Refresh();
+            }
+        }
+
         public static void Dispose()
         {
             configManager.Dispose();

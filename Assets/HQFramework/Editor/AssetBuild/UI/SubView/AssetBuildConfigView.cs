@@ -92,6 +92,22 @@ namespace HQFramework.Editor
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 
+            GUILayout.Label("Asset Built-in Dir(Related to Application.streamingAssetsPath):", headerStyle);
+            GUILayout.Space(5);
+            GUILayout.BeginHorizontal();
+            currentBuildConfig.assetBuiltinDir = EditorGUILayout.TextField(currentBuildConfig.assetBuiltinDir);
+            if (GUILayout.Button("...", GUILayout.Width(30)))
+            {
+                string absDir = EditorUtility.OpenFolderPanel("Choose a directory to save assets:", Application.streamingAssetsPath, "");
+                if (!string.IsNullOrEmpty(absDir))
+                {
+                    string relatedDir = Path.GetRelativePath(Application.streamingAssetsPath, absDir);
+                    currentBuildConfig.assetBuiltinDir = relatedDir.Replace("\\", "/");
+                }
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+
             GUILayout.Label("Select a Asset Build Preprocessor:", headerStyle);
             GUILayout.Space(5);
             selectedPreprocessorTypeIndex = EditorGUILayout.Popup(selectedPreprocessorTypeIndex, preprocessorTypeList);

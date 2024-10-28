@@ -267,6 +267,7 @@ namespace HQFramework.Editor
 
         private void ConfirmPublish()
         {
+            AssetArchiveData selectedArchive = archiveDataList[selectedArchiveIndex];
             GUILayout.BeginVertical();
             GUILayout.BeginArea(new Rect(10, 10, viewRect.width - 20, viewRect.height - 60));
 
@@ -282,7 +283,7 @@ namespace HQFramework.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Publish", GUILayout.Width(150), GUILayout.Height(45)))
             {
-                
+                HQAssetBuildLauncher.PublishAssetArchive(selectedArchive, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, OnUploadBundleProgress, OnUploadBundleDone);
             }
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
@@ -315,6 +316,16 @@ namespace HQFramework.Editor
                     moduleReleaseNotesDic.Add(moduleCompileInfo.moduleID, string.Empty);
                 }
             }
+        }
+
+        private void OnUploadBundleProgress(int uploadedCount, int totalCount, string currentFileName)
+        {
+            EditorUtility.DisplayProgressBar("Syncing Assets With Server...", $"{uploadedCount}/{totalCount}, {currentFileName}", (float)uploadedCount/totalCount);
+        }
+
+        private void OnUploadBundleDone()
+        {
+            EditorUtility.ClearProgressBar();
         }
     }
 }

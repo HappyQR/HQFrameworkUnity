@@ -30,11 +30,12 @@ namespace HQFramework.Editor
             btnTableContent.text = " Assets Table";
             GUIContent btnArchiveContent = EditorGUIUtility.IconContent("SaveAs");
             btnArchiveContent.text = " Assets Archive";
+            GUIContent btnBuiltinContent = EditorGUIUtility.IconContent("d_Profiler.Memory");
+            btnBuiltinContent.text = " Archive Built-in";
             GUIContent btnPublishContent = EditorGUIUtility.IconContent("d_CloudConnect");
             btnPublishContent.text = " Assets Publish";
             GUIContent btnConfigContent = EditorGUIUtility.IconContent("SettingsIcon");
             btnConfigContent.text = " Build Settings";
-            // GUIContent btnRuntimeContent = EditorGUIUtility.IconContent("d_Profiler.Memory");
             // "d_RotateTool On"
 
             contentList = new TabContentView[]
@@ -43,6 +44,7 @@ namespace HQFramework.Editor
                 new AssetTableView(this, btnTableContent),
                 new AssetInspectView(this, btnInspectorContent),
                 new AssetArchiveView(this, btnArchiveContent),
+                new AssetBuiltinView(this, btnBuiltinContent),
                 new AssetPublishView(this, btnPublishContent),
                 new AssetBuildConfigView(this, btnConfigContent),
             };
