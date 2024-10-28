@@ -1,4 +1,8 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
@@ -13,6 +17,9 @@ namespace HQFramework.Editor
 
         private static string manifestUrl = "HQFramework/Assets/AssetModuleManifest.json";
         private static string bucketName = "happyq-test";
+        private static string assetUrlRoot = "HQFramework/Assets";
+
+        private static string urlRoot = "https://happyq-test.oss-cn-beijing.aliyuncs.com/";
 
         private void Init()
         {
@@ -48,23 +55,58 @@ namespace HQFramework.Editor
 
         public string GetModuleUrlRoot(AssetModuleInfo moduleInfo)
         {
-            return moduleInfo.moduleName;
+            return Path.Combine(urlRoot, moduleInfo.moduleName);
         }
 
         public Task<AssetModuleManifest> GetRemoteManifestAsync()
         {
-            
-            throw new System.NotImplementedException();
+            return GetRemoteManifestInternal();
+        }
+
+        private async Task<AssetModuleManifest> GetRemoteManifestInternal()
+        {
+            Init();
+            if (!client.DoesObjectExist(bucketName, manifestUrl))
+            {
+                AssetModuleManifest remoteManifest = new AssetModuleManifest();
+                remoteManifest.moduleDic = new Dictionary<int, AssetModuleInfo>();
+                return remoteManifest;
+            }
+            else
+            {
+                string manifestFileUrl = Path.Combine(urlRoot, manifestUrl);
+                using HttpClient httpClient = new HttpClient();
+                string jsonStr = await httpClient.GetStringAsync(manifestFileUrl);
+                return JsonUtilityEditor.ToObject<AssetModuleManifest>(jsonStr);
+            }
         }
 
         public Task<bool> UploadBundleAsync(AssetBundleUploadItem item)
         {
-            throw new System.NotImplementedException();
+            return Task.Run(() => UploadBundleInternal(item));
+        }
+
+        private bool UploadBundleInternal(AssetBundleUploadItem item)
+        {
+            Init();
+            string bundleUrl = Path.Combine(assetUrlRoot, item.moduleInfo.moduleName, item.bundleInfo.bundleName);
+            using PutObjectResult result = client.PutObject(bucketName, bundleUrl, item.bundleFilePath);
+            return result.HttpStatusCode == HttpStatusCode.OK;
         }
 
         public Task<bool> UploadManifestAsync(AssetModuleManifest manifest)
         {
-            throw new System.NotImplementedException();
+            return Task.Run(() => UploadManifestInternal(manifest));
+        }
+
+        private bool UploadManifestInternal(AssetModuleManifest manifest)
+        {
+            Init();
+            string jsonStr = JsonUtilityEditor.ToJson(manifest);
+            byte[] data = Encoding.UTF8.GetBytes(jsonStr);
+            using Stream stream = new MemoryStream(data);
+            using PutObjectResult result = client.PutObject(bucketName, manifestUrl, stream);
+            return result.HttpStatusCode == HttpStatusCode.OK;
         }
 
         public void PackBuiltinModule(AssetModuleCompileInfo moduleCompileInfo)
