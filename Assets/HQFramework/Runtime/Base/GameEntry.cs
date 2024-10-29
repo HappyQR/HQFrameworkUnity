@@ -1,19 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
-using HQFramework.Procedure;
 using UnityEngine;
 
 namespace HQFramework.Runtime
 {
     public class GameEntry : MonoBehaviour
     {
-        [Tooltip("The full type name of LogHelper")]
-        public string logHelperTypeName;
-
-        public string[] gameProcedures;
-
-        public string entryProcedure;
-
         private delegate void HQFrameworkLifecyleMethod();
         private delegate void HQFrameworkUpdateMethod(float deltaTimeLogic, float deltaTimeRealtime);
 
@@ -21,16 +14,17 @@ namespace HQFramework.Runtime
         private HQFrameworkUpdateMethod frameworkUpdate;
         private HQFrameworkLifecyleMethod frameworkShutdown;
 
+        private static Dictionary<Type, BaseComponent> moduleDic;
+
+        public string logHelperTypeName;
+
         private void Awake()
         {
             InitializeFramework();
             InitializeFrameworkHelper();
             DontDestroyOnLoad(this);
-        }
 
-        private void Start()
-        {
-            RegisterAllProcedures();
+            moduleDic = new Dictionary<Type, BaseComponent>();
         }
 
         private void InitializeFramework()
@@ -58,28 +52,6 @@ namespace HQFramework.Runtime
             HQDebugger.SetHelper(logHelper);
         }
 
-        private void RegisterAllProcedures()
-        {
-            IProcedureManager procedureManager = HQFrameworkEngine.GetModule<IProcedureManager>();
-            Type baseProcedureType = typeof(ProcedureBase);
-            Type entryProcedureType = Utility.Assembly.GetType(entryProcedure);
-            if (gameProcedures.Length > 0)
-            {
-                for (int i = 0; i < gameProcedures.Length; i++)
-                {
-                    Type type = Utility.Assembly.GetType(gameProcedures[i]);
-                    if (!baseProcedureType.IsAssignableFrom(type))
-                    {
-                        Debug.LogError($"{type} is not a subclass of ProcedureBase.");
-                    }
-                    procedureManager.RegisterProcedure(type);
-                }
-            }
-
-            procedureManager.SetEntryProcedure(entryProcedureType);
-            procedureManager.Launch();
-        }
-
         private void Update()
         {
             frameworkUpdate.Invoke(Time.deltaTime, Time.unscaledDeltaTime);
@@ -88,6 +60,29 @@ namespace HQFramework.Runtime
         private void OnDestroy()
         {
             frameworkShutdown.Invoke();
+        }
+
+        public static void RegisterModule(BaseComponent component)
+        {
+            Type type = component.GetType();
+            moduleDic.Add(type, component);
+        }
+
+        public static T GetModule<T>() where T : BaseComponent
+        {
+            Type type = typeof(T);
+            return moduleDic[type] as T;
+        }
+
+        public static BaseComponent GetModule(Type moduleType)
+        {
+            return moduleDic[moduleType];
+        }
+
+        public static BaseComponent GetModule(string moduleTypeName)
+        {
+            Type type = Type.GetType(moduleTypeName);
+            return moduleDic[type];
         }
     }
 }

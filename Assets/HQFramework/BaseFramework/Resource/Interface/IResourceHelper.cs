@@ -12,26 +12,31 @@ namespace HQFramework.Resource
         int LauncherHotfixID
         {
             get;
+            set;
         }
         
         AssetHotfixMode HotfixMode
         {
             get;
+            set;
         }
 
         string AssetsPersistentDir
         {
             get;
+            set;
         }
 
         string AssetsBuiltinDir
         {
             get;
+            set;
         }
 
         string HotfixManifestUrl
         {
             get;
+            set;
         }
 
         Task<AssetModuleManifest> LoadAssetManifestAsync();

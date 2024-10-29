@@ -6,24 +6,55 @@ namespace HQFramework.Runtime
 {
     internal class DefaultResourceHelper : IResourceHelper
     {
-        private static readonly string resourceConfigFilePath = "ResourceConfig";
         private static readonly string manifestFileName = "AssetModuleManifest.json";
 
         private string localManifestFilePath;
 
-        public int LauncherHotfixID => 1;
+        public int LauncherHotfixID
+        {
+            get;
+            set;
+        }
 
-        public AssetHotfixMode HotfixMode => throw new System.NotImplementedException();
+        public AssetHotfixMode HotfixMode
+        {
+            get;
+            set;
+        }
 
-        public string AssetsPersistentDir => throw new System.NotImplementedException();
+        public string AssetsPersistentDir
+        {
+            get;
+            set;
+        }
 
-        public string AssetsBuiltinDir => throw new System.NotImplementedException();
+        public string AssetsBuiltinDir
+        {
+            get;
+            set;
+        }
 
-        public string HotfixManifestUrl => throw new System.NotImplementedException();
+        public string HotfixManifestUrl
+        {
+            get;
+            set;
+        }
+
+        private string LocalManifestFilePath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(localManifestFilePath))
+                {
+                    localManifestFilePath = Path.Combine(AssetsPersistentDir, manifestFileName);
+                }
+                return localManifestFilePath;
+            }
+        }
 
         public async Task<AssetModuleManifest> LoadAssetManifestAsync()
         {
-            string localManifestJsonStr = await File.ReadAllTextAsync(localManifestFilePath);
+            string localManifestJsonStr = await File.ReadAllTextAsync(LocalManifestFilePath);
             AssetModuleManifest localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(localManifestJsonStr);
             return localManifest;
         }
@@ -31,7 +62,7 @@ namespace HQFramework.Runtime
         public void OverrideLocalManifest(AssetModuleManifest localManifest)
         {
             string manifestJson = SerializeManager.ObjectToJson(localManifest);
-            File.WriteAllText(localManifestFilePath, manifestJson);
+            File.WriteAllText(LocalManifestFilePath, manifestJson);
         }
 
         public string GetBundleFilePath(AssetBundleInfo bundleInfo)

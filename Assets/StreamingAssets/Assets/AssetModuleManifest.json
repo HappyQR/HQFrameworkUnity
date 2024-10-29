@@ -11,10 +11,10 @@
             "id": 0,
             "moduleName": "Public",
             "description": null,
-            "currentPatchVersion": 22,
+            "currentPatchVersion": 2,
             "minimalSupportedPatchVersion": 0,
             "isBuiltin": true,
-            "moduleUrlRoot": "Public",
+            "moduleUrlRoot": "https://happyq-test.oss-cn-beijing.aliyuncs.com/Public",
             "releaseNote": null,
             "dependencies": [
                 1
@@ -130,96 +130,6 @@
                     "assetName": "skybox22.jpg",
                     "moduleID": 0,
                     "bundleName": "public_textures.bundle"
-                }
-            }
-        },
-        "1": {
-            "id": 1,
-            "moduleName": "Portal",
-            "description": null,
-            "currentPatchVersion": 22,
-            "minimalSupportedPatchVersion": 0,
-            "isBuiltin": false,
-            "moduleUrlRoot": "Portal",
-            "releaseNote": null,
-            "dependencies": [
-            ],
-            "bundleDic": {
-                "portal_atlas.bundle": {
-                    "moduleID": 1,
-                    "moduleName": "Portal",
-                    "bundleName": "portal_atlas.bundle",
-                    "md5": "f7545854bb8c79cdf6ce6f5b98a37fb7",
-                    "size": 123866,
-                    "dependencies": [
-                    ],
-                    "bundleUrlRelatedToModule": "portal_atlas.bundle"
-                },
-                "portal_textures.bundle": {
-                    "moduleID": 1,
-                    "moduleName": "Portal",
-                    "bundleName": "portal_textures.bundle",
-                    "md5": "b9a1455165cf871c946bc3ef4af465d7",
-                    "size": 1875265,
-                    "dependencies": [
-                    ],
-                    "bundleUrlRelatedToModule": "portal_textures.bundle"
-                }
-            },
-            "assetsDic": {
-                "3336601375": {
-                    "crc": 3336601375,
-                    "assetPath": "Assets/GameAssets/Portal/Atlas/AirDrop.png",
-                    "assetName": "AirDrop.png",
-                    "moduleID": 1,
-                    "bundleName": "portal_atlas.bundle"
-                },
-                "250436372": {
-                    "crc": 250436372,
-                    "assetPath": "Assets/GameAssets/Portal/Textures/skybox22.jpg",
-                    "assetName": "skybox22.jpg",
-                    "moduleID": 1,
-                    "bundleName": "portal_textures.bundle"
-                },
-                "2771692734": {
-                    "crc": 2771692734,
-                    "assetPath": "Assets/GameAssets/Portal/Textures/transparent_texture.png",
-                    "assetName": "transparent_texture.png",
-                    "moduleID": 1,
-                    "bundleName": "portal_textures.bundle"
-                }
-            }
-        },
-        "2": {
-            "id": 2,
-            "moduleName": "CustomHome",
-            "description": null,
-            "currentPatchVersion": 10,
-            "minimalSupportedPatchVersion": 0,
-            "isBuiltin": false,
-            "moduleUrlRoot": "CustomHome",
-            "releaseNote": null,
-            "dependencies": [
-            ],
-            "bundleDic": {
-                "customhome_textures.bundle": {
-                    "moduleID": 2,
-                    "moduleName": "CustomHome",
-                    "bundleName": "customhome_textures.bundle",
-                    "md5": "53ef23e0449e74c4c8f5afbd879b6a18",
-                    "size": 824724,
-                    "dependencies": [
-                    ],
-                    "bundleUrlRelatedToModule": "customhome_textures.bundle"
-                }
-            },
-            "assetsDic": {
-                "4147710873": {
-                    "crc": 4147710873,
-                    "assetPath": "Assets/GameAssets/CustomHome/Textures/skywalkSkybox.png",
-                    "assetName": "skywalkSkybox.png",
-                    "moduleID": 2,
-                    "bundleName": "customhome_textures.bundle"
                 }
             }
         }

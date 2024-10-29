@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using HQFramework.Resource;
 
@@ -22,6 +23,11 @@ namespace HQFramework.Editor
         {
             if (moduleCompileInfoList == null || moduleCompileInfoList.Count == 0)
                 return null;
+            if (Directory.Exists(publishHelper.AssetsBuiltinDir))
+            {
+                Directory.Delete(publishHelper.AssetsBuiltinDir);
+            }
+            Directory.CreateDirectory(publishHelper.AssetsBuiltinDir);
             AssetModuleManifest manifest = publishHelper.GetBasicManifest();
             manifest.isBuiltinManifest = true;
             manifest.resourceVersion = "0.0.0";

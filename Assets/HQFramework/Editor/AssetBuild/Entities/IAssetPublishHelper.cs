@@ -5,6 +5,11 @@ namespace HQFramework.Editor
 {
     public interface IAssetPublishHelper
     {
+        string AssetsBuiltinDir
+        {
+            get;
+        }
+
         AssetModuleManifest GetBasicManifest();
 
         string GetBundleRelatedUrl(AssetBundleInfo bundleInfo, AssetModuleInfo moduleInfo);

@@ -21,6 +21,8 @@ namespace HQFramework.Editor
 
         private static string urlRoot = "https://happyq-test.oss-cn-beijing.aliyuncs.com/";
 
+        public string AssetsBuiltinDir => Path.Combine(Application.streamingAssetsPath, HQAssetBuildLauncher.CurrentBuildConfig.assetBuiltinDir);
+
         private void Init()
         {
             if (client == null)
@@ -111,11 +113,7 @@ namespace HQFramework.Editor
 
         public void PackBuiltinModule(AssetModuleCompileInfo moduleCompileInfo)
         {
-            string moduleDir = Path.Combine(Application.streamingAssetsPath, HQAssetBuildLauncher.CurrentBuildConfig.assetBuiltinDir, moduleCompileInfo.moduleID.ToString());
-            if (Directory.Exists(moduleDir))
-            {
-                Directory.Delete(moduleDir, true);
-            }
+            string moduleDir = Path.Combine(AssetsBuiltinDir, moduleCompileInfo.moduleID.ToString());
             Directory.CreateDirectory(moduleDir);
 
             for (int i = 0; i < moduleCompileInfo.bundleList.Count; i++)

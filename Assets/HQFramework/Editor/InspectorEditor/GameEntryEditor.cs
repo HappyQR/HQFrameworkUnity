@@ -11,19 +11,13 @@ namespace HQFramework.Editor
     public class GameEntryEditor : UnityEditor.Editor
     {
         private SerializedProperty logHelperTypeName;
-        private SerializedProperty gameProcedures;
-        private SerializedProperty entryProcedure;
-
+        
         private string[] logHelperTypeList;
         private int logHelperTypeNameIndex;
-        private int procedureIndex;
 
         private void OnEnable()
         {
             logHelperTypeName = serializedObject.FindProperty(nameof(logHelperTypeName));
-            gameProcedures = serializedObject.FindProperty(nameof(gameProcedures));
-            entryProcedure = serializedObject.FindProperty(nameof(entryProcedure));
-
             logHelperTypeList = CollectLogHelperTypes();
         }
 
@@ -36,15 +30,6 @@ namespace HQFramework.Editor
             GUILayout.EndHorizontal();
 
             EditorGUILayout.Separator();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Entry Procedure:");
-            procedureIndex = EditorGUILayout.Popup(procedureIndex, (target as GameEntry).gameProcedures);
-            if ((target as GameEntry).gameProcedures.Length > 0)
-            {
-                entryProcedure.stringValue = (target as GameEntry).gameProcedures[procedureIndex];
-            }
-            GUILayout.EndHorizontal();
-            EditorGUILayout.PropertyField(gameProcedures);
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -52,16 +37,28 @@ namespace HQFramework.Editor
         private string[] CollectLogHelperTypes()
         {
             List<string> typeList = new List<string>();
-            Assembly assembly = Assembly.GetAssembly(typeof(GameEntry));
-            Type[] types = assembly.GetTypes();
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             Type logHelperInterfaceType = typeof(ILogHelper);
-            for (int i = 0; i < types.Length; i++)
+            for (int i = 0; i < assemblies.Length; i++)
             {
-                if (logHelperInterfaceType.IsAssignableFrom(types[i]))
+                Type[] types = assemblies[i].GetTypes();
+                for (int j = 0; j < types.Length; j++)
                 {
-                    typeList.Add(types[i].FullName);
+                    if (!types[j].IsAbstract && !types[j].IsInterface && logHelperInterfaceType.IsAssignableFrom(types[j]))
+                    {
+                        typeList.Add(types[j].FullName);
+                    }
                 }
             }
+
+            for (int i = 0; i < typeList.Count; i++)
+            {
+                if (typeList[i] == logHelperTypeName.stringValue)
+                {
+                    logHelperTypeNameIndex = i;
+                }
+            }
+            
             return typeList.ToArray();
         }
     }
