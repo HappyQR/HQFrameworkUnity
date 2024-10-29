@@ -11,7 +11,7 @@
             "id": 0,
             "moduleName": "Public",
             "description": null,
-            "currentPatchVersion": 2,
+            "currentPatchVersion": 19,
             "minimalSupportedPatchVersion": 0,
             "isBuiltin": true,
             "moduleUrlRoot": "https://happyq-test.oss-cn-beijing.aliyuncs.com/Public",
@@ -24,7 +24,7 @@
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_audios.bundle",
-                    "md5": "66805d81a87f2e330ebce84258eb45b0",
+                    "md5": "25e43868cdb33473b7caa358fbf26692",
                     "size": 3411750,
                     "dependencies": [
                     ],
@@ -34,7 +34,7 @@
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_entities.bundle",
-                    "md5": "5ad65499999b5e45d8d413cc1b553045",
+                    "md5": "8b5f317025503ba870fa7f9dcfe44fe2",
                     "size": 4903,
                     "dependencies": [
                         "portal_textures.bundle",
@@ -48,8 +48,8 @@
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_materials.bundle",
-                    "md5": "45f8869cebe6086e25dfdcd23b359817",
-                    "size": 105288,
+                    "md5": "c3254b591d6a33063558c07b942ca495",
+                    "size": 105409,
                     "dependencies": [
                         "portal_textures.bundle",
                         "public_textures.bundle"
@@ -60,8 +60,8 @@
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_textures.bundle",
-                    "md5": "ce50a6d2f996c3b02dd06e801d94a702",
-                    "size": 1865885,
+                    "md5": "4b2641c24504178aea7c04b1575f963d",
+                    "size": 1865878,
                     "dependencies": [
                     ],
                     "bundleUrlRelatedToModule": "public_textures.bundle"

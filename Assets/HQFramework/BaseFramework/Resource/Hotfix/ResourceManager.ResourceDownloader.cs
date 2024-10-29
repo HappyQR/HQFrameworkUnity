@@ -295,6 +295,11 @@ namespace HQFramework.Resource
                 {
                     DownloadItem downloadItem = group.downloadedQueue.Dequeue();
                     string destBundlePath = resourceManager.GetBundleFilePath(downloadItem.bundleInfo);
+                    string moduleDir = Path.GetDirectoryName(destBundlePath);
+                    if (!Directory.Exists(moduleDir))
+                    {
+                        Directory.CreateDirectory(moduleDir);
+                    }
                     File.Copy(downloadItem.filePath, destBundlePath);
                     File.Delete(downloadItem.filePath);
                 }

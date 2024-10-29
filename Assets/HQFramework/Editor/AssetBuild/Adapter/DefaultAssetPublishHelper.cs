@@ -57,7 +57,7 @@ namespace HQFramework.Editor
 
         public string GetModuleUrlRoot(AssetModuleInfo moduleInfo)
         {
-            return Path.Combine(urlRoot, moduleInfo.moduleName);
+            return Path.Combine(urlRoot, assetUrlRoot, moduleInfo.moduleName);
         }
 
         public Task<AssetModuleManifest> GetRemoteManifestAsync()

@@ -25,7 +25,7 @@ namespace HQFramework.Editor
                 return null;
             if (Directory.Exists(publishHelper.AssetsBuiltinDir))
             {
-                Directory.Delete(publishHelper.AssetsBuiltinDir);
+                Directory.Delete(publishHelper.AssetsBuiltinDir, true);
             }
             Directory.CreateDirectory(publishHelper.AssetsBuiltinDir);
             AssetModuleManifest manifest = publishHelper.GetBasicManifest();
