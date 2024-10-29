@@ -69,6 +69,12 @@ namespace HQFramework.Resource
 
                 downloadDic = new Dictionary<int, DownloadItem>();
                 downloadGroupDic = new Dictionary<int, DownloadGroup>();
+                cancelEventDic = new Dictionary<int, Action<HotfixDownloadCancelEventArgs>>();
+                completeEventDic = new Dictionary<int, Action<HotfixDownloadCompleteEventArgs>>();
+                errorEventDic = new Dictionary<int, Action<HotfixDownloadErrorEventArgs>>();
+                pauseEventDic = new Dictionary<int, Action<HotfixDownloadPauseEventArgs>>();
+                resumeEventDic = new Dictionary<int, Action<HotfixDownloadResumeEventArgs>>();
+                updateEventDic = new Dictionary<int, Action<HotfixDownloadUpdateEventArgs>>();
             }
 
             public void OnUpdate()

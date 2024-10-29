@@ -1,12 +1,19 @@
 using System;
 using HQFramework.Procedure;
+using UnityEngine;
 
 namespace HQFramework.Runtime
 {
     public class ProcedureComponent : BaseComponent
     {
-        public string[] gameProcedures;
-        public string entryProcedure;
+#if UNITY_EDITOR
+        public UnityEditor.MonoScript[] procedureScripts;
+#endif
+
+        [SerializeField]
+        private string[] gameProcedures;
+        [SerializeField]
+        private string entryProcedure;
 
         private IProcedureManager procedureManager;
 

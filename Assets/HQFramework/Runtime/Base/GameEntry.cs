@@ -14,17 +14,18 @@ namespace HQFramework.Runtime
         private HQFrameworkUpdateMethod frameworkUpdate;
         private HQFrameworkLifecyleMethod frameworkShutdown;
 
-        private static Dictionary<Type, BaseComponent> moduleDic;
+        private static Dictionary<Type, BaseComponent> moduleDic = new Dictionary<Type, BaseComponent>();
 
-        public string logHelperTypeName;
+        [SerializeField]
+        private string logHelperTypeName;
+        [SerializeField]
+        private string jsonHelperTypeName;
 
         private void Awake()
         {
             InitializeFramework();
             InitializeFrameworkHelper();
             DontDestroyOnLoad(this);
-
-            moduleDic = new Dictionary<Type, BaseComponent>();
         }
 
         private void InitializeFramework()
@@ -50,6 +51,14 @@ namespace HQFramework.Runtime
             }
             ILogHelper logHelper = Activator.CreateInstance(logHelperType) as ILogHelper;
             HQDebugger.SetHelper(logHelper);
+
+            Type jsonHelperType = Type.GetType(jsonHelperTypeName);
+            if (jsonHelperType == null)
+            {
+                throw new Exception($"{jsonHelperTypeName} is not found.");
+            }
+            IJsonHelper jsonHelper = Activator.CreateInstance(jsonHelperType) as IJsonHelper;
+            SerializeManager.SetJsonHelper(jsonHelper);
         }
 
         private void Update()

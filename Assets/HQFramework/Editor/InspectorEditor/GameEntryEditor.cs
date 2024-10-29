@@ -11,55 +11,88 @@ namespace HQFramework.Editor
     public class GameEntryEditor : UnityEditor.Editor
     {
         private SerializedProperty logHelperTypeName;
+        private SerializedProperty jsonHelperTypeName;
         
         private string[] logHelperTypeList;
-        private int logHelperTypeNameIndex;
+        private string[] jsonHelperTypeList;
+        private int logHelperTypeIndex;
+        private int jsonHelperTypeIndex;
 
         private void OnEnable()
         {
             logHelperTypeName = serializedObject.FindProperty(nameof(logHelperTypeName));
-            logHelperTypeList = CollectLogHelperTypes();
+            jsonHelperTypeName = serializedObject.FindProperty(nameof(jsonHelperTypeName));
+            CollectTypeList();
         }
 
         public override void OnInspectorGUI()
         {
+            GUIStyle headerStyle = "AM HeaderStyle";
+
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Log Helper: ");
-            logHelperTypeNameIndex = EditorGUILayout.Popup(logHelperTypeNameIndex, logHelperTypeList);
-            logHelperTypeName.stringValue = logHelperTypeList[logHelperTypeNameIndex];
+            GUILayout.Label("Log Helper: ", headerStyle);
+            logHelperTypeIndex = EditorGUILayout.Popup(logHelperTypeIndex, logHelperTypeList, GUILayout.ExpandWidth(true));
+            logHelperTypeName.stringValue = logHelperTypeList[logHelperTypeIndex];
             GUILayout.EndHorizontal();
 
             EditorGUILayout.Separator();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Json Helper: ", headerStyle);
+            jsonHelperTypeIndex = EditorGUILayout.Popup(jsonHelperTypeIndex, jsonHelperTypeList, GUILayout.ExpandWidth(true));
+            jsonHelperTypeName.stringValue = jsonHelperTypeList[jsonHelperTypeIndex];
+            GUILayout.EndHorizontal();
+
             serializedObject.ApplyModifiedProperties();
         }
 
-        private string[] CollectLogHelperTypes()
+        private void CollectTypeList()
         {
-            List<string> typeList = new List<string>();
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            List<string> logHelperTypes = new List<string>();
+            List<string> jsonHelperTypes = new List<string>();
+
             Type logHelperInterfaceType = typeof(ILogHelper);
+            Type jsonHelperInterfaceType = typeof(IJsonHelper);
+
             for (int i = 0; i < assemblies.Length; i++)
             {
                 Type[] types = assemblies[i].GetTypes();
                 for (int j = 0; j < types.Length; j++)
                 {
-                    if (!types[j].IsAbstract && !types[j].IsInterface && logHelperInterfaceType.IsAssignableFrom(types[j]))
+                    if (!types[j].IsAbstract && !types[j].IsInterface)
                     {
-                        typeList.Add(types[j].FullName);
+                        if (logHelperInterfaceType.IsAssignableFrom(types[j]))
+                        {
+                            logHelperTypes.Add(types[j].FullName);
+                        }
+                        else if (jsonHelperInterfaceType.IsAssignableFrom(types[j]))
+                        {
+                            jsonHelperTypes.Add(types[j].FullName);    
+                        }
                     }
                 }
             }
 
-            for (int i = 0; i < typeList.Count; i++)
+            for (int i = 0; i < logHelperTypes.Count; i++)
             {
-                if (typeList[i] == logHelperTypeName.stringValue)
+                if (logHelperTypes[i] == logHelperTypeName.stringValue)
                 {
-                    logHelperTypeNameIndex = i;
+                    logHelperTypeIndex = i;
+                }
+            }
+
+            for (int i = 0; i < jsonHelperTypes.Count; i++)
+            {
+                if (jsonHelperTypes[i] == jsonHelperTypeName.stringValue)
+                {
+                    jsonHelperTypeIndex = i;
                 }
             }
             
-            return typeList.ToArray();
+            logHelperTypeList = logHelperTypes.ToArray();
+            jsonHelperTypeList = jsonHelperTypes.ToArray();
         }
     }
 }

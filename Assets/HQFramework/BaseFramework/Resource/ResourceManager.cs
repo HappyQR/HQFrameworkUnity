@@ -34,6 +34,8 @@ namespace HQFramework.Resource
         public void SetHelper(IResourceHelper resourceHelper)
         {
             this.resourceHelper = resourceHelper;
+            hotfixChecker = new ResourceHotfixChecker(this);
+            resourceDownloader = new ResourceDownloader(this);
         }
 
         public int LaunchHotfixCheck()
@@ -42,11 +44,7 @@ namespace HQFramework.Resource
             {
                 throw new InvalidOperationException("You can't use CheckHotfix under NoHotfix mode.");
             }
-            if (hotfixChecker == null)
-            {
-                hotfixChecker = new ResourceHotfixChecker(this);
-            }
-            
+
             return hotfixChecker.LaunchHotfix();
         }
 
@@ -80,10 +78,7 @@ namespace HQFramework.Resource
             {
                 throw new InvalidOperationException("Nothing to update.");
             }
-            if (resourceDownloader == null)
-            {
-                resourceDownloader = new ResourceDownloader(this);
-            }
+            
             return resourceDownloader.LaunchHotfix();
         }
 

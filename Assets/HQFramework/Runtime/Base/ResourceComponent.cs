@@ -7,14 +7,23 @@ namespace HQFramework.Runtime
 {
     public class ResourceComponent : BaseComponent
     {
-        public string resourceHelperTypeName;
-        public AssetHotfixMode hotfixMode;
-        public int launcherHotfixID;
-        public string assetsPersistentDir;
-        public string assetsBuiltinDir;
-        public string hotfixManifestUrl;
+        [SerializeField]
+        private string resourceHelperTypeName;
+        [SerializeField]
+        private AssetHotfixMode hotfixMode;
+        [SerializeField]
+        private int launcherHotfixID;
+        [SerializeField]
+        private string assetsPersistentDir;
+        [SerializeField]
+        private string assetsBuiltinDir;
+        [SerializeField]
+        private string hotfixManifestUrl;
 
         private IResourceManager resourceManager;
+
+        public string PersistentDir => resourceManager.PersistentDir;
+        public string BuiltinDir => resourceManager.BuiltinDir;
 
         private void Start()
         {

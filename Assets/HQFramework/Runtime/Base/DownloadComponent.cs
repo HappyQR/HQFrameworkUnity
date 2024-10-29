@@ -1,12 +1,15 @@
 using System;
 using HQFramework.Download;
+using UnityEngine;
 
 namespace HQFramework.Runtime
 {
     public class DownloadComponent : BaseComponent
     {
-        public float timeOut = 10f;
-        public ushort maxConcurrentCount = 5;
+        [SerializeField]
+        private float timeOut = 10f;
+        [SerializeField]
+        private ushort maxConcurrentCount = 5;
 
         private IDownloadManager downloadManager;
 

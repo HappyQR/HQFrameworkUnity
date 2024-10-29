@@ -1,7 +1,6 @@
 using System.Collections;
 using System.IO;
 using HQFramework;
-using HQFramework.Coroutine;
 using HQFramework.Procedure;
 using HQFramework.Resource;
 using HQFramework.Runtime;
@@ -9,23 +8,17 @@ using UnityEngine.Networking;
 
 public class ResourceDecompressProcedure : ProcedureBase
 {
-    private IResourceManager resourceManager;
-    private ICoroutineManager coroutineManager;
+    private ResourceComponent resourceManager;
+    private CoroutineComponent coroutineManager;
     private string assetManifestFileName = "AssetModuleManifest.json";
 
     protected override void OnEnter()
     {
         HQDebugger.Log("ResourceDecompressProcedure Enter");
 
-        JsonLitHelper jsonLitHelper = new JsonLitHelper();
-        SerializeManager.SetJsonHelper(jsonLitHelper);
-
-        // DefaultResourceHelper helper = new DefaultResourceHelper();
-        // resourceManager = HQFrameworkEngine.GetModule<IResourceManager>();
-        // resourceManager.SetHelper(helper);
-
-        coroutineManager = HQFrameworkEngine.GetModule<ICoroutineManager>();
-        coroutineManager.StartCoroutine(DecompressBuiltinResource());
+        resourceManager = GameEntry.GetModule<ResourceComponent>();
+        coroutineManager = GameEntry.GetModule<CoroutineComponent>();
+        coroutineManager.StartHQCoroutine(DecompressBuiltinResource());
     }
 
     private IEnumerator DecompressBuiltinResource()
@@ -48,8 +41,8 @@ public class ResourceDecompressProcedure : ProcedureBase
         AssetModuleManifest localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(manifestJson);
         foreach (var module in localManifest.moduleDic.Values)
         {
-            string moudleDir = Path.Combine(resourceManager.PersistentDir, module.moduleName);
-            string moduleUrl = "file://" + Path.Combine(resourceManager.BuiltinDir, module.moduleName);
+            string moudleDir = Path.Combine(resourceManager.PersistentDir, module.id.ToString());
+            string moduleUrl = "file://" + Path.Combine(resourceManager.BuiltinDir, module.id.ToString());
             if (!Directory.Exists(moudleDir))
             {
                 Directory.CreateDirectory(moudleDir);
