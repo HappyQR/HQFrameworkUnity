@@ -300,7 +300,7 @@ namespace HQFramework.Resource
                     {
                         Directory.CreateDirectory(moduleDir);
                     }
-                    File.Copy(downloadItem.filePath, destBundlePath);
+                    File.Copy(downloadItem.filePath, destBundlePath, true);
                     File.Delete(downloadItem.filePath);
                 }
                 downloadGroupDic.Remove(item.hotfixID);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using HQFramework.Procedure;
 using UnityEngine;
 
@@ -20,10 +21,10 @@ namespace HQFramework.Runtime
         private void Start()
         {
             procedureManager = HQFrameworkEngine.GetModule<IProcedureManager>();
-            RegisterAllProcedures();
+            GameEntry.GetModule<CoroutineComponent>().StartHQCoroutine(RegisterAllProcedures());
         }
 
-        private void RegisterAllProcedures()
+        private IEnumerator RegisterAllProcedures()
         {
             Type baseProcedureType = typeof(ProcedureBase);
             Type entryProcedureType = Utility.Assembly.GetType(entryProcedure);
@@ -37,6 +38,8 @@ namespace HQFramework.Runtime
                         HQDebugger.LogError($"{type} is not a subclass of ProcedureBase.");
                     }
                     procedureManager.RegisterProcedure(type);
+
+                    yield return null;
                 }
             }
 
