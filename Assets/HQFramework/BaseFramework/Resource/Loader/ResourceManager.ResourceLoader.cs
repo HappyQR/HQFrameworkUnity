@@ -37,7 +37,11 @@ namespace HQFramework.Resource
                     return;
                 }
 
-
+                AssetItemInfo assetInfo = assetItemDic[crc];
+                ResourceLoadTask task = ResourceLoadTask.Create(this, resourceManager.resourceHelper, assetInfo, priority, groupID);
+                int taskID = resourceLoadTaskDispatcher.AddTask(task);
+                resourceLoadTaskDispatcher.AddResourceLoadCompleteEvent(taskID, onComplete);
+                resourceLoadTaskDispatcher.AddResourceLoadErrorEvent(taskID, onError);
             }
 
             public void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
