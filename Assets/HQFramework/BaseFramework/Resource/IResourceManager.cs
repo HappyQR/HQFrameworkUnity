@@ -40,9 +40,11 @@ namespace HQFramework.Resource
 
         void AddHotfixDownloadCompleteEvent(int hotfixID, Action<HotfixDownloadCompleteEventArgs> onHotfixComplete);
 
-        void LoadAsset(uint crc, Type assetType, Action<object> callback);
+        bool HasModule(int moduleID);
 
-        void LoadAsset<T>(uint crc, Action<T> callback) where T : class;
+        void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID);
+
+        void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class;
 
         void ReleaseAsset(object asset);
     }

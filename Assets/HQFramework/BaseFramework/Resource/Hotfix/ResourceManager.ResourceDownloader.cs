@@ -306,6 +306,7 @@ namespace HQFramework.Resource
                     File.Delete(downloadItem.filePath);
                 }
                 downloadGroupDic.Remove(item.hotfixID);
+                resourceManager.ReloadAssetMap();
 
                 // override local manifest
                 if (item.hotfixID == resourceManager.resourceHelper.LauncherHotfixID) // launcher hotfix complete.

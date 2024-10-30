@@ -36,6 +36,10 @@ namespace HQFramework.Resource
             this.resourceHelper = resourceHelper;
             hotfixChecker = new ResourceHotfixChecker(this);
             resourceDownloader = new ResourceDownloader(this);
+            resourceLoader = new ResourceLoader(this);
+
+            localManifest = resourceHelper.LoadAssetManifest();
+            ReloadAssetMap();
         }
 
         public int LaunchHotfixCheck()
@@ -145,14 +149,19 @@ namespace HQFramework.Resource
             resourceDownloader.AddHotfixDownloadCompleteEvent(hotfixID, onHotfixComplete);
         }
 
-        public void LoadAsset(uint crc, Type assetType, Action<object> callback)
+        public bool HasModule(int moduleID)
         {
-            throw new NotImplementedException();
+            return localManifest.moduleDic.ContainsKey(moduleID);
         }
 
-        public void LoadAsset<T>(uint crc, Action<T> callback) where T : class
+        public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
         {
-            throw new NotImplementedException();
+            resourceLoader.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
+        {
+            resourceLoader.LoadAsset<T>(crc, onComplete, onError, priority, groupID);
         }
 
         public void ReleaseAsset(object asset)
@@ -172,6 +181,11 @@ namespace HQFramework.Resource
                 bundleFilePathDic.Add(bundleInfo.bundleName, bundlePath);
                 return bundlePath;
             }
+        }
+
+        private void ReloadAssetMap()
+        {
+            resourceLoader.ReloadAssetMap();
         }
     }
 }

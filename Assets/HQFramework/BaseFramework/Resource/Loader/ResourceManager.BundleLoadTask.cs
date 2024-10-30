@@ -1,38 +1,37 @@
-using System;
-
 namespace HQFramework.Resource
 {
     internal partial class ResourceManager
     {
         private partial class ResourceLoader
         {
-            private class ResourceLoadTask : ResumableTask
+            private class BundleLoadTask : ResumableTask
             {
                 private static int serialID = 0;
+
                 private ResourceLoader resourceLoader;
                 private IResourceHelper resourceHelper;
-                private AssetItemInfo assetItem;
+                private AssetBundleInfo bundleInfo;
 
-                public static ResourceLoadTask Create(ResourceLoader resourceLoader, IResourceHelper resourceHelper, AssetItemInfo assetItem, int priority, int groupID)
+                public static BundleLoadTask Create(ResourceLoader resourceLoader, IResourceHelper resourceHelper, AssetBundleInfo bundleInfo, int priority, int groupID)
                 {
-                    ResourceLoadTask task = ReferencePool.Spawn<ResourceLoadTask>();
+                    BundleLoadTask task = ReferencePool.Spawn<BundleLoadTask>();
                     task.id = serialID++;
                     task.priority = priority;
                     task.groupID = groupID;
-                    task.assetItem = assetItem;
                     task.resourceLoader = resourceLoader;
                     task.resourceHelper = resourceHelper;
+                    task.bundleInfo = bundleInfo;
                     return task;
-                }
-
-                public override TaskStartStatus Start()
-                {
-                    throw new NotImplementedException();
                 }
 
                 public override void OnUpdate()
                 {
-                    throw new NotImplementedException();
+                    throw new System.NotImplementedException();
+                }
+
+                public override TaskStartStatus Start()
+                {
+                    throw new System.NotImplementedException();
                 }
 
                 protected override void OnRecyle()
@@ -40,7 +39,7 @@ namespace HQFramework.Resource
                     base.OnRecyle();
                     resourceLoader = null;
                     resourceHelper = null;
-                    assetItem = null;
+                    bundleInfo = null;
                 }
             }
         }

@@ -66,10 +66,6 @@ namespace HQFramework.Resource
             private async void LaunchHotfixInternal()
             {
                 int hotfixID = resourceManager.resourceHelper.LauncherHotfixID;
-                if (resourceManager.localManifest == null)
-                {
-                    resourceManager.localManifest = await resourceManager.resourceHelper.LoadAssetManifestAsync();
-                }
                 try
                 {
                     using HttpClient client = new HttpClient();

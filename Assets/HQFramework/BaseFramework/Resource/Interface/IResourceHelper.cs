@@ -39,7 +39,7 @@ namespace HQFramework.Resource
             set;
         }
 
-        Task<AssetModuleManifest> LoadAssetManifestAsync();
+        AssetModuleManifest LoadAssetManifest();
 
         void OverrideLocalManifest(AssetModuleManifest localManifest);
 

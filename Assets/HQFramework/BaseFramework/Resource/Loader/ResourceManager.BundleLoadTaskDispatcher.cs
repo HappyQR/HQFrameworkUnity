@@ -6,20 +6,15 @@ namespace HQFramework.Resource
     {
         private partial class ResourceLoader
         {
-            private class ResourceLoadTaskDispatcher : ResumableTaskDispatcher<ResourceLoadTask>
+            private class BundleLoadTaskDispatcher : ResumableTaskDispatcher<BundleLoadTask>
             {
-                public ResourceLoadTaskDispatcher(ushort maxConcurrentCount) : base(maxConcurrentCount)
+                public BundleLoadTaskDispatcher(ushort maxConcurrentCount) : base(maxConcurrentCount)
                 {
                 }
 
                 public void AddResourceLoadErrorEvent(int taskID, Action<ResourceLoadErrorEventArgs> onError)
                 {
 
-                }
-
-                public void AddResourceLoadCompleteEvent(int taskID, Action<ResourceLoadCompleteEventArgs> onComplete)
-                {
-                    
                 }
             }
         }

@@ -52,9 +52,9 @@ namespace HQFramework.Runtime
             }
         }
 
-        public async Task<AssetModuleManifest> LoadAssetManifestAsync()
+        public AssetModuleManifest LoadAssetManifest()
         {
-            string localManifestJsonStr = await File.ReadAllTextAsync(LocalManifestFilePath);
+            string localManifestJsonStr = File.ReadAllText(LocalManifestFilePath);
             AssetModuleManifest localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(localManifestJsonStr);
             return localManifest;
         }
