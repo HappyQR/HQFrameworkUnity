@@ -258,13 +258,15 @@ namespace HQFramework.Resource
             {
                 downloadManager.StopDownloads(args.GroupID);
                 int hotfixID = args.GroupID;
-                AssetBundleInfo bundleInfo = downloadDic[hotfixID].bundleInfo;
+                AssetBundleInfo bundleInfo = downloadDic[args.ID].bundleInfo;
                 if (errorEventDic.ContainsKey(hotfixID))
                 {
                     HotfixDownloadErrorEventArgs errArgs = HotfixDownloadErrorEventArgs.Create(hotfixID, bundleInfo, args.ErrorMessage);
                     errorEventDic[hotfixID]?.Invoke(errArgs);
                     ReferencePool.Recyle(errArgs);
                 }
+                downloadDic.Remove(args.ID);
+                downloadGroupDic.Remove(hotfixID);
                 ClearHotfix(hotfixID);
             }
 

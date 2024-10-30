@@ -33,6 +33,7 @@ namespace HQFramework.Download
                 DownloadTaskWorker worker = ReferencePool.Spawn<DownloadTaskWorker>();
                 worker.buffer = ArrayPool<byte>.Shared.Rent(defaultBufferSize);
                 worker.cancelToken = new CancellationTokenSource();
+                worker.status = TaskStatus.Waiting;
                 worker.task = task;
                 return worker;
             }
@@ -224,7 +225,6 @@ namespace HQFramework.Download
                 ArrayPool<byte>.Shared.Return(buffer);
                 buffer = null;
                 totalSize = downloadedSize = 0;
-                status = TaskStatus.Waiting;
                 task = null;
                 responseMsg?.Dispose();
                 cancelToken.Dispose();
