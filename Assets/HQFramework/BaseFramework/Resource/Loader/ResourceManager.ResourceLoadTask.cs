@@ -27,7 +27,22 @@ namespace HQFramework.Resource
 
                 public override TaskStartStatus Start()
                 {
-                    throw new NotImplementedException();
+                    if (resourceLoader.loadedBundleDic.ContainsKey(assetItem.bundleName))
+                    {
+                        if (resourceLoader.loadedBundleDic[assetItem.bundleName] == null)
+                        {
+                            return TaskStartStatus.HasToWait;
+                        }
+                        else
+                        {
+                            // resourceHelper.LoadAsset(assetItem.bundleName)
+                            return TaskStartStatus.InProgress;
+                        }
+                    }
+                    else
+                    {
+                        return TaskStartStatus.HasToWait;
+                    }
                 }
 
                 public override void OnUpdate()

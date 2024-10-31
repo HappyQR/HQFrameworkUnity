@@ -46,5 +46,7 @@ namespace HQFramework.Resource
         string GetBundleFilePath(AssetBundleInfo bundleInfo);
 
         void DeleteAssetModule(AssetModuleInfo module);
+
+        void LoadAsset(string bundleName, string assetPath, Type assetType, Action<object> callback);
     }
 }
