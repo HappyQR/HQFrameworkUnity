@@ -1,6 +1,7 @@
+using System;
 using System.IO;
-using System.Threading.Tasks;
 using HQFramework.Resource;
+using UnityEngine;
 
 namespace HQFramework.Runtime
 {
@@ -77,6 +78,25 @@ namespace HQFramework.Runtime
             {
                 Directory.Delete(moduleDir, true);
             }
+        }
+
+        public void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> callback)
+        {
+            AssetBundle assetBundle = (AssetBundle)bundle;
+            AssetBundleRequest request = assetBundle.LoadAssetAsync(assetPath, assetType);
+            request.completed += (asyncOperation) =>
+            {
+                callback?.Invoke(request.asset);
+            };
+        }
+
+        public void LoadAssetBundle(string bundlePath, Action<object> callback)
+        {
+            AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(bundlePath);
+            request.completed += (asyncOperation) =>
+            {
+                callback?.Invoke(request.assetBundle);
+            };
         }
     }
 }

@@ -12,9 +12,9 @@ namespace HQFramework.Resource
                 {
                 }
 
-                public void AddResourceLoadErrorEvent(int taskID, Action<ResourceLoadErrorEventArgs> onError)
+                public void AddBundleLoadCompleteCallback(int taskID, Action<object> onComplete)
                 {
-
+                    
                 }
             }
         }

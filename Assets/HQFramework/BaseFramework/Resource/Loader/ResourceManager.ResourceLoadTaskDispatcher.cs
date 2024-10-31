@@ -12,11 +12,6 @@ namespace HQFramework.Resource
                 {
                 }
 
-                public void AddResourceLoadErrorEvent(int taskID, Action<ResourceLoadErrorEventArgs> onError)
-                {
-
-                }
-
                 public void AddResourceLoadCompleteEvent(int taskID, Action<ResourceLoadCompleteEventArgs> onComplete)
                 {
                     
