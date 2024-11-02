@@ -1,4 +1,4 @@
-namespace HQFramework
+namespace HQFramework.Resource
 {
     public class ResourceLoadCompleteEventArgs : IReference
     {

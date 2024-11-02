@@ -56,6 +56,12 @@ namespace HQFramework.Resource
                 LoadAsset(crc, assetType, OnLoadComplete, onError, priority, groupID);
             }
 
+            public void OnUpdate()
+            {
+                resourceLoadTaskDispatcher.ProcessTasks();
+                bundleLoadTaskDispatcher.ProcessTasks();
+            }
+
             public void ReloadAssetMap()
             {
                 assetItemDic.Clear();
@@ -68,9 +74,21 @@ namespace HQFramework.Resource
                 }
             }
 
-            private void LoadBundle(AssetBundleInfo bundleInfo)
+            private void LoadBundle(AssetBundleInfo bundleInfo, int priority, int groupID)
             {
-                
+                if (loadedBundleDic.ContainsValue(bundleInfo.bundleName))
+                {
+                    return;
+                }
+                loadedBundleDic.Add(bundleInfo.bundleName, null);
+                BundleLoadTask task = BundleLoadTask.Create(this, resourceManager.resourceHelper, bundleInfo, priority, groupID);
+                int taskID = bundleLoadTaskDispatcher.AddTask(task);
+                bundleLoadTaskDispatcher.AddBundleLoadCompleteCallback(taskID, OnLoadBundleComplete);
+            }
+
+            private void OnLoadBundleComplete(BundleLoadCompleteEventArgs args)
+            {
+                loadedBundleDic[args.bundleName] = args.bundleObject;
             }
         }
     }

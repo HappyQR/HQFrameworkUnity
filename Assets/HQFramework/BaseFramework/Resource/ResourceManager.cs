@@ -28,6 +28,7 @@ namespace HQFramework.Resource
 
         protected override void OnUpdate()
         {
+            resourceLoader?.OnUpdate();
             resourceDownloader?.OnUpdate();
         }
 

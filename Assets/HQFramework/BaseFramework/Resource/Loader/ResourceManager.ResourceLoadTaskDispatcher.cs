@@ -14,7 +14,10 @@ namespace HQFramework.Resource
 
                 public void AddResourceLoadCompleteEvent(int taskID, Action<ResourceLoadCompleteEventArgs> onComplete)
                 {
-                    
+                    if (taskDic.ContainsKey(taskID))
+                    {
+                        taskDic[taskID].OnComplete += onComplete;
+                    }
                 }
             }
         }

@@ -12,9 +12,12 @@ namespace HQFramework.Resource
                 {
                 }
 
-                public void AddBundleLoadCompleteCallback(int taskID, Action<object> onComplete)
+                public void AddBundleLoadCompleteCallback(int taskID, Action<BundleLoadCompleteEventArgs> onComplete)
                 {
-                    
+                    if (taskDic.ContainsKey(taskID))
+                    {
+                        taskDic[taskID].OnComplete += onComplete;
+                    }
                 }
             }
         }

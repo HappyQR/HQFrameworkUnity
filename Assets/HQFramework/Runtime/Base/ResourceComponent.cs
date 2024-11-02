@@ -119,14 +119,19 @@ namespace HQFramework.Runtime
             resourceManager.AddHotfixDownloadCompleteEvent(hotfixID, onHotfixComplete);
         }
 
-        public void LoadAsset(uint crc, Type assetType, Action<object> callback)
+        public bool HasModule(int moduleID)
         {
-            throw new NotImplementedException();
+            return resourceManager.HasModule(moduleID);
         }
 
-        public void LoadAsset<T>(uint crc, Action<T> callback) where T : class
+        public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
         {
-            throw new NotImplementedException();
+            resourceManager.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0) where T : class
+        {
+            resourceManager.LoadAsset<T>(crc, onComplete, onError, priority, groupID);
         }
 
         public void ReleaseAsset(object asset)

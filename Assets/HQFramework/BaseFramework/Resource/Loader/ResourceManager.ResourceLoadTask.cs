@@ -52,7 +52,7 @@ namespace HQFramework.Resource
                     else
                     {
                         AssetBundleInfo bundleInfo = resourceLoader.resourceManager.localManifest.moduleDic[assetItem.moduleID].bundleDic[assetItem.bundleName];
-                        resourceLoader.LoadBundle(bundleInfo);
+                        resourceLoader.LoadBundle(bundleInfo, priority, groupID);
                         return TaskStartStatus.HasToWait;
                     }
                 }
