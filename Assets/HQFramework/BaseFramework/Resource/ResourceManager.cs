@@ -9,13 +9,16 @@ namespace HQFramework.Resource
         private ResourceHotfixChecker hotfixChecker;
         private ResourceDownloader resourceDownloader;
         private ResourceLoader resourceLoader;
+        private BundleLoader bundleManager;
 
         private AssetModuleManifest localManifest;
         private AssetModuleManifest remoteManifest;
-
         private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> necessaryHotfixContent;
         private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> separateHotfixContent;
-        private Dictionary<string, string> bundleFilePathDic;
+
+        private Dictionary<string, string> bundleFilePathMap;
+        private Dictionary<uint, AssetItemInfo> assetItemMap;
+        private Dictionary<string, BundleItem> loadedBundleMap;
 
         public override byte Priority => byte.MaxValue;
         public string PersistentDir => resourceHelper.AssetsPersistentDir;
@@ -23,7 +26,9 @@ namespace HQFramework.Resource
 
         protected override void OnInitialize()
         {
-            bundleFilePathDic = new Dictionary<string, string>();
+            bundleFilePathMap = new Dictionary<string, string>();
+            assetItemMap = new Dictionary<uint, AssetItemInfo>();
+            loadedBundleMap = new Dictionary<string, BundleItem>();
         }
 
         protected override void OnUpdate()
@@ -38,6 +43,7 @@ namespace HQFramework.Resource
             hotfixChecker = new ResourceHotfixChecker(this);
             resourceDownloader = new ResourceDownloader(this);
             resourceLoader = new ResourceLoader(this);
+            bundleManager = new BundleLoader(this);
 
             localManifest = resourceHelper.LoadAssetManifest();
             ReloadAssetMap();
@@ -172,21 +178,28 @@ namespace HQFramework.Resource
 
         private string GetBundleFilePath(AssetBundleInfo bundleInfo)
         {
-            if (bundleFilePathDic.ContainsKey(bundleInfo.bundleName))
+            if (bundleFilePathMap.ContainsKey(bundleInfo.bundleName))
             {
-                return bundleFilePathDic[bundleInfo.bundleName];
+                return bundleFilePathMap[bundleInfo.bundleName];
             }
             else
             {
                 string bundlePath = resourceHelper.GetBundleFilePath(bundleInfo);
-                bundleFilePathDic.Add(bundleInfo.bundleName, bundlePath);
+                bundleFilePathMap.Add(bundleInfo.bundleName, bundlePath);
                 return bundlePath;
             }
         }
 
         private void ReloadAssetMap()
         {
-            resourceLoader.ReloadAssetMap();
+            assetItemMap.Clear();
+            foreach (var module in localManifest.moduleDic.Values)
+            {
+                foreach (var asset in module.assetsDic.Values)
+                {
+                    assetItemMap.Add(asset.crc, asset);
+                }
+            }
         }
     }
 }

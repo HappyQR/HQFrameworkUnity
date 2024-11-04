@@ -9,8 +9,7 @@ namespace HQFramework.Resource
             private class ResourceLoadTask : ResumableTask
             {
                 private static int serialID = 0;
-                private ResourceLoader resourceLoader;
-                private IResourceHelper resourceHelper;
+                private ResourceManager resourceManager;
                 private AssetItemInfo assetItem;
                 private Type assetType;
 
@@ -22,7 +21,7 @@ namespace HQFramework.Resource
                     remove { onComplete -= value; }
                 }
 
-                public static ResourceLoadTask Create(ResourceLoader resourceLoader, IResourceHelper resourceHelper, AssetItemInfo assetItem, Type assetType, int priority, int groupID)
+                public static ResourceLoadTask Create(ResourceManager resourceManager, AssetItemInfo assetItem, Type assetType, int priority, int groupID)
                 {
                     ResourceLoadTask task = ReferencePool.Spawn<ResourceLoadTask>();
                     task.id = serialID++;
@@ -30,31 +29,13 @@ namespace HQFramework.Resource
                     task.groupID = groupID;
                     task.assetItem = assetItem;
                     task.assetType = assetType;
-                    task.resourceLoader = resourceLoader;
-                    task.resourceHelper = resourceHelper;
+                    task.resourceManager = resourceManager;
                     return task;
                 }
 
                 public override TaskStartStatus Start()
                 {
-                    if (resourceLoader.loadedBundleDic.ContainsKey(assetItem.bundleName))
-                    {
-                        if (resourceLoader.loadedBundleDic[assetItem.bundleName] == null)
-                        {
-                            return TaskStartStatus.HasToWait;
-                        }
-                        else
-                        {
-                            resourceHelper.LoadAsset(resourceLoader.loadedBundleDic[assetItem.bundleName], assetItem.assetPath, assetType, OnLoadAssetCompleteCallback);
-                            return TaskStartStatus.InProgress;
-                        }
-                    }
-                    else
-                    {
-                        AssetBundleInfo bundleInfo = resourceLoader.resourceManager.localManifest.moduleDic[assetItem.moduleID].bundleDic[assetItem.bundleName];
-                        resourceLoader.LoadBundle(bundleInfo, priority, groupID);
-                        return TaskStartStatus.HasToWait;
-                    }
+                    return TaskStartStatus.HasToWait;
                 }
 
                 public override void OnUpdate()
@@ -65,8 +46,7 @@ namespace HQFramework.Resource
                 protected override void OnRecyle()
                 {
                     base.OnRecyle();
-                    resourceLoader = null;
-                    resourceHelper = null;
+                    resourceManager = null;
                     assetItem = null;
                     assetType = null;
                     onComplete = null;

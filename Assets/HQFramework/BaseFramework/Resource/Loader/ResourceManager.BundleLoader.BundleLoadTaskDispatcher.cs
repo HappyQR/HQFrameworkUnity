@@ -4,7 +4,7 @@ namespace HQFramework.Resource
 {
     internal partial class ResourceManager
     {
-        private partial class ResourceLoader
+        private partial class BundleLoader
         {
             private class BundleLoadTaskDispatcher : ResumableTaskDispatcher<BundleLoadTask>
             {

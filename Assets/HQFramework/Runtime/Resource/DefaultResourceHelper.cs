@@ -3,6 +3,8 @@ using System.IO;
 using HQFramework.Resource;
 using UnityEngine;
 
+using UnityObject = UnityEngine.Object;
+
 namespace HQFramework.Runtime
 {
     internal class DefaultResourceHelper : IResourceHelper
@@ -97,6 +99,11 @@ namespace HQFramework.Runtime
             {
                 callback?.Invoke(request.assetBundle);
             };
+        }
+
+        public void DestroyAsset(object asset)
+        {
+            UnityObject.Destroy((UnityObject)asset);
         }
     }
 }

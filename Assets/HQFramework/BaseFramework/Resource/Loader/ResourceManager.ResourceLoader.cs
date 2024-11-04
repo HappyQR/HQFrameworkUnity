@@ -9,11 +9,6 @@ namespace HQFramework.Resource
         {
             private ResourceManager resourceManager;
             private ResourceLoadTaskDispatcher resourceLoadTaskDispatcher;
-            private BundleLoadTaskDispatcher bundleLoadTaskDispatcher;
-
-            private Dictionary<uint, AssetItemInfo> assetItemDic;
-            private Dictionary<string, object> loadedBundleDic;
-            private Dictionary<string, int> bundleReferenceCountDic;
 
             private static readonly ushort maxConcurrentLoadCount = 1024;
 
@@ -21,15 +16,11 @@ namespace HQFramework.Resource
             {
                 this.resourceManager = resourceManager;
                 this.resourceLoadTaskDispatcher = new ResourceLoadTaskDispatcher(maxConcurrentLoadCount);
-                this.bundleLoadTaskDispatcher = new BundleLoadTaskDispatcher(maxConcurrentLoadCount);
-                this.assetItemDic = new Dictionary<uint, AssetItemInfo>();
-                this.loadedBundleDic = new Dictionary<string, object>();
-                this.bundleReferenceCountDic = new Dictionary<string, int>();
             }
 
             public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
             {
-                if (!assetItemDic.ContainsKey(crc))
+                if (!assetItemMap.ContainsKey(crc))
                 {
                     ResourceLoadErrorEventArgs errorArgs = ResourceLoadErrorEventArgs.Create(crc, null, null, null, $"id : {crc} assets doesn't exist.");
                     onError?.Invoke(errorArgs);
@@ -37,8 +28,8 @@ namespace HQFramework.Resource
                     return;
                 }
 
-                AssetItemInfo assetInfo = assetItemDic[crc];
-                ResourceLoadTask task = ResourceLoadTask.Create(this, resourceManager.resourceHelper, assetInfo, assetType, priority, groupID);
+                AssetItemInfo assetInfo = assetItemMap[crc];
+                ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, assetInfo, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);
                 resourceLoadTaskDispatcher.AddResourceLoadCompleteEvent(taskID, onComplete);
             }
@@ -59,36 +50,6 @@ namespace HQFramework.Resource
             public void OnUpdate()
             {
                 resourceLoadTaskDispatcher.ProcessTasks();
-                bundleLoadTaskDispatcher.ProcessTasks();
-            }
-
-            public void ReloadAssetMap()
-            {
-                assetItemDic.Clear();
-                foreach (var module in resourceManager.localManifest.moduleDic.Values)
-                {
-                    foreach (var asset in module.assetsDic.Values)
-                    {
-                        assetItemDic.Add(asset.crc, asset);
-                    }
-                }
-            }
-
-            private void LoadBundle(AssetBundleInfo bundleInfo, int priority, int groupID)
-            {
-                if (loadedBundleDic.ContainsValue(bundleInfo.bundleName))
-                {
-                    return;
-                }
-                loadedBundleDic.Add(bundleInfo.bundleName, null);
-                BundleLoadTask task = BundleLoadTask.Create(this, resourceManager.resourceHelper, bundleInfo, priority, groupID);
-                int taskID = bundleLoadTaskDispatcher.AddTask(task);
-                bundleLoadTaskDispatcher.AddBundleLoadCompleteCallback(taskID, OnLoadBundleComplete);
-            }
-
-            private void OnLoadBundleComplete(BundleLoadCompleteEventArgs args)
-            {
-                loadedBundleDic[args.bundleName] = args.bundleObject;
             }
         }
     }

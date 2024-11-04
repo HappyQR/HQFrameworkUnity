@@ -50,5 +50,7 @@ namespace HQFramework.Resource
         void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> callback);
 
         void LoadAssetBundle(string bundlePath, Action<object> callback);
+
+        void DestroyAsset(object asset);
     }
 }
