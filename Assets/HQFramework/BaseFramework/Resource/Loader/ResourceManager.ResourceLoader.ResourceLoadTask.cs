@@ -35,7 +35,22 @@ namespace HQFramework.Resource
 
                 public override TaskStartStatus Start()
                 {
-                    return TaskStartStatus.HasToWait;
+                    if (resourceManager.loadedBundleMap.ContainsKey(assetItem.bundleName))
+                    {
+                        if (!resourceManager.loadedBundleMap[assetItem.bundleName].Ready)
+                        {
+                            return TaskStartStatus.HasToWait;
+                        }
+                        object bundleObject = resourceManager.loadedBundleMap[assetItem.bundleName].bundleObject;
+                        resourceManager.resourceHelper.LoadAsset(bundleObject, assetItem.assetPath, assetType, OnLoadAssetCompleteCallback);
+                        return TaskStartStatus.InProgress;
+                    }
+                    else
+                    {
+                        AssetBundleInfo bundleInfo = resourceManager.localManifest.moduleDic[assetItem.moduleID].bundleDic[assetItem.bundleName];
+                        resourceManager.bundleLoader.LoadBundle(bundleInfo, priority, groupID);
+                        return TaskStartStatus.HasToWait;
+                    }
                 }
 
                 public override void OnUpdate()

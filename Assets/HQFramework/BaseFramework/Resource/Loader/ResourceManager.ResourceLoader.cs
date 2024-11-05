@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace HQFramework.Resource
 {
@@ -10,8 +9,6 @@ namespace HQFramework.Resource
             private ResourceManager resourceManager;
             private ResourceLoadTaskDispatcher resourceLoadTaskDispatcher;
 
-            private static readonly ushort maxConcurrentLoadCount = 1024;
-
             public ResourceLoader(ResourceManager resourceManager)
             {
                 this.resourceManager = resourceManager;
@@ -20,7 +17,7 @@ namespace HQFramework.Resource
 
             public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
             {
-                if (!assetItemMap.ContainsKey(crc))
+                if (!resourceManager.assetItemMap.ContainsKey(crc))
                 {
                     ResourceLoadErrorEventArgs errorArgs = ResourceLoadErrorEventArgs.Create(crc, null, null, null, $"id : {crc} assets doesn't exist.");
                     onError?.Invoke(errorArgs);
@@ -28,7 +25,7 @@ namespace HQFramework.Resource
                     return;
                 }
 
-                AssetItemInfo assetInfo = assetItemMap[crc];
+                AssetItemInfo assetInfo = resourceManager.assetItemMap[crc];
                 ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, assetInfo, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);
                 resourceLoadTaskDispatcher.AddResourceLoadCompleteEvent(taskID, onComplete);

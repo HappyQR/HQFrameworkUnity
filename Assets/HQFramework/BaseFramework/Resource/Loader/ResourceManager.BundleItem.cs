@@ -7,9 +7,11 @@ namespace HQFramework.Resource
             public int refCount;
             public object bundleObject;
 
+            public bool Ready => bundleObject != null;
+
             public BundleItem()
             {
-                refCount = 1;
+                refCount = 0;
                 bundleObject = null;
             }
         }

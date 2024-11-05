@@ -134,6 +134,21 @@ namespace HQFramework.Runtime
             resourceManager.LoadAsset<T>(crc, onComplete, onError, priority, groupID);
         }
 
+        public void LoadAsset(string path, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
+        {
+            resourceManager.LoadAsset(path, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void LoadAsset<T>(string path, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0) where T : class
+        {
+            resourceManager.LoadAsset(path, onComplete, onError, priority, groupID);
+        }
+
+        public BundleData[] GetLoadedBundleData()
+        {
+            return resourceManager.GetLoadedBundleData();
+        }
+
         public void ReleaseAsset(object asset)
         {
             throw new NotImplementedException();

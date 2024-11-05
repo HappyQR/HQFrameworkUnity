@@ -5,10 +5,30 @@ namespace HQFramework.Resource
         private partial class BundleLoader
         {
             private ResourceManager resourceManager;
+            private BundleLoadTaskDispatcher bundleLoadTaskDispatcher;
 
             public BundleLoader(ResourceManager resourceManager)
             {
                 this.resourceManager = resourceManager;
+                this.bundleLoadTaskDispatcher = new BundleLoadTaskDispatcher(maxConcurrentLoadCount);
+            }
+
+            public void LoadBundle(AssetBundleInfo bundleInfo, int priority, int groupID)
+            {
+                resourceManager.loadedBundleMap.Add(bundleInfo.bundleName, new BundleItem());
+                BundleLoadTask task = BundleLoadTask.Create(resourceManager, bundleInfo, priority, groupID);
+                int taskID = bundleLoadTaskDispatcher.AddTask(task);
+                bundleLoadTaskDispatcher.AddBundleLoadCompleteCallback(taskID, OnLoadBundleComplete);
+            }
+
+            public void OnUpdate()
+            {
+                bundleLoadTaskDispatcher.ProcessTasks();
+            }
+
+            private void OnLoadBundleComplete(BundleLoadCompleteEventArgs args)
+            {
+                resourceManager.loadedBundleMap[args.bundleName].bundleObject = args.bundleObject;
             }
         }
     }

@@ -9,7 +9,7 @@ namespace HQFramework.Resource
         private ResourceHotfixChecker hotfixChecker;
         private ResourceDownloader resourceDownloader;
         private ResourceLoader resourceLoader;
-        private BundleLoader bundleManager;
+        private BundleLoader bundleLoader;
 
         private AssetModuleManifest localManifest;
         private AssetModuleManifest remoteManifest;
@@ -19,20 +19,25 @@ namespace HQFramework.Resource
         private Dictionary<string, string> bundleFilePathMap;
         private Dictionary<uint, AssetItemInfo> assetItemMap;
         private Dictionary<string, BundleItem> loadedBundleMap;
+        private Dictionary<object, string> loadedAssetMap; // key: asset object, value: bundle name
 
         public override byte Priority => byte.MaxValue;
         public string PersistentDir => resourceHelper.AssetsPersistentDir;
         public string BuiltinDir => resourceHelper.AssetsBuiltinDir;
+
+        private static readonly ushort maxConcurrentLoadCount = 1024;
 
         protected override void OnInitialize()
         {
             bundleFilePathMap = new Dictionary<string, string>();
             assetItemMap = new Dictionary<uint, AssetItemInfo>();
             loadedBundleMap = new Dictionary<string, BundleItem>();
+            loadedAssetMap = new Dictionary<object, string>();
         }
 
         protected override void OnUpdate()
         {
+            bundleLoader?.OnUpdate();
             resourceLoader?.OnUpdate();
             resourceDownloader?.OnUpdate();
         }
@@ -43,7 +48,7 @@ namespace HQFramework.Resource
             hotfixChecker = new ResourceHotfixChecker(this);
             resourceDownloader = new ResourceDownloader(this);
             resourceLoader = new ResourceLoader(this);
-            bundleManager = new BundleLoader(this);
+            bundleLoader = new BundleLoader(this);
 
             localManifest = resourceHelper.LoadAssetManifest();
             ReloadAssetMap();
@@ -171,7 +176,42 @@ namespace HQFramework.Resource
             resourceLoader.LoadAsset<T>(crc, onComplete, onError, priority, groupID);
         }
 
+        public void LoadAsset(string path, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
+        {
+            uint crc = Utility.CRC32.ComputeCrc32(path);
+            resourceLoader.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void LoadAsset<T>(string path, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
+        {
+            uint crc = Utility.CRC32.ComputeCrc32(path);
+            resourceLoader.LoadAsset<T>(crc, onComplete, onError, priority, groupID);
+        }
+
         public void ReleaseAsset(object asset)
+        {
+            if (!loadedAssetMap.ContainsKey(asset))
+            {
+                throw new InvalidOperationException("You can only release the asset loaded from ResourceManager.");
+            }
+            string bundleName = loadedAssetMap[asset];
+            loadedBundleMap[bundleName].refCount--;
+        }
+
+        public BundleData[] GetLoadedBundleData()
+        {
+            BundleData[] result = new BundleData[loadedBundleMap.Count];
+            int index = 0;
+            foreach (var item in loadedBundleMap)
+            {
+                result[index] = new BundleData(item.Key, item.Value.refCount, item.Value.Ready);
+                index++;
+            }
+
+            return result;
+        }
+
+        public AssetData[] GetLoadedAssetData()
         {
             throw new NotImplementedException();
         }

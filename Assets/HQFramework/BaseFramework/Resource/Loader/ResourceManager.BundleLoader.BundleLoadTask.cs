@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace HQFramework.Resource
 {
@@ -12,6 +13,7 @@ namespace HQFramework.Resource
 
                 private ResourceManager resourceManager;
                 private AssetBundleInfo bundleInfo;
+                private Queue<string> dependencyQueue = new Queue<string>();
 
                 private Action<BundleLoadCompleteEventArgs> onComplete;
 
@@ -35,6 +37,10 @@ namespace HQFramework.Resource
                     task.groupID = groupID;
                     task.resourceManager = resourceManager;
                     task.bundleInfo = bundleInfo;
+                    for (int i = 0; i < task.bundleInfo.dependencies.Length; i++)
+                    {
+                        task.dependencyQueue.Enqueue(task.bundleInfo.dependencies[i]);
+                    }
                     return task;
                 }
 
@@ -45,54 +51,99 @@ namespace HQFramework.Resource
 
                 public override TaskStartStatus Start()
                 {
-                    bool ready = true;
-
-                    for (int i = 0; i < bundleInfo.dependencies.Length; i++)
+                    int loopCount = dependencyQueue.Count;
+                    for (int i = 0; i < loopCount; i++)
                     {
-                        if (resourceLoader.loadedBundleDic.ContainsKey(bundleInfo.dependencies[i]))
+                        string bundleDependency = dependencyQueue.Dequeue();
+                        if (resourceManager.loadedBundleMap.ContainsKey(bundleDependency))
                         {
-                            if (resourceLoader.loadedBundleDic[bundleInfo.dependencies[i]] != null)
+                            if (resourceManager.loadedBundleMap[bundleDependency].Ready)
                             {
-                                ready = ready && true;
+                                resourceManager.loadedBundleMap[bundleDependency].refCount++;
                             }
                             else
                             {
-                                ready = false;
+                                dependencyQueue.Enqueue(bundleDependency);
                             }
                         }
                         else
                         {
                             AssetBundleInfo dependencyBundle = null;
-                            if (resourceLoader.resourceManager.localManifest.moduleDic[bundleInfo.moduleID].bundleDic.TryGetValue(bundleInfo.dependencies[i], out dependencyBundle))
+                            if (resourceManager.localManifest.moduleDic[bundleInfo.moduleID].bundleDic.TryGetValue(bundleDependency, out dependencyBundle))
                             {
-                                resourceLoader.LoadBundle(dependencyBundle, priority, groupID);
+                                resourceManager.bundleLoader.LoadBundle(dependencyBundle, priority, groupID);
                             }
                             else // find in other dependence modules
                             {
-                                AssetModuleInfo currentModule = resourceLoader.resourceManager.localManifest.moduleDic[bundleInfo.moduleID];
+                                AssetModuleInfo currentModule = resourceManager.localManifest.moduleDic[bundleInfo.moduleID];
                                 for (int j = 0; j < currentModule.dependencies.Length; j++)
                                 {
-                                    if (resourceLoader.resourceManager.localManifest.moduleDic[currentModule.dependencies[j]].bundleDic.TryGetValue(bundleInfo.dependencies[i], out dependencyBundle))
+                                    int moduleDependency = currentModule.dependencies[j];
+                                    if (resourceManager.localManifest.moduleDic[moduleDependency].bundleDic.TryGetValue(bundleDependency, out dependencyBundle))
                                     {
-                                        resourceLoader.LoadBundle(dependencyBundle, priority, groupID);
+                                        resourceManager.bundleLoader.LoadBundle(dependencyBundle, priority, groupID);
                                         break;
                                     }
                                 }
                             }
-                            ready = false;
+                            dependencyQueue.Enqueue(bundleDependency);
                         }
                     }
-
-                    if (ready)
+                    if (dependencyQueue.Count == 0)
                     {
-                        string bundlePath = resourceLoader.resourceManager.GetBundleFilePath(bundleInfo);
-                        resourceHelper.LoadAssetBundle(bundlePath, OnLoadBundleComplete);
+                        string bundlePath = resourceManager.GetBundleFilePath(bundleInfo);
+                        resourceManager.resourceHelper.LoadAssetBundle(bundlePath, OnLoadBundleComplete);
                         return TaskStartStatus.InProgress;
                     }
                     else
                     {
                         return TaskStartStatus.HasToWait;
                     }
+
+
+                    // bool ready = true;
+
+                    // for (int i = 0; i < bundleInfo.dependencies.Length; i++)
+                    // {
+                    //     string bundleDependency = bundleInfo.dependencies[i];
+                    //     if (resourceManager.loadedBundleMap.ContainsKey(bundleDependency))
+                    //     {
+                    //         ready = ready && resourceManager.loadedBundleMap[bundleDependency].Ready;
+                    //     }
+                    //     else
+                    //     {
+                    //         AssetBundleInfo dependencyBundle = null;
+                    //         if (resourceManager.localManifest.moduleDic[bundleInfo.moduleID].bundleDic.TryGetValue(bundleDependency, out dependencyBundle))
+                    //         {
+                    //             resourceManager.bundleLoader.LoadBundle(dependencyBundle, priority, groupID);
+                    //         }
+                    //         else // find in other dependence modules
+                    //         {
+                    //             AssetModuleInfo currentModule = resourceManager.localManifest.moduleDic[bundleInfo.moduleID];
+                    //             for (int j = 0; j < currentModule.dependencies.Length; j++)
+                    //             {
+                    //                 int moduleDependency = currentModule.dependencies[j];
+                    //                 if (resourceManager.localManifest.moduleDic[moduleDependency].bundleDic.TryGetValue(bundleDependency, out dependencyBundle))
+                    //                 {
+                    //                     resourceManager.bundleLoader.LoadBundle(dependencyBundle, priority, groupID);
+                    //                     break;
+                    //                 }
+                    //             }
+                    //         }
+                    //         ready = false;
+                    //     }
+                    // }
+
+                    // if (ready)
+                    // {
+                    //     string bundlePath = resourceManager.GetBundleFilePath(bundleInfo);
+                    //     resourceManager.resourceHelper.LoadAssetBundle(bundlePath, OnLoadBundleComplete);
+                    //     return TaskStartStatus.InProgress;
+                    // }
+                    // else
+                    // {
+                    //     return TaskStartStatus.HasToWait;
+                    // }
                 }
 
                 private void OnLoadBundleComplete(object bundleObject)
@@ -110,6 +161,7 @@ namespace HQFramework.Resource
                     resourceManager = null;
                     bundleInfo = null;
                     onComplete = null;
+                    dependencyQueue.Clear();
                 }
             }
         }

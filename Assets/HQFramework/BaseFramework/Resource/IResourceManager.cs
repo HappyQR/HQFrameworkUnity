@@ -46,6 +46,14 @@ namespace HQFramework.Resource
 
         void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class;
 
+        void LoadAsset(string path, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID);
+
+        void LoadAsset<T>(string path, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class;
+
         void ReleaseAsset(object asset);
+
+        BundleData[] GetLoadedBundleData();
+
+        AssetData[] GetLoadedAssetData();
     }
 }
