@@ -4,7 +4,7 @@ namespace HQFramework.UI
 {
     public interface IUIManager
     {
-        void ShowForm(Type formType, Action<UIFormShowCompleteEventArgs> onComplete);
+        void ShowForm(Type formType, Action<IUIForm> callback);
 
         void HideForm(Type formType, Action callback);
 

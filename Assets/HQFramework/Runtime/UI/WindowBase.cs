@@ -30,6 +30,7 @@ namespace HQFramework.Runtime
         {
             this.gameObject = gameObject;
             this.transform = gameObject.transform;
+            this.canvas = gameObject.GetComponent<Canvas>();
             this.linkHolder = gameObject.GetComponent<WindowLinkHolder>();
         }
 

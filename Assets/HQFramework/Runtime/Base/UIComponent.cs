@@ -5,6 +5,6 @@ namespace HQFramework.Runtime
 {
     public class UIComponent : BaseComponent
     {
-        
+        // public void AddWindowGroup();
     }
 }
