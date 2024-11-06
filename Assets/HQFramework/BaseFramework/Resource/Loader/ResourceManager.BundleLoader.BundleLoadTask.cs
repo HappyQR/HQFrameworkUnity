@@ -99,51 +99,6 @@ namespace HQFramework.Resource
                     {
                         return TaskStartStatus.HasToWait;
                     }
-
-
-                    // bool ready = true;
-
-                    // for (int i = 0; i < bundleInfo.dependencies.Length; i++)
-                    // {
-                    //     string bundleDependency = bundleInfo.dependencies[i];
-                    //     if (resourceManager.loadedBundleMap.ContainsKey(bundleDependency))
-                    //     {
-                    //         ready = ready && resourceManager.loadedBundleMap[bundleDependency].Ready;
-                    //     }
-                    //     else
-                    //     {
-                    //         AssetBundleInfo dependencyBundle = null;
-                    //         if (resourceManager.localManifest.moduleDic[bundleInfo.moduleID].bundleDic.TryGetValue(bundleDependency, out dependencyBundle))
-                    //         {
-                    //             resourceManager.bundleLoader.LoadBundle(dependencyBundle, priority, groupID);
-                    //         }
-                    //         else // find in other dependence modules
-                    //         {
-                    //             AssetModuleInfo currentModule = resourceManager.localManifest.moduleDic[bundleInfo.moduleID];
-                    //             for (int j = 0; j < currentModule.dependencies.Length; j++)
-                    //             {
-                    //                 int moduleDependency = currentModule.dependencies[j];
-                    //                 if (resourceManager.localManifest.moduleDic[moduleDependency].bundleDic.TryGetValue(bundleDependency, out dependencyBundle))
-                    //                 {
-                    //                     resourceManager.bundleLoader.LoadBundle(dependencyBundle, priority, groupID);
-                    //                     break;
-                    //                 }
-                    //             }
-                    //         }
-                    //         ready = false;
-                    //     }
-                    // }
-
-                    // if (ready)
-                    // {
-                    //     string bundlePath = resourceManager.GetBundleFilePath(bundleInfo);
-                    //     resourceManager.resourceHelper.LoadAssetBundle(bundlePath, OnLoadBundleComplete);
-                    //     return TaskStartStatus.InProgress;
-                    // }
-                    // else
-                    // {
-                    //     return TaskStartStatus.HasToWait;
-                    // }
                 }
 
                 private void OnLoadBundleComplete(object bundleObject)
