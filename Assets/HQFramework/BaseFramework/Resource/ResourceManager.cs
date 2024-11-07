@@ -23,7 +23,8 @@ namespace HQFramework.Resource
         private Dictionary<uint, AssetItemInfo> assetItemMap;
         private Dictionary<string, BundleItem> loadedBundleMap;
         private HashSet<BundleItem> loadingBundleSet;
-        private Dictionary<object, string> loadedAssetMap; // key: asset object, value: bundle name
+        private Dictionary<uint, object> crcLoadedAssetMap; // key: crc, value: asset object
+        private Dictionary<object, uint> loadedAssetCrcMap; // key: asset object, value: crc
         private Dictionary<object, object> instantiatedAssetMap; // key: instantiated Asset, value: origin asset
 
         public override byte Priority => byte.MaxValue;
@@ -38,7 +39,8 @@ namespace HQFramework.Resource
             assetItemMap = new Dictionary<uint, AssetItemInfo>();
             loadedBundleMap = new Dictionary<string, BundleItem>();
             loadingBundleSet = new HashSet<BundleItem>();
-            loadedAssetMap = new Dictionary<object, string>();
+            crcLoadedAssetMap = new Dictionary<uint, object>();
+            loadedAssetCrcMap = new Dictionary<object, uint>();
             instantiatedAssetMap = new Dictionary<object, object>();
         }
 
@@ -202,49 +204,51 @@ namespace HQFramework.Resource
 
         public object InstantiateAsset(object asset)
         {
-            if (!loadedAssetMap.ContainsKey(asset))
+            if (!loadedAssetCrcMap.ContainsKey(asset))
             {
                 throw new InvalidOperationException("you can only instantiate object loaded from resource manager!");
             }
 
             object target = resourceHelper.InstantiateAsset(asset);
             instantiatedAssetMap.Add(target, asset);
-            string bundleName = loadedAssetMap[asset];
+            string bundleName = assetItemMap[loadedAssetCrcMap[asset]].bundleName;
             loadedBundleMap[bundleName].refCount++;
             return target;
         }
 
         public T InstantiateAsset<T>(T asset) where T : class
         {
-            if (!loadedAssetMap.ContainsKey(asset))
+            if (!loadedAssetCrcMap.ContainsKey(asset))
             {
                 throw new InvalidOperationException("you can only instantiate object loaded from resource manager!");
             }
 
             object target = resourceHelper.InstantiateAsset(asset);
             instantiatedAssetMap.Add(target, asset);
-            string bundleName = loadedAssetMap[asset];
+            string bundleName = assetItemMap[loadedAssetCrcMap[asset]].bundleName;
             loadedBundleMap[bundleName].refCount++;
             return (T)target;
         }
 
         public void ReleaseAsset(object asset)
         {
-            if (!loadedAssetMap.ContainsKey(asset) && !instantiatedAssetMap.ContainsKey(asset))
+            if (!loadedAssetCrcMap.ContainsKey(asset) && !instantiatedAssetMap.ContainsKey(asset))
             {
                 throw new InvalidOperationException("You can only release the asset loaded from ResourceManager.");
             }
             
             string bundleName;
-            if (loadedAssetMap.ContainsKey(asset))
+            if (loadedAssetCrcMap.ContainsKey(asset))
             {
-                bundleName = loadedAssetMap[asset];
-                loadedAssetMap.Remove(asset);
+                bundleName = assetItemMap[loadedAssetCrcMap[asset]].bundleName;
+                crcLoadedAssetMap.Remove(loadedAssetCrcMap[asset]);
+                loadedAssetCrcMap.Remove(asset);
             }
             else
             {
-                bundleName = loadedAssetMap[instantiatedAssetMap[asset]];
+                bundleName = assetItemMap[loadedAssetCrcMap[instantiatedAssetMap[asset]]].bundleName;
                 instantiatedAssetMap.Remove(asset);
+                //这里有个问题，移除了实例化的资源，但并没有移除内存中的资源，需要建立一个引用计数
             }
             resourceHelper.UnloadAsset(asset);
             loadedBundleMap[bundleName].refCount--;

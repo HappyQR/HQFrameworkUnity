@@ -25,6 +25,14 @@ namespace HQFramework.Resource
                     return;
                 }
 
+                if (resourceManager.crcLoadedAssetMap.ContainsKey(crc))
+                {
+                    ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(crc, resourceManager.crcLoadedAssetMap[crc]);
+                    onComplete?.Invoke(args);
+                    ReferencePool.Recyle(args);
+                    return;
+                }
+
                 AssetItemInfo assetInfo = resourceManager.assetItemMap[crc];
                 ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, assetInfo, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);

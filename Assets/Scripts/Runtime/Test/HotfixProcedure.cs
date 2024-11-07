@@ -38,26 +38,38 @@ public class HotfixProcedure : ProcedureBase
         {
             // resourceComponent.LaunchHotfix();
 
+            if (cube2 != null)
+            {
+                resourceComponent.ReleaseAsset(cube2);
+            }
+
+            if (tex1 != null)
+            {
+                resourceComponent.ReleaseAsset(tex1);
+            }
+
             resourceComponent.LoadAsset<Texture2D>("Assets/GameAssets/Public/Textures/skybox22.jpg", OnLoadTexComplete, null);
-
             resourceComponent.LoadAsset<GameObject>(2987955044, OnLoadAssetComplete, OnLoadAssetError);
-            resourceComponent.LoadAsset<GameObject>(1937126282, OnLoadAssetComplete, OnLoadAssetError);
-            resourceComponent.LoadAsset<GameObject>(2529943260, OnLoadAssetComplete, OnLoadAssetError);
+            // resourceComponent.LoadAsset<GameObject>(1937126282, OnLoadAssetComplete, OnLoadAssetError);
+            // resourceComponent.LoadAsset<GameObject>(2529943260, OnLoadAssetComplete, OnLoadAssetError);
         }
 
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            resourceComponent.ReleaseAsset(cube1);
-        }
+        // if (Input.GetKeyDown(KeyCode.B))
+        // {
+        //     resourceComponent.ReleaseAsset(cube1);
+        //     cube1 = null;
+        // }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
             resourceComponent.ReleaseAsset(cube2);
+            cube2 = null;
         }
 
         if (Input.GetKeyDown(KeyCode.D))
         {
             resourceComponent.ReleaseAsset(tex1);
+            tex1 = null;
         }
     }
 
@@ -70,7 +82,7 @@ public class HotfixProcedure : ProcedureBase
     {
         if (args.crc == 2987955044)
         {
-            cube1 = args.asset;
+            // cube1 = args.asset;
             cube2 = resourceComponent.InstantiateAsset(args.asset);
         }
     }

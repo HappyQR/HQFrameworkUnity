@@ -70,7 +70,8 @@ namespace HQFramework.Resource
                 private void OnLoadAssetCompleteCallback(object asset)
                 {
                     ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(assetItem.crc, asset);
-                    resourceManager.loadedAssetMap.Add(args.asset, assetItem.bundleName);
+                    resourceManager.loadedAssetCrcMap.Add(args.asset, assetItem.crc);
+                    resourceManager.crcLoadedAssetMap.Add(assetItem.crc, args.asset);
                     if (resourceManager.resourceHelper.IsIndividualAsset(args.asset))
                     {
                         resourceManager.loadedBundleMap[assetItem.bundleName].refCount++;
