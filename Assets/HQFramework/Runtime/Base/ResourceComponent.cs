@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using HQFramework.Download;
 using HQFramework.Resource;
 using UnityEngine;
 
@@ -28,6 +29,8 @@ namespace HQFramework.Runtime
         private void Start()
         {
             InitializeResourceHelper();
+            IDownloadManager downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
+            resourceManager.SetDownloadManager(downloadManager);
         }
 
         private void InitializeResourceHelper()

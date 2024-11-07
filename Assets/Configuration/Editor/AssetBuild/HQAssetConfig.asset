@@ -23,6 +23,8 @@ MonoBehaviour:
     enableEncryption: 0
     assetBuiltinDir: Assets
     publishHelperName: HQFramework.Editor.DefaultAssetPublishHelper
+    assetUploaderName: 
+    hotfixRootFolder: 
   moduleConfigList:
   - id: 0
     moduleName: Public

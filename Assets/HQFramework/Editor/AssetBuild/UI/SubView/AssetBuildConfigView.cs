@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -22,6 +23,8 @@ namespace HQFramework.Editor
         private int selectedPostprocessorTypeIndex;
         private string[] publishHelperTypeList;
         private int selectedPublishHelperTypeIndex;
+        private string[] assetUploaderTypeList;
+        private int selectedAssetUploaderTypeIndex;
         private Vector2 scrollPos;
 
         public AssetBuildConfigView(EditorWindow baseWindow, GUIContent tabTitle) : base(baseWindow, tabTitle)
@@ -135,15 +138,6 @@ namespace HQFramework.Editor
             }
             GUILayout.Space(10);
 
-            GUILayout.Label("Select a Asset Publish Helper:", headerStyle);
-            GUILayout.Space(5);
-            selectedPublishHelperTypeIndex = EditorGUILayout.Popup(selectedPublishHelperTypeIndex, publishHelperTypeList);
-            if (postprocessorTypeList.Length > 0)
-            {
-                currentBuildConfig.publishHelperName = publishHelperTypeList[selectedPublishHelperTypeIndex];
-            }
-            GUILayout.Space(10);
-
             GUILayout.Label("Select a Compression Function:", headerStyle);
             GUILayout.Space(5);
             currentBuildConfig.compressOption = (CompressOption)EditorGUILayout.EnumPopup(currentBuildConfig.compressOption);
@@ -153,6 +147,29 @@ namespace HQFramework.Editor
             GUILayout.Space(5);
             currentBuildConfig.platform = (BuildTargetPlatform)EditorGUILayout.EnumPopup(currentBuildConfig.platform);
             EditorGUILayout.Space(10);
+
+            GUILayout.Label("Select a Asset Publish Helper:", headerStyle);
+            GUILayout.Space(5);
+            selectedPublishHelperTypeIndex = EditorGUILayout.Popup(selectedPublishHelperTypeIndex, publishHelperTypeList);
+            if (publishHelperTypeList.Length > 0)
+            {
+                currentBuildConfig.publishHelperName = publishHelperTypeList[selectedPublishHelperTypeIndex];
+            }
+            GUILayout.Space(10);
+
+            GUILayout.Label("Select a Asset Uploader:", headerStyle);
+            GUILayout.Space(5);
+            selectedAssetUploaderTypeIndex = EditorGUILayout.Popup(selectedAssetUploaderTypeIndex, assetUploaderTypeList);
+            if (assetUploaderTypeList.Length > 0)
+            {
+                currentBuildConfig.assetUploaderName = assetUploaderTypeList[selectedAssetUploaderTypeIndex];
+            }
+            GUILayout.Space(10);
+
+            GUILayout.Label("Assets Hotfix URL Root Folder:", headerStyle);
+            GUILayout.Space(5);
+            currentBuildConfig.hotfixRootFolder = EditorGUILayout.TextField(currentBuildConfig.hotfixRootFolder);
+            GUILayout.Space(10);
 
             // GUILayout.BeginHorizontal();
             // GUILayout.Label("Enable Bundle Encryption:", headerStyle);
@@ -204,6 +221,15 @@ namespace HQFramework.Editor
                     break;
                 }
             }
+
+            for (int i = 0; i < assetUploaderTypeList.Length; i++)
+            {
+                if (assetUploaderTypeList[i] == currentBuildConfig.assetUploaderName)
+                {
+                    selectedAssetUploaderTypeIndex = i;
+                    break;
+                }
+            }
         }
 
         private void PopupNewOption()
@@ -236,6 +262,7 @@ namespace HQFramework.Editor
             List<string> postprocessorTypes = new List<string>();
             List<string> compilerTypes = new List<string>();
             List<string> publishHelperTypes = new List<string>();
+            List<string> uploaderTypes = new List<string>();
 
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             for (int i = 0; i < assemblies.Length; i++)
@@ -261,6 +288,10 @@ namespace HQFramework.Editor
                         {
                             publishHelperTypes.Add(types[j].FullName);
                         }
+                        else if (typeof(IAssetUploader).IsAssignableFrom(types[j]))
+                        {
+                            uploaderTypes.Add(types[j].FullName);
+                        }
                     }
                 }
             }
@@ -269,6 +300,7 @@ namespace HQFramework.Editor
             compilerTypeList = compilerTypes.ToArray();
             postprocessorTypeList = postprocessorTypes.ToArray();
             publishHelperTypeList = publishHelperTypes.ToArray();
+            assetUploaderTypeList = uploaderTypes.ToArray();
         }
 
         public override void OnDisable()

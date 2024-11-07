@@ -44,7 +44,6 @@ namespace HQFramework.Resource
             }
 
             private readonly ResourceManager resourceManager;
-            private readonly IDownloadManager downloadManager;
             private readonly string tempDownloadDir;
 
             private Dictionary<int, DownloadItem> downloadDic; // key: downloadID
@@ -60,7 +59,6 @@ namespace HQFramework.Resource
             public ResourceDownloader(ResourceManager resourceManager)
             {
                 this.resourceManager = resourceManager;
-                this.downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
                 this.tempDownloadDir = Path.Combine(resourceManager.PersistentDir, "temp_download_cache");
                 if (!Directory.Exists(tempDownloadDir))
                 {
@@ -134,17 +132,17 @@ namespace HQFramework.Resource
             {
                 downloadGroupDic[item.hotfixID].totalSize += item.bundleInfo.size;
                 downloadGroupDic[item.hotfixID].itemCount++;
-                int downloadID = downloadManager.AddDownload(item.url, item.filePath, true, item.hotfixID);
-                downloadManager.AddDownloadErrorEvent(downloadID, OnDownloadError);
-                downloadManager.AddDownloadCompleteEvent(downloadID, OnDownloadComplete);
-                downloadManager.AddDownloadUpdateEvent(downloadID, OnDownloadUpdate);
+                int downloadID = resourceManager.downloadManager.AddDownload(item.url, item.filePath, true, item.hotfixID);
+                resourceManager.downloadManager.AddDownloadErrorEvent(downloadID, OnDownloadError);
+                resourceManager.downloadManager.AddDownloadCompleteEvent(downloadID, OnDownloadComplete);
+                resourceManager.downloadManager.AddDownloadUpdateEvent(downloadID, OnDownloadUpdate);
 
                 downloadDic.Add(downloadID, item);
             }
 
             public void PauseHotfix(int hotfixID)
             {
-                int pauseCount = downloadManager.PauseDownloads(hotfixID);
+                int pauseCount = resourceManager.downloadManager.PauseDownloads(hotfixID);
                 if (pauseCount > 0 && pauseEventDic.ContainsKey(hotfixID))
                 {
                     HotfixDownloadPauseEventArgs args = HotfixDownloadPauseEventArgs.Create(hotfixID, pauseCount);
@@ -155,7 +153,7 @@ namespace HQFramework.Resource
 
             public void ResumeHotfix(int hotfixID)
             {
-                int resumeCount = downloadManager.ResumeDownloads(hotfixID);
+                int resumeCount = resourceManager.downloadManager.ResumeDownloads(hotfixID);
                 if (resumeCount > 0 && resumeEventDic.ContainsKey(hotfixID))
                 {
                     HotfixDownloadResumeEventArgs args = HotfixDownloadResumeEventArgs.Create(hotfixID, resumeCount);
@@ -166,7 +164,7 @@ namespace HQFramework.Resource
 
             public void CancelHotfix(int hotfixID)
             {
-                int cancelCount = downloadManager.StopDownloads(hotfixID);
+                int cancelCount = resourceManager.downloadManager.StopDownloads(hotfixID);
                 if (cancelCount > 0 && cancelEventDic.ContainsKey(hotfixID))
                 {
                     HotfixDownloadCancelEventArgs args = HotfixDownloadCancelEventArgs.Create(hotfixID, cancelCount);
@@ -256,7 +254,7 @@ namespace HQFramework.Resource
 
             private void OnDownloadError(DownloadErrorEventArgs args)
             {
-                downloadManager.StopDownloads(args.GroupID);
+                resourceManager.downloadManager.StopDownloads(args.GroupID);
                 int hotfixID = args.GroupID;
                 AssetBundleInfo bundleInfo = downloadDic[args.ID].bundleInfo;
                 if (errorEventDic.ContainsKey(hotfixID))

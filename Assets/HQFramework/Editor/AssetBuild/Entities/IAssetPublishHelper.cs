@@ -10,6 +10,8 @@ namespace HQFramework.Editor
             get;
         }
 
+        void SetUploader(IAssetUploader uploader);
+
         AssetModuleManifest GetBasicManifest();
 
         string GetBundleRelatedUrl(AssetBundleInfo bundleInfo, AssetModuleInfo moduleInfo);

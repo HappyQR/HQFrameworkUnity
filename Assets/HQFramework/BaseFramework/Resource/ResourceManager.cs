@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using HQFramework.Download;
 
 namespace HQFramework.Resource
 {
     internal sealed partial class ResourceManager : HQModuleBase, IResourceManager
     {
         private IResourceHelper resourceHelper;
+        private IDownloadManager downloadManager;
         private ResourceHotfixChecker hotfixChecker;
         private ResourceDownloader resourceDownloader;
         private ResourceLoader resourceLoader;
@@ -46,12 +49,17 @@ namespace HQFramework.Resource
         {
             this.resourceHelper = resourceHelper;
             hotfixChecker = new ResourceHotfixChecker(this);
-            resourceDownloader = new ResourceDownloader(this);
             resourceLoader = new ResourceLoader(this);
             bundleLoader = new BundleLoader(this);
 
             localManifest = resourceHelper.LoadAssetManifest();
             ReloadAssetMap();
+        }
+
+        public void SetDownloadManager(IDownloadManager downloadManager)
+        {
+            this.downloadManager = downloadManager;
+            resourceDownloader = new ResourceDownloader(this);
         }
 
         public int LaunchHotfixCheck()

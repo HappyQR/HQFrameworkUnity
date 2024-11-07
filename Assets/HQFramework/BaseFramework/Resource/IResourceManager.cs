@@ -1,4 +1,5 @@
 using System;
+using HQFramework.Download;
 
 namespace HQFramework.Resource
 {
@@ -9,6 +10,8 @@ namespace HQFramework.Resource
         string BuiltinDir { get; }
 
         void SetHelper(IResourceHelper resourceHelper);
+
+        void SetDownloadManager(IDownloadManager downloadManager);
 
         int LaunchHotfixCheck();
 

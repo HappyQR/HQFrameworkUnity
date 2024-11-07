@@ -13,6 +13,7 @@ namespace HQFramework.Editor
     public sealed class AssetPublishController
     {
         private static IAssetPublishHelper publishHelper;
+        private static IAssetUploader assetUploader;
 
         public static void SetHelper(IAssetPublishHelper helper)
         {

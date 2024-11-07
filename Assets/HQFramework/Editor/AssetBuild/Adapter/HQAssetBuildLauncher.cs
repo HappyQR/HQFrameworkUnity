@@ -99,7 +99,11 @@ namespace HQFramework.Editor
         public static async void PublishAssetArchive(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
         {
             Type publishHelperType = Type.GetType(CurrentBuildConfig.publishHelperName);
+            Type uploaderType = Type.GetType(CurrentBuildConfig.assetUploaderName);
             IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
+            IAssetUploader assetUploader = Activator.CreateInstance(uploaderType) as IAssetUploader;
+            assetUploader.HotfixRootFolder = CurrentBuildConfig.hotfixRootFolder;
+            publishHelper.SetUploader(assetUploader);
             AssetPublishController.SetHelper(publishHelper);
             AssetModuleManifest result = await AssetPublishController.PublishAssets(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, uploadCallback, endCallback);
             if (result != null)

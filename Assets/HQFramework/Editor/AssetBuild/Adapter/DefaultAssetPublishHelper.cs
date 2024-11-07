@@ -13,32 +13,14 @@ namespace HQFramework.Editor
 {
     public class DefaultAssetPublishHelper : IAssetPublishHelper
     {
-        private OssClient client;
-
-        private static string manifestUrl = "HQFramework/Assets/AssetModuleManifest.json";
-        private static string bucketName = "happyq-test";
-        private static string assetUrlRoot = "HQFramework/Assets";
-
-        private static string urlRoot = "https://happyq-test.oss-cn-beijing.aliyuncs.com/";
+        private string hotfixRootFolder;
+        private IAssetUploader assetUploader;
 
         public string AssetsBuiltinDir => Path.Combine(Application.streamingAssetsPath, HQAssetBuildLauncher.CurrentBuildConfig.assetBuiltinDir);
-
-        private void Init()
+        
+        public void SetUploader(IAssetUploader uploader)
         {
-            if (client == null)
-            {
-                string[] key_id = File.ReadAllText(Path.Combine(Application.dataPath, "../Build/Aliyun.txt")).Split('|');
-                string accessId = key_id[0];
-                string accessKey = key_id[1];
-                string endpoint = "https://oss-cn-beijing.aliyuncs.com";
-                string region = "cn-beijing";
-                ClientConfiguration conf = new ClientConfiguration();
-                conf.SignatureVersion = SignatureVersion.V4;
-                conf.ConnectionTimeout = 3000;
-                conf.EnalbeMD5Check = true;
-                client = new OssClient(endpoint, accessId, accessKey, conf);
-                client.SetRegion(region);
-            }
+            this.assetUploader = uploader;
         }
         
         public AssetModuleManifest GetBasicManifest()
@@ -57,7 +39,7 @@ namespace HQFramework.Editor
 
         public string GetModuleUrlRoot(AssetModuleInfo moduleInfo)
         {
-            return Path.Combine(urlRoot, assetUrlRoot, moduleInfo.moduleName);
+            return "";
         }
 
         public Task<AssetModuleManifest> GetRemoteManifestAsync()
@@ -67,48 +49,20 @@ namespace HQFramework.Editor
 
         private async Task<AssetModuleManifest> GetRemoteManifestInternal()
         {
-            Init();
-            if (!client.DoesObjectExist(bucketName, manifestUrl))
-            {
-                AssetModuleManifest remoteManifest = new AssetModuleManifest();
-                remoteManifest.moduleDic = new Dictionary<int, AssetModuleInfo>();
-                return remoteManifest;
-            }
-            else
-            {
-                string manifestFileUrl = Path.Combine(urlRoot, manifestUrl);
-                using HttpClient httpClient = new HttpClient();
-                string jsonStr = await httpClient.GetStringAsync(manifestFileUrl);
-                return JsonUtilityEditor.ToObject<AssetModuleManifest>(jsonStr);
-            }
+            string manifestFileUrl = "";
+            using HttpClient httpClient = new HttpClient();
+            string jsonStr = await httpClient.GetStringAsync(manifestFileUrl);
+            return JsonUtilityEditor.ToObject<AssetModuleManifest>(jsonStr);
         }
 
         public Task<bool> UploadBundleAsync(AssetBundleUploadItem item)
         {
-            return Task.Run(() => UploadBundleInternal(item));
-        }
-
-        private bool UploadBundleInternal(AssetBundleUploadItem item)
-        {
-            Init();
-            string bundleUrl = Path.Combine(assetUrlRoot, item.moduleInfo.moduleName, item.bundleInfo.bundleName);
-            using PutObjectResult result = client.PutObject(bucketName, bundleUrl, item.bundleFilePath);
-            return result.HttpStatusCode == HttpStatusCode.OK;
+            return null;
         }
 
         public Task<bool> UploadManifestAsync(AssetModuleManifest manifest)
         {
-            return Task.Run(() => UploadManifestInternal(manifest));
-        }
-
-        private bool UploadManifestInternal(AssetModuleManifest manifest)
-        {
-            Init();
-            string jsonStr = JsonUtilityEditor.ToJson(manifest);
-            byte[] data = Encoding.UTF8.GetBytes(jsonStr);
-            using Stream stream = new MemoryStream(data);
-            using PutObjectResult result = client.PutObject(bucketName, manifestUrl, stream);
-            return result.HttpStatusCode == HttpStatusCode.OK;
+            return null;
         }
 
         public void PackBuiltinModule(AssetModuleCompileInfo moduleCompileInfo)
