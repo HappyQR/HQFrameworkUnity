@@ -50,6 +50,12 @@ namespace HQFramework.Resource
 
         void LoadAssetBundle(string bundlePath, Action<object> callback);
 
-        void DestroyAsset(object asset);
+        bool IsIndividualAsset(object asset);
+
+        object InstantiateAsset(object asset);
+
+        void UnloadAsset(object asset);
+
+        void UnloadBundle(object bundle);
     }
 }

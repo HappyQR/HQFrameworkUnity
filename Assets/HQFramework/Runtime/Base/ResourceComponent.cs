@@ -154,7 +154,22 @@ namespace HQFramework.Runtime
 
         public void ReleaseAsset(object asset)
         {
-            throw new NotImplementedException();
+            resourceManager.ReleaseAsset(asset);
+        }
+
+        public object InstantiateAsset(object asset)
+        {
+            return resourceManager.InstantiateAsset(asset);
+        }
+
+        public T InstantiateAsset<T>(T asset) where T : class
+        {
+            return resourceManager.InstantiateAsset<T>(asset);
+        }
+
+        public AssetData[] GetLoadedAssetData()
+        {
+            return resourceManager.GetLoadedAssetData();
         }
     }
 }

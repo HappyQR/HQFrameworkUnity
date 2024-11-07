@@ -22,7 +22,9 @@ namespace HQFramework.Resource
         private Dictionary<string, string> bundleFilePathMap;
         private Dictionary<uint, AssetItemInfo> assetItemMap;
         private Dictionary<string, BundleItem> loadedBundleMap;
+        private HashSet<BundleItem> loadingBundleSet;
         private Dictionary<object, string> loadedAssetMap; // key: asset object, value: bundle name
+        private Dictionary<object, object> instantiatedAssetMap; // key: instantiated Asset, value: origin asset
 
         public override byte Priority => byte.MaxValue;
         public string PersistentDir => resourceHelper.AssetsPersistentDir;
@@ -35,7 +37,9 @@ namespace HQFramework.Resource
             bundleFilePathMap = new Dictionary<string, string>();
             assetItemMap = new Dictionary<uint, AssetItemInfo>();
             loadedBundleMap = new Dictionary<string, BundleItem>();
+            loadingBundleSet = new HashSet<BundleItem>();
             loadedAssetMap = new Dictionary<object, string>();
+            instantiatedAssetMap = new Dictionary<object, object>();
         }
 
         protected override void OnUpdate()
@@ -196,14 +200,59 @@ namespace HQFramework.Resource
             resourceLoader.LoadAsset<T>(crc, onComplete, onError, priority, groupID);
         }
 
-        public void ReleaseAsset(object asset)
+        public object InstantiateAsset(object asset)
         {
             if (!loadedAssetMap.ContainsKey(asset))
             {
+                throw new InvalidOperationException("you can only instantiate object loaded from resource manager!");
+            }
+
+            object target = resourceHelper.InstantiateAsset(asset);
+            instantiatedAssetMap.Add(target, asset);
+            string bundleName = loadedAssetMap[asset];
+            loadedBundleMap[bundleName].refCount++;
+            return target;
+        }
+
+        public T InstantiateAsset<T>(T asset) where T : class
+        {
+            if (!loadedAssetMap.ContainsKey(asset))
+            {
+                throw new InvalidOperationException("you can only instantiate object loaded from resource manager!");
+            }
+
+            object target = resourceHelper.InstantiateAsset(asset);
+            instantiatedAssetMap.Add(target, asset);
+            string bundleName = loadedAssetMap[asset];
+            loadedBundleMap[bundleName].refCount++;
+            return (T)target;
+        }
+
+        public void ReleaseAsset(object asset)
+        {
+            if (!loadedAssetMap.ContainsKey(asset) && !instantiatedAssetMap.ContainsKey(asset))
+            {
                 throw new InvalidOperationException("You can only release the asset loaded from ResourceManager.");
             }
-            string bundleName = loadedAssetMap[asset];
+            
+            string bundleName;
+            if (loadedAssetMap.ContainsKey(asset))
+            {
+                bundleName = loadedAssetMap[asset];
+                loadedAssetMap.Remove(asset);
+            }
+            else
+            {
+                bundleName = loadedAssetMap[instantiatedAssetMap[asset]];
+                instantiatedAssetMap.Remove(asset);
+            }
+            resourceHelper.UnloadAsset(asset);
             loadedBundleMap[bundleName].refCount--;
+            
+            if (loadedBundleMap[bundleName].refCount == 0)
+            {
+                UnloadUnusedBundles();
+            }
         }
 
         public BundleData[] GetLoadedBundleData()
@@ -222,6 +271,54 @@ namespace HQFramework.Resource
         public AssetData[] GetLoadedAssetData()
         {
             throw new NotImplementedException();
+        }
+
+        private void UnloadUnusedBundles()
+        {
+            string unusedBundleName = null;
+            while (true)
+            {
+                foreach (BundleItem item in loadedBundleMap.Values)
+                {
+                    if (item.refCount == 0)
+                    {
+                        bool inUsed = loadingBundleSet.Contains(item);
+                        if (inUsed)
+                        {
+                            continue;
+                        }
+                        
+                        foreach (BundleItem loadingBundle in loadingBundleSet)
+                        {
+                            if (loadingBundle.dependencySet.Contains(item.bundleName))
+                            {
+                                inUsed = true;
+                                break;
+                            }
+                        }
+                        if (!inUsed)
+                        {
+                            unusedBundleName = item.bundleName;
+                            break;
+                        }
+                    }
+                }
+
+                if (unusedBundleName == null)
+                {
+                    break;
+                }
+                else
+                {
+                    resourceHelper.UnloadBundle(loadedBundleMap[unusedBundleName].bundleObject);
+                    foreach (string bundleDependency in loadedBundleMap[unusedBundleName].dependencySet)
+                    {
+                        loadedBundleMap[bundleDependency].refCount--;
+                    }
+                    loadedBundleMap.Remove(unusedBundleName);
+                    unusedBundleName = null;
+                }
+            }
         }
 
         private string GetBundleFilePath(AssetBundleInfo bundleInfo)

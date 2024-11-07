@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using HQFramework.Resource;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace HQFramework.Runtime
         private static readonly string manifestFileName = "AssetModuleManifest.json";
 
         private string localManifestFilePath;
+
+        private Dictionary<int, UnityObject> instantiateDic = new Dictionary<int, UnityObject>();
 
         public int LauncherHotfixID
         {
@@ -101,9 +104,36 @@ namespace HQFramework.Runtime
             };
         }
 
-        public void DestroyAsset(object asset)
+        public bool IsIndividualAsset(object asset)
         {
-            UnityObject.Destroy((UnityObject)asset);
+            return asset is not GameObject;
+        }
+
+        public object InstantiateAsset(object asset)
+        {
+            UnityObject instance = UnityObject.Instantiate(asset as UnityObject);
+            instantiateDic.Add(instance.GetInstanceID(), instance);
+            return instance;
+        }
+
+        public void UnloadAsset(object asset)
+        {
+            UnityObject target = asset as UnityObject;
+            int instanceID = target.GetInstanceID();
+            if (instantiateDic.ContainsKey(instanceID))
+            {
+                UnityObject.Destroy(target);
+                instantiateDic.Remove(instanceID);
+            }
+            else if (target is not GameObject)
+            {
+                Resources.UnloadAsset(target);
+            }
+        }
+
+        public void UnloadBundle(object bundle)
+        {
+            (bundle as AssetBundle).Unload(true);
         }
     }
 }

@@ -47,8 +47,17 @@ public class HotfixProcedure : ProcedureBase
 
         if (Input.GetKeyDown(KeyCode.B))
         {
-            // Resources.UnloadAsset(tex1);
-            Object.Destroy(cube2);
+            resourceComponent.ReleaseAsset(cube1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            resourceComponent.ReleaseAsset(cube2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            resourceComponent.ReleaseAsset(tex1);
         }
     }
 
@@ -62,7 +71,7 @@ public class HotfixProcedure : ProcedureBase
         if (args.crc == 2987955044)
         {
             cube1 = args.asset;
-            cube2 = Object.Instantiate(args.asset);
+            cube2 = resourceComponent.InstantiateAsset(args.asset);
         }
     }
 

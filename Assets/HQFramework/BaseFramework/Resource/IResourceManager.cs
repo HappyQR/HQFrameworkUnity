@@ -53,6 +53,10 @@ namespace HQFramework.Resource
 
         void LoadAsset<T>(string path, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class;
 
+        object InstantiateAsset(object asset);
+
+        T InstantiateAsset<T>(T asset) where T : class;
+
         void ReleaseAsset(object asset);
 
         BundleData[] GetLoadedBundleData();
