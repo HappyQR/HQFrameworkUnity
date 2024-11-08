@@ -14,7 +14,7 @@ namespace HQFramework.Resource
             set;
         }
         
-        AssetHotfixMode HotfixMode
+        HQHotfixMode HotfixMode
         {
             get;
             set;
@@ -38,13 +38,13 @@ namespace HQFramework.Resource
             set;
         }
 
-        AssetModuleManifest LoadAssetManifest();
+        HQAssetManifest LoadAssetManifest();
 
-        void OverrideLocalManifest(AssetModuleManifest localManifest);
+        void OverrideLocalManifest(HQAssetManifest localManifest);
 
-        string GetBundleFilePath(AssetBundleInfo bundleInfo);
+        string GetBundleFilePath(HQAssetBundleConfig bundleInfo);
 
-        void DeleteAssetModule(AssetModuleInfo module);
+        void DeleteAssetModule(HQAssetModuleConfig module);
 
         void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> callback);
 

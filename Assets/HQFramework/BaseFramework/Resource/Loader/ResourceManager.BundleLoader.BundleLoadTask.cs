@@ -12,7 +12,7 @@ namespace HQFramework.Resource
                 private static int serialID = 0;
 
                 private ResourceManager resourceManager;
-                private AssetBundleInfo bundleInfo;
+                private HQAssetBundleConfig bundleInfo;
                 private Queue<string> dependencyQueue = new Queue<string>();
 
                 private Action<BundleLoadCompleteEventArgs> onComplete;
@@ -29,7 +29,7 @@ namespace HQFramework.Resource
                     }
                 }
 
-                public static BundleLoadTask Create(ResourceManager resourceManager, AssetBundleInfo bundleInfo, int priority, int groupID)
+                public static BundleLoadTask Create(ResourceManager resourceManager, HQAssetBundleConfig bundleInfo, int priority, int groupID)
                 {
                     BundleLoadTask task = ReferencePool.Spawn<BundleLoadTask>();
                     task.id = serialID++;
@@ -68,14 +68,14 @@ namespace HQFramework.Resource
                         }
                         else
                         {
-                            AssetBundleInfo dependencyBundle = null;
+                            HQAssetBundleConfig dependencyBundle = null;
                             if (resourceManager.localManifest.moduleDic[bundleInfo.moduleID].bundleDic.TryGetValue(bundleDependency, out dependencyBundle))
                             {
                                 resourceManager.bundleLoader.LoadBundle(dependencyBundle, priority, groupID);
                             }
                             else // find in other dependence modules
                             {
-                                AssetModuleInfo currentModule = resourceManager.localManifest.moduleDic[bundleInfo.moduleID];
+                                HQAssetModuleConfig currentModule = resourceManager.localManifest.moduleDic[bundleInfo.moduleID];
                                 for (int j = 0; j < currentModule.dependencies.Length; j++)
                                 {
                                     int moduleDependency = currentModule.dependencies[j];

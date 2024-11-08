@@ -18,7 +18,7 @@ namespace HQFramework.Editor
         private SerializedProperty assetsBuiltinDir;
         private SerializedProperty hotfixManifestUrl;
 
-        private AssetHotfixMode hotfixModeProxy;
+        private HQHotfixMode hotfixModeProxy;
 
         private string[] helperTypeList;
         private int helperTypeIndex;
@@ -32,7 +32,7 @@ namespace HQFramework.Editor
             assetsBuiltinDir = serializedObject.FindProperty(nameof(assetsBuiltinDir));
             hotfixManifestUrl = serializedObject.FindProperty(nameof(hotfixManifestUrl));
 
-            hotfixModeProxy = (AssetHotfixMode)hotfixMode.enumValueIndex;
+            hotfixModeProxy = (HQHotfixMode)hotfixMode.enumValueIndex;
 
             helperTypeList = CollectLogHelperTypes();
         }
@@ -49,11 +49,11 @@ namespace HQFramework.Editor
             EditorGUILayout.Separator();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Hotfix Mode: ", headerStyle);
-            hotfixModeProxy = (AssetHotfixMode)EditorGUILayout.EnumPopup(hotfixModeProxy, GUILayout.ExpandWidth(true));
+            hotfixModeProxy = (HQHotfixMode)EditorGUILayout.EnumPopup(hotfixModeProxy, GUILayout.ExpandWidth(true));
             hotfixMode.enumValueIndex = (int)hotfixModeProxy;
             GUILayout.EndHorizontal();
 
-            if (hotfixModeProxy != AssetHotfixMode.NoHotfix)
+            if (hotfixModeProxy != HQHotfixMode.NoHotfix)
             {
                 EditorGUILayout.Separator();
                 GUILayout.BeginHorizontal();

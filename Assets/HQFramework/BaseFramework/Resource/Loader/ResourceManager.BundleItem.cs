@@ -13,7 +13,7 @@ namespace HQFramework.Resource
 
             public bool Ready => bundleObject != null;
 
-            public BundleItem(AssetBundleInfo targetBundleInfo)
+            public BundleItem(HQAssetBundleConfig targetBundleInfo)
             {
                 refCount = 0;
                 bundleObject = null;

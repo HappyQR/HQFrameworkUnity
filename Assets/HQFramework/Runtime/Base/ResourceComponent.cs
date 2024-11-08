@@ -11,7 +11,7 @@ namespace HQFramework.Runtime
         [SerializeField]
         private string resourceHelperTypeName;
         [SerializeField]
-        private AssetHotfixMode hotfixMode;
+        private HQHotfixMode hotfixMode;
         [SerializeField]
         private int launcherHotfixID;
         [SerializeField]
@@ -147,7 +147,7 @@ namespace HQFramework.Runtime
             resourceManager.LoadAsset(path, onComplete, onError, priority, groupID);
         }
 
-        public BundleData[] GetLoadedBundleData()
+        public AssetBundleInfo[] GetLoadedBundleData()
         {
             return resourceManager.GetLoadedBundleData();
         }
@@ -167,7 +167,7 @@ namespace HQFramework.Runtime
             return resourceManager.InstantiateAsset<T>(asset);
         }
 
-        public AssetData[] GetLoadedAssetData()
+        public AssetItemInfo[] GetLoadedAssetData()
         {
             return resourceManager.GetLoadedAssetData();
         }

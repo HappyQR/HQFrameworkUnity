@@ -1,6 +1,6 @@
 namespace HQFramework.Resource
 {
-    public enum AssetHotfixMode : byte
+    public enum HQHotfixMode : byte
     {
         /// <summary>
         /// disable hotfix, just stand-alone

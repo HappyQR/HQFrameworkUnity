@@ -14,13 +14,13 @@ namespace HQFramework.Resource
         private ResourceLoader resourceLoader;
         private BundleLoader bundleLoader;
 
-        private AssetModuleManifest localManifest;
-        private AssetModuleManifest remoteManifest;
-        private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> necessaryHotfixContent;
-        private Dictionary<AssetModuleInfo, List<AssetBundleInfo>> separateHotfixContent;
+        private HQAssetManifest localManifest;
+        private HQAssetManifest remoteManifest;
+        private Dictionary<HQAssetModuleConfig, List<HQAssetBundleConfig>> necessaryHotfixContent;
+        private Dictionary<HQAssetModuleConfig, List<HQAssetBundleConfig>> separateHotfixContent;
 
         private Dictionary<string, string> bundleFilePathMap;
-        private Dictionary<uint, AssetItemInfo> assetItemMap;
+        private Dictionary<uint, HQAssetItemConfig> assetItemMap;
         private Dictionary<string, BundleItem> loadedBundleMap;
         private HashSet<BundleItem> loadingBundleSet;
         private Dictionary<uint, object> crcLoadedAssetMap; // key: crc, value: asset object
@@ -36,7 +36,7 @@ namespace HQFramework.Resource
         protected override void OnInitialize()
         {
             bundleFilePathMap = new Dictionary<string, string>();
-            assetItemMap = new Dictionary<uint, AssetItemInfo>();
+            assetItemMap = new Dictionary<uint, HQAssetItemConfig>();
             loadedBundleMap = new Dictionary<string, BundleItem>();
             loadingBundleSet = new HashSet<BundleItem>();
             crcLoadedAssetMap = new Dictionary<uint, object>();
@@ -70,7 +70,7 @@ namespace HQFramework.Resource
 
         public int LaunchHotfixCheck()
         {
-            if (resourceHelper.HotfixMode == AssetHotfixMode.NoHotfix)
+            if (resourceHelper.HotfixMode == HQHotfixMode.NoHotfix)
             {
                 throw new InvalidOperationException("You can't use CheckHotfix under NoHotfix mode.");
             }
@@ -80,7 +80,7 @@ namespace HQFramework.Resource
 
         public int ModuleHotfixCheck(int moduleID)
         {
-            if (resourceHelper.HotfixMode != AssetHotfixMode.SeparateHotfix)
+            if (resourceHelper.HotfixMode != HQHotfixMode.SeparateHotfix)
             {
                 throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
             }
@@ -100,7 +100,7 @@ namespace HQFramework.Resource
 
         public int LaunchHotfix()
         {
-            if (resourceHelper.HotfixMode == AssetHotfixMode.NoHotfix)
+            if (resourceHelper.HotfixMode == HQHotfixMode.NoHotfix)
             {
                 throw new InvalidOperationException("You can't use CheckHotfix under NoHotfix mode.");
             }
@@ -114,12 +114,12 @@ namespace HQFramework.Resource
 
         public int ModuleHotfix(int moduleID)
         {
-            if (resourceHelper.HotfixMode != AssetHotfixMode.SeparateHotfix)
+            if (resourceHelper.HotfixMode != HQHotfixMode.SeparateHotfix)
             {
                 throw new InvalidOperationException("CheckModuleHotfix() only adapt to SeparateHotfix mode.");
             }
 
-            AssetModuleInfo remoteModule = remoteManifest.moduleDic[moduleID];
+            HQAssetModuleConfig remoteModule = remoteManifest.moduleDic[moduleID];
             if (separateHotfixContent.ContainsKey(remoteModule))
             {
                 return resourceDownloader.ModuleHotfix(remoteModule, separateHotfixContent[remoteModule]);
@@ -259,20 +259,20 @@ namespace HQFramework.Resource
             }
         }
 
-        public BundleData[] GetLoadedBundleData()
+        public AssetBundleInfo[] GetLoadedBundleData()
         {
-            BundleData[] result = new BundleData[loadedBundleMap.Count];
+            AssetBundleInfo[] result = new AssetBundleInfo[loadedBundleMap.Count];
             int index = 0;
             foreach (var item in loadedBundleMap)
             {
-                result[index] = new BundleData(item.Key, item.Value.refCount, item.Value.Ready);
+                result[index] = new AssetBundleInfo(item.Key, item.Value.refCount, item.Value.Ready);
                 index++;
             }
 
             return result;
         }
 
-        public AssetData[] GetLoadedAssetData()
+        public AssetItemInfo[] GetLoadedAssetData()
         {
             throw new NotImplementedException();
         }
@@ -291,7 +291,7 @@ namespace HQFramework.Resource
                         {
                             continue;
                         }
-                        
+
                         foreach (BundleItem loadingBundle in loadingBundleSet)
                         {
                             if (loadingBundle.dependencySet.Contains(item.bundleName))
@@ -325,7 +325,7 @@ namespace HQFramework.Resource
             }
         }
 
-        private string GetBundleFilePath(AssetBundleInfo bundleInfo)
+        private string GetBundleFilePath(HQAssetBundleConfig bundleInfo)
         {
             if (bundleFilePathMap.ContainsKey(bundleInfo.bundleName))
             {

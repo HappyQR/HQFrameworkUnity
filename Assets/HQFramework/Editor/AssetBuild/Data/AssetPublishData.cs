@@ -11,15 +11,15 @@ namespace HQFramework.Editor
         public int versionCode;
         public int minimalSupportedVersionCode;
         public string releaseNote;
-        public Dictionary<int, AssetModuleInfo> moduleDic;
+        public Dictionary<int, HQAssetModuleConfig> moduleDic;
         public Dictionary<string, string> bundleFileMap;
     }
 
     [Serializable]
     public class AssetBundleUploadItem
     {
-        public AssetModuleInfo moduleInfo;
-        public AssetBundleInfo bundleInfo;
+        public HQAssetModuleConfig moduleInfo;
+        public HQAssetBundleConfig bundleInfo;
         public string bundleFilePath;
     }
 }

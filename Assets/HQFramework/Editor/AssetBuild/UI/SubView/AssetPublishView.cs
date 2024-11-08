@@ -10,7 +10,7 @@ namespace HQFramework.Editor
     public class AssetPublishView : TabContentView
     {
         private List<AssetArchiveData> archiveDataList;
-        private AssetModuleManifest lastPublishManifest;
+        private HQAssetManifest lastPublishManifest;
         private int selectedArchiveIndex = -1;
 
         private GUIStyle normalBtnStyle;
@@ -37,7 +37,7 @@ namespace HQFramework.Editor
 
         public override async void OnEnable()
         {
-            List<AssetModuleManifest> history = await HQAssetBuildLauncher.GetAssetPublishHistoryAsync();
+            List<HQAssetManifest> history = await HQAssetBuildLauncher.GetAssetPublishHistoryAsync();
             archiveDataList = await HQAssetBuildLauncher.GetAssetArchivesAsync();
             archiveIcon = EditorGUIUtility.IconContent("SceneSet Icon");
             archiveScrollPos.y = int.MaxValue;

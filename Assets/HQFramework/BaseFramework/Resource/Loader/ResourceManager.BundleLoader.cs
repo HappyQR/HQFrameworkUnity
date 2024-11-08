@@ -13,7 +13,7 @@ namespace HQFramework.Resource
                 this.bundleLoadTaskDispatcher = new BundleLoadTaskDispatcher(maxConcurrentLoadCount);
             }
 
-            public void LoadBundle(AssetBundleInfo bundleInfo, int priority, int groupID)
+            public void LoadBundle(HQAssetBundleConfig bundleInfo, int priority, int groupID)
             {
                 BundleItem targetBundle = new BundleItem(bundleInfo);
                 resourceManager.loadingBundleSet.Add(targetBundle);

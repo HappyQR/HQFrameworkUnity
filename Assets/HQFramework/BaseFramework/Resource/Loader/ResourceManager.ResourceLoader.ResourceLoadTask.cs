@@ -10,7 +10,7 @@ namespace HQFramework.Resource
             {
                 private static int serialID = 0;
                 private ResourceManager resourceManager;
-                private AssetItemInfo assetItem;
+                private HQAssetItemConfig assetItem;
                 private Type assetType;
 
                 private Action<ResourceLoadCompleteEventArgs> onComplete;
@@ -21,7 +21,7 @@ namespace HQFramework.Resource
                     remove { onComplete -= value; }
                 }
 
-                public static ResourceLoadTask Create(ResourceManager resourceManager, AssetItemInfo assetItem, Type assetType, int priority, int groupID)
+                public static ResourceLoadTask Create(ResourceManager resourceManager, HQAssetItemConfig assetItem, Type assetType, int priority, int groupID)
                 {
                     ResourceLoadTask task = ReferencePool.Spawn<ResourceLoadTask>();
                     task.id = serialID++;
@@ -47,7 +47,7 @@ namespace HQFramework.Resource
                     }
                     else
                     {
-                        AssetBundleInfo bundleInfo = resourceManager.localManifest.moduleDic[assetItem.moduleID].bundleDic[assetItem.bundleName];
+                        HQAssetBundleConfig bundleInfo = resourceManager.localManifest.moduleDic[assetItem.moduleID].bundleDic[assetItem.bundleName];
                         resourceManager.bundleLoader.LoadBundle(bundleInfo, priority, groupID);
                         return TaskStartStatus.HasToWait;
                     }

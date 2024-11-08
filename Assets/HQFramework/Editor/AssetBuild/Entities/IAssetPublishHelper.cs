@@ -12,18 +12,18 @@ namespace HQFramework.Editor
 
         void SetUploader(IAssetUploader uploader);
 
-        AssetModuleManifest GetBasicManifest();
+        HQAssetManifest GetBasicManifest();
 
-        string GetBundleRelatedUrl(AssetBundleInfo bundleInfo, AssetModuleInfo moduleInfo);
+        string GetBundleRelatedUrl(HQAssetBundleConfig bundleInfo, HQAssetModuleConfig moduleInfo);
 
-        string GetModuleUrlRoot(AssetModuleInfo moduleInfo);
+        string GetModuleUrlRoot(HQAssetModuleConfig moduleInfo);
 
         void PackBuiltinModule(AssetModuleCompileInfo moduleCompileInfo);
 
-        Task<AssetModuleManifest> GetRemoteManifestAsync();
+        Task<HQAssetManifest> GetRemoteManifestAsync();
 
         Task<bool> UploadBundleAsync(AssetBundleUploadItem item);
 
-        Task<bool> UploadManifestAsync(AssetModuleManifest manifest);
+        Task<bool> UploadManifestAsync(HQAssetManifest manifest);
     }
 }

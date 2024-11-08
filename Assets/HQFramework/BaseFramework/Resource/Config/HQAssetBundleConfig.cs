@@ -4,7 +4,7 @@ using System;
 namespace HQFramework.Resource
 {
     [Serializable]
-    public class AssetBundleInfo
+    public class HQAssetBundleConfig
     {
         public int moduleID;
         public string moduleName;

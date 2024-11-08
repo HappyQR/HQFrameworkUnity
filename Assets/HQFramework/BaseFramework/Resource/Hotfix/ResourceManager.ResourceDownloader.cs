@@ -14,9 +14,9 @@ namespace HQFramework.Resource
                 public int hotfixID { get; private set; }
                 public string url { get; private set; }
                 public string filePath { get; private set; }
-                public AssetBundleInfo bundleInfo { get; private set; }
+                public HQAssetBundleConfig bundleInfo { get; private set; }
 
-                public static DownloadItem Create(int hotfixID, string url, string filePath, AssetBundleInfo bundleInfo)
+                public static DownloadItem Create(int hotfixID, string url, string filePath, HQAssetBundleConfig bundleInfo)
                 {
                     DownloadItem item = ReferencePool.Spawn<DownloadItem>();
                     item.hotfixID = hotfixID;
@@ -97,10 +97,10 @@ namespace HQFramework.Resource
                 int hotfixID = resourceManager.resourceHelper.LauncherHotfixID;
                 DownloadGroup downloadGroup = new DownloadGroup();
                 downloadGroupDic.Add(hotfixID, downloadGroup);
-                foreach (KeyValuePair<AssetModuleInfo, List<AssetBundleInfo>> moduleBundleListPair in resourceManager.necessaryHotfixContent)
+                foreach (KeyValuePair<HQAssetModuleConfig, List<HQAssetBundleConfig>> moduleBundleListPair in resourceManager.necessaryHotfixContent)
                 {
-                    AssetModuleInfo module = moduleBundleListPair.Key;
-                    List<AssetBundleInfo> bundleList = moduleBundleListPair.Value;
+                    HQAssetModuleConfig module = moduleBundleListPair.Key;
+                    List<HQAssetBundleConfig> bundleList = moduleBundleListPair.Value;
 
                     for (int i = 0; i < bundleList.Count; i++)
                     {
@@ -113,7 +113,7 @@ namespace HQFramework.Resource
                 return hotfixID;
             }
 
-            public int ModuleHotfix(AssetModuleInfo module, List<AssetBundleInfo> bundleList)
+            public int ModuleHotfix(HQAssetModuleConfig module, List<HQAssetBundleConfig> bundleList)
             {
                 int hotfixID = resourceManager.resourceHelper.LauncherHotfixID + module.id;
                 DownloadGroup downloadGroup = new DownloadGroup();
@@ -256,7 +256,7 @@ namespace HQFramework.Resource
             {
                 resourceManager.downloadManager.StopDownloads(args.GroupID);
                 int hotfixID = args.GroupID;
-                AssetBundleInfo bundleInfo = downloadDic[args.ID].bundleInfo;
+                HQAssetBundleConfig bundleInfo = downloadDic[args.ID].bundleInfo;
                 if (errorEventDic.ContainsKey(hotfixID))
                 {
                     HotfixDownloadErrorEventArgs errArgs = HotfixDownloadErrorEventArgs.Create(hotfixID, bundleInfo, args.ErrorMessage);
@@ -310,7 +310,7 @@ namespace HQFramework.Resource
                 if (item.hotfixID == resourceManager.resourceHelper.LauncherHotfixID) // launcher hotfix complete.
                 {
                     DeleteObsoleteModules();
-                    foreach (AssetModuleInfo remoteModule in resourceManager.necessaryHotfixContent.Keys)
+                    foreach (HQAssetModuleConfig remoteModule in resourceManager.necessaryHotfixContent.Keys)
                     {
                         MergeRemoteModuleToLocalManifest(remoteModule);
                     }
@@ -326,7 +326,7 @@ namespace HQFramework.Resource
                 }
                 else                                                                // separate hotfix complete.
                 {
-                    AssetModuleInfo remoteModule = resourceManager.remoteManifest.moduleDic[item.bundleInfo.moduleID];
+                    HQAssetModuleConfig remoteModule = resourceManager.remoteManifest.moduleDic[item.bundleInfo.moduleID];
                     MergeRemoteModuleToLocalManifest(remoteModule);
                     resourceManager.separateHotfixContent.Remove(remoteModule);
                 }
@@ -345,11 +345,11 @@ namespace HQFramework.Resource
                 }
             }
 
-            private void MergeRemoteModuleToLocalManifest(AssetModuleInfo remoteModule)
+            private void MergeRemoteModuleToLocalManifest(HQAssetModuleConfig remoteModule)
             {
                 if (resourceManager.localManifest.moduleDic.ContainsKey(remoteModule.id))
                 {
-                    AssetModuleInfo localModule = resourceManager.localManifest.moduleDic[remoteModule.id];
+                    HQAssetModuleConfig localModule = resourceManager.localManifest.moduleDic[remoteModule.id];
                     // delete obsolete bundles
                     foreach (var bundle in localModule.bundleDic.Values)
                     {
@@ -374,7 +374,7 @@ namespace HQFramework.Resource
             private void DeleteObsoleteModules()
             {
                 List<int> obsoleteModuleList = new List<int>();
-                foreach (AssetModuleInfo localModule in resourceManager.localManifest.moduleDic.Values)
+                foreach (HQAssetModuleConfig localModule in resourceManager.localManifest.moduleDic.Values)
                 {
                     if (!resourceManager.remoteManifest.moduleDic.ContainsKey(localModule.id))
                     {
@@ -388,7 +388,7 @@ namespace HQFramework.Resource
                 }
             }
 
-            private string GetBundleDownloadPath(AssetBundleInfo bundleInfo)
+            private string GetBundleDownloadPath(HQAssetBundleConfig bundleInfo)
             {
                 return Path.Combine(tempDownloadDir, bundleInfo.md5);
             }

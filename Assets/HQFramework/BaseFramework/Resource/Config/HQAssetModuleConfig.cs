@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace HQFramework.Resource
 {
     [Serializable]
-    public class AssetModuleInfo
+    public class HQAssetModuleConfig
     {
         public int id;
         public string moduleName;
@@ -15,8 +15,8 @@ namespace HQFramework.Resource
         public string moduleUrlRoot;
         public string releaseNote;
         public int[] dependencies;
-        public Dictionary<string, AssetBundleInfo> bundleDic;
+        public Dictionary<string, HQAssetBundleConfig> bundleDic;
         //模块全量资源信息
-        public Dictionary<uint, AssetItemInfo> assetsDic;
+        public Dictionary<uint, HQAssetItemConfig> assetsDic;
     }
 }

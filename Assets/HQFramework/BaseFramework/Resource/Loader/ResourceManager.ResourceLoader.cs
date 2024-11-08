@@ -33,7 +33,7 @@ namespace HQFramework.Resource
                     return;
                 }
 
-                AssetItemInfo assetInfo = resourceManager.assetItemMap[crc];
+                HQAssetItemConfig assetInfo = resourceManager.assetItemMap[crc];
                 ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, assetInfo, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);
                 resourceLoadTaskDispatcher.AddResourceLoadCompleteEvent(taskID, onComplete);

@@ -28,14 +28,14 @@ namespace HQFramework.Editor
                 moduleCompileInfo.devNotes = item.Key.devNotes;
                 moduleCompileInfo.buildTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 moduleCompileInfo.bundleList = item.Value;
-                moduleCompileInfo.assetsDic = new Dictionary<uint, AssetItemInfo>();
+                moduleCompileInfo.assetsDic = new Dictionary<uint, HQAssetItemConfig>();
                 for (int i = 0; i < item.Key.bundleConfigList.Count; i++)
                 {
                     AssetBundleConfig bundleConfig = item.Key.bundleConfigList[i];
                     for (int j = 0; j < bundleConfig.assetItemList.Count; j++)
                     {
                         string assetPath = bundleConfig.assetItemList[j];
-                        AssetItemInfo assetItem = new AssetItemInfo();
+                        HQAssetItemConfig assetItem = new HQAssetItemConfig();
                         assetItem.crc = Utility.CRC32.ComputeCrc32(assetPath);
                         assetItem.assetPath = assetPath;
                         assetItem.assetName = Path.GetFileName(assetPath);

@@ -38,7 +38,7 @@ public class ResourceDecompressProcedure : ProcedureBase
             yield return null;
         }
         string manifestJson = localManifestRequest.downloadHandler.text;
-        AssetModuleManifest localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(manifestJson);
+        HQAssetManifest localManifest = SerializeManager.JsonToObject<HQAssetManifest>(manifestJson);
         foreach (var module in localManifest.moduleDic.Values)
         {
             string moudleDir = Path.Combine(resourceManager.PersistentDir, module.id.ToString());

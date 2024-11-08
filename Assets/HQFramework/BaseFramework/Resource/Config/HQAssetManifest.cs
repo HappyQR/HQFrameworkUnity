@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace HQFramework.Resource
 {
     [Serializable]
-    public class AssetModuleManifest
+    public class HQAssetManifest
     {
         public string productName;
         public string productVersion;
@@ -13,6 +13,6 @@ namespace HQFramework.Resource
         public int minimalSupportedVersionCode;
         public string releaseNote;
         public bool isBuiltinManifest;
-        public Dictionary<int, AssetModuleInfo> moduleDic;
+        public Dictionary<int, HQAssetModuleConfig> moduleDic;
     }
 }

@@ -52,7 +52,7 @@ namespace HQFramework.Editor
 
         private List<AssetArchiveData> archiveDataList;
         private List<AssetModuleCompileInfo> compileInfoList;
-        private List<AssetModuleManifest> publishDataList;
+        private List<HQAssetManifest> publishDataList;
 
         public async Task<bool> AddAssetArchiveAsync(AssetArchiveData archive)
         {
@@ -78,7 +78,7 @@ namespace HQFramework.Editor
             return true;
         }
 
-        public async Task<bool> AddPublishDataAsync(AssetModuleManifest publishData)
+        public async Task<bool> AddPublishDataAsync(HQAssetManifest publishData)
         {
             if (publishDataList == null)
             {
@@ -128,7 +128,7 @@ namespace HQFramework.Editor
             return compileInfoList;
         }
 
-        public async Task<List<AssetModuleManifest>> GetAssetPublishHistoryAsync()
+        public async Task<List<HQAssetManifest>> GetAssetPublishHistoryAsync()
         {
             if (publishDataList != null)
             {
@@ -136,12 +136,12 @@ namespace HQFramework.Editor
             }
             else if (!File.Exists(publishDataFilePath))
             {
-                publishDataList = new List<AssetModuleManifest>();
+                publishDataList = new List<HQAssetManifest>();
             }
             else
             {
                 byte[] data = await File.ReadAllBytesAsync(publishDataFilePath);
-                publishDataList = AssetUtility.ConfigSerializer.Deserialize<List<AssetModuleManifest>>(data);
+                publishDataList = AssetUtility.ConfigSerializer.Deserialize<List<HQAssetManifest>>(data);
             }
 
             return publishDataList;

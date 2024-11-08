@@ -91,7 +91,7 @@ namespace HQFramework.Editor
             return dataManager.GetAssetModuleCompileHistoryAsync();
         }
 
-        public static Task<List<AssetModuleManifest>> GetAssetPublishHistoryAsync()
+        public static Task<List<HQAssetManifest>> GetAssetPublishHistoryAsync()
         {
             return dataManager.GetAssetPublishHistoryAsync();
         }
@@ -105,7 +105,7 @@ namespace HQFramework.Editor
             assetUploader.HotfixRootFolder = CurrentBuildConfig.hotfixRootFolder;
             publishHelper.SetUploader(assetUploader);
             AssetPublishController.SetHelper(publishHelper);
-            AssetModuleManifest result = await AssetPublishController.PublishAssets(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, uploadCallback, endCallback);
+            HQAssetManifest result = await AssetPublishController.PublishAssets(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, uploadCallback, endCallback);
             if (result != null)
             {
                 bool saved = await dataManager.AddPublishDataAsync(result);
@@ -166,7 +166,7 @@ namespace HQFramework.Editor
             IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
             AssetPublishController.SetHelper(publishHelper);
 
-            AssetModuleManifest builtinManifest = AssetPublishController.PackBuiltinAssets(moduleCompileInfoList);
+            HQAssetManifest builtinManifest = AssetPublishController.PackBuiltinAssets(moduleCompileInfoList);
             if (builtinManifest != null)
             {
                 string manifestFilePath = Path.Combine(Application.streamingAssetsPath, CurrentBuildConfig.assetBuiltinDir, "AssetModuleManifest.json");

@@ -20,7 +20,7 @@ namespace HQFramework.Editor
             publishHelper = helper;
         }
 
-        public static AssetModuleManifest PackBuiltinAssets(List<AssetModuleCompileInfo> moduleCompileInfoList)
+        public static HQAssetManifest PackBuiltinAssets(List<AssetModuleCompileInfo> moduleCompileInfoList)
         {
             if (moduleCompileInfoList == null || moduleCompileInfoList.Count == 0)
                 return null;
@@ -29,25 +29,25 @@ namespace HQFramework.Editor
                 Directory.Delete(publishHelper.AssetsBuiltinDir, true);
             }
             Directory.CreateDirectory(publishHelper.AssetsBuiltinDir);
-            AssetModuleManifest manifest = publishHelper.GetBasicManifest();
+            HQAssetManifest manifest = publishHelper.GetBasicManifest();
             manifest.isBuiltinManifest = true;
             manifest.resourceVersion = "0.0.0";
-            manifest.moduleDic = new Dictionary<int, AssetModuleInfo>();
+            manifest.moduleDic = new Dictionary<int, HQAssetModuleConfig>();
             for (int i = 0; i < moduleCompileInfoList.Count; i++)
             {
                 AssetModuleCompileInfo compileInfo = moduleCompileInfoList[i];
-                AssetModuleInfo module = new AssetModuleInfo();
+                HQAssetModuleConfig module = new HQAssetModuleConfig();
                 module.id = compileInfo.moduleID;
                 module.moduleName = compileInfo.moduleName;
                 module.isBuiltin = compileInfo.isBuiltin;
                 module.currentPatchVersion = compileInfo.buildVersionCode;
                 module.dependencies = compileInfo.dependencies;
                 module.assetsDic = compileInfo.assetsDic;
-                module.bundleDic = new Dictionary<string, AssetBundleInfo>();
+                module.bundleDic = new Dictionary<string, HQAssetBundleConfig>();
                 for (int j = 0; j < compileInfo.bundleList.Count; j++)
                 {
                     AssetBundleCompileInfo bundleCompileInfo = compileInfo.bundleList[j];
-                    AssetBundleInfo bundleInfo = new AssetBundleInfo();
+                    HQAssetBundleConfig bundleInfo = new HQAssetBundleConfig();
                     bundleInfo.moduleID = compileInfo.moduleID;
                     bundleInfo.moduleName = compileInfo.moduleName;
                     bundleInfo.bundleName = bundleCompileInfo.bundleName;
@@ -66,10 +66,10 @@ namespace HQFramework.Editor
             return manifest;
         }
 
-        public static async Task<AssetModuleManifest> PublishAssets(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
+        public static async Task<HQAssetManifest> PublishAssets(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
         {
             AssetPublishData publishData = PreprocessAssetArchive(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic);
-            AssetModuleManifest localManifest = publishHelper.GetBasicManifest();
+            HQAssetManifest localManifest = publishHelper.GetBasicManifest();
             localManifest.versionCode = publishData.versionCode;
             localManifest.resourceVersion = publishData.resourceVersion;
             localManifest.minimalSupportedVersionCode = publishData.minimalSupportedVersionCode;
@@ -77,9 +77,9 @@ namespace HQFramework.Editor
             localManifest.isBuiltinManifest = false;
             localManifest.moduleDic = publishData.moduleDic;
 
-            AssetModuleManifest remoteManifest = await publishHelper.GetRemoteManifestAsync();
+            HQAssetManifest remoteManifest = await publishHelper.GetRemoteManifestAsync();
             List<AssetBundleUploadItem> uploadList = new List<AssetBundleUploadItem>();
-            foreach (AssetModuleInfo localModule in localManifest.moduleDic.Values)
+            foreach (HQAssetModuleConfig localModule in localManifest.moduleDic.Values)
             {
                 if (!remoteManifest.moduleDic.ContainsKey(localModule.id))
                 {
@@ -94,8 +94,8 @@ namespace HQFramework.Editor
                     continue;
                 }
 
-                AssetModuleInfo remoteModule = remoteManifest.moduleDic[localModule.id];
-                foreach (AssetBundleInfo localBundle in localModule.bundleDic.Values)
+                HQAssetModuleConfig remoteModule = remoteManifest.moduleDic[localModule.id];
+                foreach (HQAssetBundleConfig localBundle in localModule.bundleDic.Values)
                 {
                     if (!remoteModule.bundleDic.ContainsKey(localBundle.bundleName) || 
                         remoteModule.bundleDic[localBundle.bundleName].md5 != localBundle.md5)
@@ -144,24 +144,24 @@ namespace HQFramework.Editor
             result.resourceVersion = resourceVersion;
             result.minimalSupportedVersionCode = minimalSupportedVersionCode;
             result.releaseNote = releaseNote;
-            result.moduleDic = new Dictionary<int, AssetModuleInfo>();
+            result.moduleDic = new Dictionary<int, HQAssetModuleConfig>();
             result.bundleFileMap = new Dictionary<string, string>();
             for (int i = 0; i < archiveData.moduleCompileInfoList.Count; i++)
             {
                 AssetModuleCompileInfo compileInfo = archiveData.moduleCompileInfoList[i];
-                AssetModuleInfo module = new AssetModuleInfo();
+                HQAssetModuleConfig module = new HQAssetModuleConfig();
                 module.id = compileInfo.moduleID;
                 module.moduleName = compileInfo.moduleName;
                 module.isBuiltin = compileInfo.isBuiltin;
                 module.currentPatchVersion = compileInfo.buildVersionCode;
                 module.dependencies = compileInfo.dependencies;
                 module.assetsDic = compileInfo.assetsDic;
-                module.bundleDic = new Dictionary<string, AssetBundleInfo>();
+                module.bundleDic = new Dictionary<string, HQAssetBundleConfig>();
                 for (int j = 0; j < compileInfo.bundleList.Count; j++)
                 {
                     AssetBundleCompileInfo bundleCompileInfo = compileInfo.bundleList[j];
                     result.bundleFileMap.Add(bundleCompileInfo.bundleName, bundleCompileInfo.filePath);
-                    AssetBundleInfo bundleInfo = new AssetBundleInfo();
+                    HQAssetBundleConfig bundleInfo = new HQAssetBundleConfig();
                     bundleInfo.moduleID = compileInfo.moduleID;
                     bundleInfo.moduleName = compileInfo.moduleName;
                     bundleInfo.bundleName = bundleCompileInfo.bundleName;

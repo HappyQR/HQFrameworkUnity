@@ -71,7 +71,7 @@ namespace HQFramework.Resource
                     using HttpClient client = new HttpClient();
                     client.Timeout = TimeSpan.FromSeconds(hotfixTimeout);
                     string remoteManifestJson = await client.GetStringAsync(resourceManager.resourceHelper.HotfixManifestUrl);
-                    resourceManager.remoteManifest = SerializeManager.JsonToObject<AssetModuleManifest>(remoteManifestJson);
+                    resourceManager.remoteManifest = SerializeManager.JsonToObject<HQAssetManifest>(remoteManifestJson);
                     HotfixCheckCompleteEventArgs args = LaunchAssetsHotfix();
                     InvokeCompleteEvent(hotfixID, args);
                 }
@@ -90,11 +90,11 @@ namespace HQFramework.Resource
                     InvokeErrorEvent(moduleID, args);
                     yield break;
                 }
-                AssetModuleInfo remoteModule = resourceManager.remoteManifest.moduleDic[moduleID];
+                HQAssetModuleConfig remoteModule = resourceManager.remoteManifest.moduleDic[moduleID];
                 if (resourceManager.localManifest.moduleDic.ContainsKey(moduleID))
                 {
-                    AssetModuleInfo localModule = resourceManager.localManifest.moduleDic[moduleID];
-                    List<AssetBundleInfo> bundleList = DiffModule(localModule, remoteModule);
+                    HQAssetModuleConfig localModule = resourceManager.localManifest.moduleDic[moduleID];
+                    List<HQAssetBundleConfig> bundleList = DiffModule(localModule, remoteModule);
                     if (bundleList == null || bundleList.Count == 0)
                     {
                         HotfixCheckCompleteEventArgs args = new HotfixCheckCompleteEventArgs(moduleID, true, false, null, 0);
@@ -116,7 +116,7 @@ namespace HQFramework.Resource
                 }
                 else
                 {
-                    List<AssetBundleInfo> bundleList = remoteModule.bundleDic.Values.ToList();
+                    List<HQAssetBundleConfig> bundleList = remoteModule.bundleDic.Values.ToList();
                     resourceManager.separateHotfixContent.Add(remoteModule, bundleList);
                     string releaseNote = remoteModule.releaseNote;
                     int totalSize = 0;
@@ -140,10 +140,10 @@ namespace HQFramework.Resource
 
                 bool forceUpdate = resourceManager.localManifest.versionCode > resourceManager.remoteManifest.versionCode || resourceManager.localManifest.versionCode < resourceManager.remoteManifest.minimalSupportedVersionCode;
                 string releaseNote = resourceManager.remoteManifest.releaseNote;
-                resourceManager.necessaryHotfixContent = new Dictionary<AssetModuleInfo, List<AssetBundleInfo>>();
-                foreach (AssetModuleInfo remoteModule in resourceManager.remoteManifest.moduleDic.Values)
+                resourceManager.necessaryHotfixContent = new Dictionary<HQAssetModuleConfig, List<HQAssetBundleConfig>>();
+                foreach (HQAssetModuleConfig remoteModule in resourceManager.remoteManifest.moduleDic.Values)
                 {
-                    if (resourceManager.resourceHelper.HotfixMode == AssetHotfixMode.SeparateHotfix && !remoteModule.isBuiltin)
+                    if (resourceManager.resourceHelper.HotfixMode == HQHotfixMode.SeparateHotfix && !remoteModule.isBuiltin)
                     {
                         continue;
                     }
@@ -153,8 +153,8 @@ namespace HQFramework.Resource
                     }
                     else
                     {
-                        AssetModuleInfo localModule = resourceManager.localManifest.moduleDic[remoteModule.id];
-                        List<AssetBundleInfo> bundleList = DiffModule(localModule, remoteModule);
+                        HQAssetModuleConfig localModule = resourceManager.localManifest.moduleDic[remoteModule.id];
+                        List<HQAssetBundleConfig> bundleList = DiffModule(localModule, remoteModule);
                         if (bundleList == null || bundleList.Count == 0)
                         {
                             continue;
@@ -164,7 +164,7 @@ namespace HQFramework.Resource
                 }
                 bool isLatest = resourceManager.necessaryHotfixContent.Count == 0;
                 int totalSize = 0;
-                foreach (List<AssetBundleInfo> bundleList in resourceManager.necessaryHotfixContent.Values)
+                foreach (List<HQAssetBundleConfig> bundleList in resourceManager.necessaryHotfixContent.Values)
                 {
                     for (int i = 0; i < bundleList.Count; i++)
                     {
@@ -175,15 +175,15 @@ namespace HQFramework.Resource
                 return checkArgs;
             }
 
-            private List<AssetBundleInfo> DiffModule(AssetModuleInfo localModule, AssetModuleInfo remoteModule)
+            private List<HQAssetBundleConfig> DiffModule(HQAssetModuleConfig localModule, HQAssetModuleConfig remoteModule)
             {
                 if (localModule.currentPatchVersion == remoteModule.currentPatchVersion)
                 {
                     return null;
                 }
                 
-                List<AssetBundleInfo> bundleList = new List<AssetBundleInfo>();
-                foreach (AssetBundleInfo remoteBundle in remoteModule.bundleDic.Values)
+                List<HQAssetBundleConfig> bundleList = new List<HQAssetBundleConfig>();
+                foreach (HQAssetBundleConfig remoteBundle in remoteModule.bundleDic.Values)
                 {
                     if (!localModule.bundleDic.ContainsKey(remoteBundle.bundleName) ||
                         localModule.bundleDic[remoteBundle.bundleName].md5 != remoteBundle.md5)

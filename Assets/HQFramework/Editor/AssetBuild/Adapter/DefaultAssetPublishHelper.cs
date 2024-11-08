@@ -23,36 +23,36 @@ namespace HQFramework.Editor
             this.assetUploader = uploader;
         }
         
-        public AssetModuleManifest GetBasicManifest()
+        public HQAssetManifest GetBasicManifest()
         {
-            AssetModuleManifest manifest = new AssetModuleManifest();
+            HQAssetManifest manifest = new HQAssetManifest();
             manifest.productName = Application.productName;
             manifest.productVersion = Application.version;
 
             return manifest;
         }
 
-        public string GetBundleRelatedUrl(AssetBundleInfo bundleInfo, AssetModuleInfo moduleInfo)
+        public string GetBundleRelatedUrl(HQAssetBundleConfig bundleInfo, HQAssetModuleConfig moduleInfo)
         {
             return bundleInfo.bundleName;
         }
 
-        public string GetModuleUrlRoot(AssetModuleInfo moduleInfo)
+        public string GetModuleUrlRoot(HQAssetModuleConfig moduleInfo)
         {
             return "";
         }
 
-        public Task<AssetModuleManifest> GetRemoteManifestAsync()
+        public Task<HQAssetManifest> GetRemoteManifestAsync()
         {
             return GetRemoteManifestInternal();
         }
 
-        private async Task<AssetModuleManifest> GetRemoteManifestInternal()
+        private async Task<HQAssetManifest> GetRemoteManifestInternal()
         {
             string manifestFileUrl = "";
             using HttpClient httpClient = new HttpClient();
             string jsonStr = await httpClient.GetStringAsync(manifestFileUrl);
-            return JsonUtilityEditor.ToObject<AssetModuleManifest>(jsonStr);
+            return JsonUtilityEditor.ToObject<HQAssetManifest>(jsonStr);
         }
 
         public Task<bool> UploadBundleAsync(AssetBundleUploadItem item)
@@ -60,7 +60,7 @@ namespace HQFramework.Editor
             return null;
         }
 
-        public Task<bool> UploadManifestAsync(AssetModuleManifest manifest)
+        public Task<bool> UploadManifestAsync(HQAssetManifest manifest)
         {
             return null;
         }

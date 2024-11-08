@@ -22,7 +22,7 @@ namespace HQFramework.Runtime
             set;
         }
 
-        public AssetHotfixMode HotfixMode
+        public HQHotfixMode HotfixMode
         {
             get;
             set;
@@ -58,25 +58,25 @@ namespace HQFramework.Runtime
             }
         }
 
-        public AssetModuleManifest LoadAssetManifest()
+        public HQAssetManifest LoadAssetManifest()
         {
             string localManifestJsonStr = File.ReadAllText(LocalManifestFilePath);
-            AssetModuleManifest localManifest = SerializeManager.JsonToObject<AssetModuleManifest>(localManifestJsonStr);
+            HQAssetManifest localManifest = SerializeManager.JsonToObject<HQAssetManifest>(localManifestJsonStr);
             return localManifest;
         }
 
-        public void OverrideLocalManifest(AssetModuleManifest localManifest)
+        public void OverrideLocalManifest(HQAssetManifest localManifest)
         {
             string manifestJson = SerializeManager.ObjectToJson(localManifest);
             File.WriteAllText(LocalManifestFilePath, manifestJson);
         }
 
-        public string GetBundleFilePath(AssetBundleInfo bundleInfo)
+        public string GetBundleFilePath(HQAssetBundleConfig bundleInfo)
         {
             return Path.Combine(AssetsPersistentDir, bundleInfo.moduleID.ToString(), bundleInfo.bundleName);
         }
 
-        public void DeleteAssetModule(AssetModuleInfo module)
+        public void DeleteAssetModule(HQAssetModuleConfig module)
         {
             string moduleDir = Path.Combine(AssetsPersistentDir, module.id.ToString());
             if (Directory.Exists(moduleDir))

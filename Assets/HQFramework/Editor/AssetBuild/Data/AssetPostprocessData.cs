@@ -19,7 +19,7 @@ namespace HQFramework.Editor
         public string devNotes;
         public string buildTime;
         public List<AssetBundleCompileInfo> bundleList;
-        public Dictionary<uint, AssetItemInfo> assetsDic;
+        public Dictionary<uint, HQAssetItemConfig> assetsDic;
         public int[] dependencies;
     }
 }
