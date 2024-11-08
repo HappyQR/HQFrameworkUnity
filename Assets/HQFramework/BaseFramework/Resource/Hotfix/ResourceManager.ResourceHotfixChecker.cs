@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using HQFramework.Coroutine;
+using System.Threading.Tasks;
 
 namespace HQFramework.Resource
 {
@@ -14,7 +13,6 @@ namespace HQFramework.Resource
             private static readonly byte hotfixTimeout = 5;
 
             private readonly ResourceManager resourceManager;
-            private readonly ICoroutineManager coroutineManager;
 
             private Dictionary<int, Action<HotfixCheckErrorEventArgs>> errorEventDic;
             private Dictionary<int, Action<HotfixCheckCompleteEventArgs>> completeEventDic;
@@ -22,7 +20,6 @@ namespace HQFramework.Resource
             public ResourceHotfixChecker(ResourceManager resourceManager)
             {
                 this.resourceManager = resourceManager;
-                coroutineManager = HQFrameworkEngine.GetModule<ICoroutineManager>();
                 errorEventDic = new Dictionary<int, Action<HotfixCheckErrorEventArgs>>();
                 completeEventDic = new Dictionary<int, Action<HotfixCheckCompleteEventArgs>>();
             }
@@ -35,7 +32,7 @@ namespace HQFramework.Resource
 
             public int ModuleHotfixCheck(int moduleID)
             {
-                coroutineManager.StartCoroutine(ModuleHotfixCheckInternal(moduleID));
+                ModuleHotfixCheckInternal(moduleID);
                 return moduleID;
             }
 
@@ -72,6 +69,10 @@ namespace HQFramework.Resource
                     client.Timeout = TimeSpan.FromSeconds(hotfixTimeout);
                     string remoteManifestJson = await client.GetStringAsync(resourceManager.resourceHelper.HotfixManifestUrl);
                     resourceManager.remoteManifest = SerializeManager.JsonToObject<HQAssetManifest>(remoteManifestJson);
+                    while (resourceManager.localManifest == null)
+                    {
+                        await Task.Yield();
+                    }
                     HotfixCheckCompleteEventArgs args = LaunchAssetsHotfix();
                     InvokeCompleteEvent(hotfixID, args);
                 }
@@ -82,13 +83,13 @@ namespace HQFramework.Resource
                 }
             }
 
-            private IEnumerator ModuleHotfixCheckInternal(int moduleID)
+            private async void ModuleHotfixCheckInternal(int moduleID)
             {
+                await Task.Yield();
                 if (!resourceManager.remoteManifest.moduleDic.ContainsKey(moduleID))
                 {
                     HotfixCheckErrorEventArgs args = new HotfixCheckErrorEventArgs(moduleID, "Module doesn't exists");
                     InvokeErrorEvent(moduleID, args);
-                    yield break;
                 }
                 HQAssetModuleConfig remoteModule = resourceManager.remoteManifest.moduleDic[moduleID];
                 if (resourceManager.localManifest.moduleDic.ContainsKey(moduleID))

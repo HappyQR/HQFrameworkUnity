@@ -38,11 +38,13 @@ namespace HQFramework.Resource
             set;
         }
 
-        HQAssetManifest LoadAssetManifest();
+        void DecompressBuiltinAssets(Action callback);
+
+        void LoadAssetManifest(Action<ManifestLoadCompleteEventArgs> callback);
 
         void OverrideLocalManifest(HQAssetManifest localManifest);
 
-        string GetBundleFilePath(HQAssetBundleConfig bundleInfo);
+        string GetBundleRelatedPath(HQAssetBundleConfig bundleInfo);
 
         void DeleteAssetModule(HQAssetModuleConfig module);
 

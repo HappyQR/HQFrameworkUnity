@@ -294,7 +294,7 @@ namespace HQFramework.Resource
                 while (group.downloadedQueue.Count > 0)
                 {
                     DownloadItem downloadItem = group.downloadedQueue.Dequeue();
-                    string destBundlePath = resourceManager.GetBundleFilePath(downloadItem.bundleInfo);
+                    string destBundlePath = GetBundleDestPath(downloadItem.bundleInfo);
                     string moduleDir = Path.GetDirectoryName(destBundlePath);
                     if (!Directory.Exists(moduleDir))
                     {
@@ -304,7 +304,7 @@ namespace HQFramework.Resource
                     File.Delete(downloadItem.filePath);
                 }
                 downloadGroupDic.Remove(item.hotfixID);
-                resourceManager.ReloadAssetMap();
+                resourceManager.ReloadAssetTable();
 
                 // override local manifest
                 if (item.hotfixID == resourceManager.resourceHelper.LauncherHotfixID) // launcher hotfix complete.
@@ -355,7 +355,7 @@ namespace HQFramework.Resource
                     {
                         if (!remoteModule.bundleDic.ContainsKey(bundle.bundleName))
                         {
-                            string bundlePath = resourceManager.GetBundleFilePath(bundle);
+                            string bundlePath = GetBundleDestPath(bundle);
                             if (File.Exists(bundlePath))
                             {
                                 File.Delete(bundlePath);
@@ -391,6 +391,11 @@ namespace HQFramework.Resource
             private string GetBundleDownloadPath(HQAssetBundleConfig bundleInfo)
             {
                 return Path.Combine(tempDownloadDir, bundleInfo.md5);
+            }
+
+            private string GetBundleDestPath(HQAssetBundleConfig bundleInfo)
+            {
+                return Path.Combine(resourceManager.PersistentDir, resourceManager.resourceHelper.GetBundleRelatedPath(bundleInfo));
             }
 
             private void ClearHotfix(int hotfixID)

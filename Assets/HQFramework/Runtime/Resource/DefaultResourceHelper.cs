@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using HQFramework.Coroutine;
 using HQFramework.Resource;
 using UnityEngine;
-
+using UnityEngine.Networking;
 using UnityObject = UnityEngine.Object;
 
 namespace HQFramework.Runtime
@@ -46,32 +48,47 @@ namespace HQFramework.Runtime
             set;
         }
 
-        private string LocalManifestFilePath
+        public void DecompressBuiltinAssets(Action callback)
         {
-            get
-            {
-                if (string.IsNullOrEmpty(localManifestFilePath))
-                {
-                    localManifestFilePath = Path.Combine(AssetsPersistentDir, manifestFileName);
-                }
-                return localManifestFilePath;
-            }
+            HQFrameworkEngine.GetModule<ICoroutineManager>().StartCoroutine(DecompressBuiltinAssetsInternal(callback));
         }
 
-        public HQAssetManifest LoadAssetManifest()
+        public async void LoadAssetManifest(Action<ManifestLoadCompleteEventArgs> callback)
         {
-            string localManifestJsonStr = File.ReadAllText(LocalManifestFilePath);
-            HQAssetManifest localManifest = SerializeManager.JsonToObject<HQAssetManifest>(localManifestJsonStr);
-            return localManifest;
+            if (string.IsNullOrEmpty(localManifestFilePath))
+            {
+                localManifestFilePath = Path.Combine(AssetsPersistentDir, manifestFileName);
+            }
+            if (File.Exists(localManifestFilePath))
+            {
+                string localManifestJsonStr = await File.ReadAllTextAsync(localManifestFilePath);
+                HQAssetManifest localManifest = SerializeManager.JsonToObject<HQAssetManifest>(localManifestJsonStr);
+                ManifestLoadCompleteEventArgs args = new ManifestLoadCompleteEventArgs(localManifest);
+                callback?.Invoke(args);
+            }
+            else
+            {
+                string lcoalManifestUrl = "file://" + Path.Combine(AssetsBuiltinDir, manifestFileName);
+                UnityWebRequest localManifestRequest = UnityWebRequest.Get(lcoalManifestUrl);
+                UnityWebRequestAsyncOperation requestAsyncOperation = localManifestRequest.SendWebRequest();
+                requestAsyncOperation.completed += (op) =>
+                {
+                    string localManifestJsonStr = localManifestRequest.downloadHandler.text;
+                    HQAssetManifest localManifest = SerializeManager.JsonToObject<HQAssetManifest>(localManifestJsonStr);
+                    ManifestLoadCompleteEventArgs args = new ManifestLoadCompleteEventArgs(localManifest);
+                    callback?.Invoke(args);
+                    localManifestRequest.Dispose();
+                };
+            }
         }
 
         public void OverrideLocalManifest(HQAssetManifest localManifest)
         {
             string manifestJson = SerializeManager.ObjectToJson(localManifest);
-            File.WriteAllText(LocalManifestFilePath, manifestJson);
+            File.WriteAllText(localManifestFilePath, manifestJson);
         }
 
-        public string GetBundleFilePath(HQAssetBundleConfig bundleInfo)
+        public string GetBundleRelatedPath(HQAssetBundleConfig bundleInfo)
         {
             return Path.Combine(AssetsPersistentDir, bundleInfo.moduleID.ToString(), bundleInfo.bundleName);
         }
@@ -134,6 +151,49 @@ namespace HQFramework.Runtime
         public void UnloadBundle(object bundle)
         {
             (bundle as AssetBundle).Unload(true);
+        }
+
+        private IEnumerator DecompressBuiltinAssetsInternal(Action onComplete)
+        {
+            string localManifestFilePath = Path.Combine(AssetsPersistentDir, manifestFileName);
+            if (File.Exists(localManifestFilePath))
+            {
+                onComplete?.Invoke();
+                yield break;
+            }
+
+            string lcoalManifestUrl = "file://" + Path.Combine(AssetsBuiltinDir, manifestFileName);
+            using UnityWebRequest localManifestRequest = UnityWebRequest.Get(lcoalManifestUrl);
+            localManifestRequest.SendWebRequest();
+            while (!localManifestRequest.isDone)
+            {
+                yield return null;
+            }
+            string manifestJson = localManifestRequest.downloadHandler.text;
+            HQAssetManifest localManifest = SerializeManager.JsonToObject<HQAssetManifest>(manifestJson);
+            foreach (var module in localManifest.moduleDic.Values)
+            {
+                string moudleDir = Path.Combine(AssetsPersistentDir, module.id.ToString());
+                string moduleUrl = "file://" + Path.Combine(AssetsBuiltinDir, module.id.ToString());
+                if (!Directory.Exists(moudleDir))
+                {
+                    Directory.CreateDirectory(moudleDir);
+                }
+                foreach (var bundle in module.bundleDic.Values)
+                {
+                    string bundlePath = Path.Combine(moudleDir, bundle.bundleName);
+                    string bundleUrl = Path.Combine(moduleUrl, bundle.bundleName);
+                    using UnityWebRequest bundleRequest = UnityWebRequest.Get(bundleUrl);
+                    bundleRequest.SendWebRequest();
+                    while (!bundleRequest.isDone)
+                    {
+                        yield return null;
+                    }
+                    File.WriteAllBytes(bundlePath, bundleRequest.downloadHandler.data);
+                }
+            }
+            File.WriteAllText(localManifestFilePath, manifestJson);
+            onComplete?.Invoke();
         }
     }
 }

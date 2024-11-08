@@ -15,12 +15,12 @@ namespace HQFramework.Resource
 
             public void LoadBundle(HQAssetBundleConfig bundleInfo, int priority, int groupID)
             {
-                BundleItem targetBundle = new BundleItem(bundleInfo);
-                resourceManager.loadingBundleSet.Add(targetBundle);
-                resourceManager.loadedBundleMap.Add(bundleInfo.bundleName, targetBundle);
-                BundleLoadTask task = BundleLoadTask.Create(resourceManager, bundleInfo, priority, groupID);
-                int taskID = bundleLoadTaskDispatcher.AddTask(task);
-                bundleLoadTaskDispatcher.AddBundleLoadCompleteCallback(taskID, OnLoadBundleComplete);
+                // BundleItem targetBundle = new BundleItem(bundleInfo);
+                // resourceManager.loadingBundleSet.Add(targetBundle);
+                // resourceManager.loadedBundleMap.Add(bundleInfo.bundleName, targetBundle);
+                // BundleLoadTask task = BundleLoadTask.Create(resourceManager, bundleInfo, priority, groupID);
+                // int taskID = bundleLoadTaskDispatcher.AddTask(task);
+                // bundleLoadTaskDispatcher.AddBundleLoadCompleteCallback(taskID, OnLoadBundleComplete);
             }
 
             public void OnUpdate()
@@ -30,8 +30,8 @@ namespace HQFramework.Resource
 
             private void OnLoadBundleComplete(BundleLoadCompleteEventArgs args)
             {
-                resourceManager.loadingBundleSet.Remove(resourceManager.loadedBundleMap[args.bundleName]);
-                resourceManager.loadedBundleMap[args.bundleName].bundleObject = args.bundleObject;
+                // resourceManager.loadingBundleSet.Remove(resourceManager.loadedBundleMap[args.bundleName]);
+                // resourceManager.loadedBundleMap[args.bundleName].bundleObject = args.bundleObject;
             }
         }
     }

@@ -17,7 +17,7 @@ namespace HQFramework.Resource
 
             public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
             {
-                if (!resourceManager.assetItemMap.ContainsKey(crc))
+                if (!resourceManager.assetTable.ContainsKey(crc))
                 {
                     ResourceLoadErrorEventArgs errorArgs = ResourceLoadErrorEventArgs.Create(crc, null, null, null, $"id : {crc} assets doesn't exist.");
                     onError?.Invoke(errorArgs);
@@ -25,31 +25,10 @@ namespace HQFramework.Resource
                     return;
                 }
 
-                if (resourceManager.crcLoadedAssetMap.ContainsKey(crc))
-                {
-                    ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(crc, resourceManager.crcLoadedAssetMap[crc]);
-                    onComplete?.Invoke(args);
-                    ReferencePool.Recyle(args);
-                    return;
-                }
-
-                HQAssetItemConfig assetInfo = resourceManager.assetItemMap[crc];
+                HQAssetItemConfig assetInfo = resourceManager.assetTable[crc];
                 ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, assetInfo, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);
                 resourceLoadTaskDispatcher.AddResourceLoadCompleteEvent(taskID, onComplete);
-            }
-
-            public void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
-            {
-                void OnLoadComplete(ResourceLoadCompleteEventArgs originalArgs)
-                {
-                    ResourceLoadCompleteEventArgs<T> args = ResourceLoadCompleteEventArgs<T>.Create(originalArgs.crc, (T)originalArgs.asset);
-                    onComplete?.Invoke(args);
-                    ReferencePool.Recyle(args);
-                }
-
-                Type assetType = typeof(T);
-                LoadAsset(crc, assetType, OnLoadComplete, onError, priority, groupID);
             }
 
             public void OnUpdate()

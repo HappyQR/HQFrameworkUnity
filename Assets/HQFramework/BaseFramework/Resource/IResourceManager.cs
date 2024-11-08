@@ -13,6 +13,8 @@ namespace HQFramework.Resource
 
         void SetDownloadManager(IDownloadManager downloadManager);
 
+        void DecompressBuiltinAssets(Action onComplete);
+
         int LaunchHotfixCheck();
 
         int LaunchHotfix();

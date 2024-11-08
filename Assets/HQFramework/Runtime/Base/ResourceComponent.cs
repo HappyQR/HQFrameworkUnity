@@ -47,6 +47,11 @@ namespace HQFramework.Runtime
             resourceManager.SetHelper(resourceHelper);
         }
 
+        public void DecompressBuiltinAssets(Action onComplete)
+        {
+            resourceManager.DecompressBuiltinAssets(onComplete);
+        }
+
         public int LaunchHotfixCheck()
         {
             return resourceManager.LaunchHotfixCheck();

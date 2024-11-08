@@ -35,22 +35,23 @@ namespace HQFramework.Resource
 
                 public override TaskStartStatus Start()
                 {
-                    if (resourceManager.loadedBundleMap.ContainsKey(assetItem.bundleName))
-                    {
-                        if (!resourceManager.loadedBundleMap[assetItem.bundleName].Ready)
-                        {
-                            return TaskStartStatus.HasToWait;
-                        }
-                        object bundleObject = resourceManager.loadedBundleMap[assetItem.bundleName].bundleObject;
-                        resourceManager.resourceHelper.LoadAsset(bundleObject, assetItem.assetPath, assetType, OnLoadAssetCompleteCallback);
-                        return TaskStartStatus.InProgress;
-                    }
-                    else
-                    {
-                        HQAssetBundleConfig bundleInfo = resourceManager.localManifest.moduleDic[assetItem.moduleID].bundleDic[assetItem.bundleName];
-                        resourceManager.bundleLoader.LoadBundle(bundleInfo, priority, groupID);
-                        return TaskStartStatus.HasToWait;
-                    }
+                    // if (resourceManager.loadedBundleMap.ContainsKey(assetItem.bundleName))
+                    // {
+                    //     if (!resourceManager.loadedBundleMap[assetItem.bundleName].Ready)
+                    //     {
+                    //         return TaskStartStatus.HasToWait;
+                    //     }
+                    //     object bundleObject = resourceManager.loadedBundleMap[assetItem.bundleName].bundleObject;
+                    //     resourceManager.resourceHelper.LoadAsset(bundleObject, assetItem.assetPath, assetType, OnLoadAssetCompleteCallback);
+                    //     return TaskStartStatus.InProgress;
+                    // }
+                    // else
+                    // {
+                    //     HQAssetBundleConfig bundleInfo = resourceManager.localManifest.moduleDic[assetItem.moduleID].bundleDic[assetItem.bundleName];
+                    //     resourceManager.bundleLoader.LoadBundle(bundleInfo, priority, groupID);
+                    //     return TaskStartStatus.HasToWait;
+                    // }
+                    return TaskStartStatus.Done;
                 }
 
                 public override void OnUpdate()
@@ -69,17 +70,17 @@ namespace HQFramework.Resource
 
                 private void OnLoadAssetCompleteCallback(object asset)
                 {
-                    ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(assetItem.crc, asset);
-                    resourceManager.loadedAssetCrcMap.Add(args.asset, assetItem.crc);
-                    resourceManager.crcLoadedAssetMap.Add(assetItem.crc, args.asset);
-                    if (resourceManager.resourceHelper.IsIndividualAsset(args.asset))
-                    {
-                        resourceManager.loadedBundleMap[assetItem.bundleName].refCount++;
-                    }
-                    onComplete?.Invoke(args);
-                    ReferencePool.Recyle(args);
+                    // ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(assetItem.crc, asset);
+                    // resourceManager.loadedAssetCrcMap.Add(args.asset, assetItem.crc);
+                    // resourceManager.crcLoadedAssetMap.Add(assetItem.crc, args.asset);
+                    // if (resourceManager.resourceHelper.IsIndividualAsset(args.asset))
+                    // {
+                    //     resourceManager.loadedBundleMap[assetItem.bundleName].refCount++;
+                    // }
+                    // onComplete?.Invoke(args);
+                    // ReferencePool.Recyle(args);
 
-                    status = TaskStatus.Done;
+                    // status = TaskStatus.Done;
                 }
             }
         }
