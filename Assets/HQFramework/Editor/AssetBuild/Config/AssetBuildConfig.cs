@@ -23,6 +23,7 @@ namespace HQFramework.Editor
         public string publishHelperName;
         public string assetUploaderName;
         public string hotfixRootFolder;
+        public string hotfixManifestFileName;
     }
 
     public enum BuildTargetPlatform

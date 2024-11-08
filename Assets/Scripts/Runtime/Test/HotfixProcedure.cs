@@ -18,12 +18,12 @@ public class HotfixProcedure : ProcedureBase
 
         resourceComponent = GameEntry.GetModule<ResourceComponent>();
 
-        // int hotfixID = resourceComponent.LaunchHotfixCheck();
-        // resourceComponent.AddHotfixCheckErrorEvent(hotfixID, (args) => HQDebugger.LogError(args.errorMessage));
-        // resourceComponent.AddHotfixCheckCompleteEvent(hotfixID, (args) => HQDebugger.LogInfo("forceupdate : " + args.forceUpdate + "\ntotalsize : " + args.totalSize + "\nreleasenote : " + args.releaseNote));
-        // resourceComponent.AddHotfixDownloadUpdateEvent(hotfixID, (args) => HQDebugger.LogInfo((float)args.DownloadedSize / args.TotalSize));
-        // resourceComponent.AddHotfixDownloadErrorEvent(hotfixID, (args) => HQDebugger.LogError(args.ErrorMessage));
-        // resourceComponent.AddHotfixDownloadCompleteEvent(hotfixID, (args) => HQDebugger.LogInfo("Hotfix Done."));
+        int hotfixID = resourceComponent.LaunchHotfixCheck();
+        resourceComponent.AddHotfixCheckErrorEvent(hotfixID, (args) => HQDebugger.LogError(args.errorMessage));
+        resourceComponent.AddHotfixCheckCompleteEvent(hotfixID, (args) => HQDebugger.LogInfo("forceupdate : " + args.forceUpdate + "\ntotalsize : " + args.totalSize + "\nreleasenote : " + args.releaseNote));
+        resourceComponent.AddHotfixDownloadUpdateEvent(hotfixID, (args) => HQDebugger.LogInfo((float)args.DownloadedSize / args.TotalSize));
+        resourceComponent.AddHotfixDownloadErrorEvent(hotfixID, (args) => HQDebugger.LogError(args.ErrorMessage));
+        resourceComponent.AddHotfixDownloadCompleteEvent(hotfixID, (args) => HQDebugger.LogInfo("Hotfix Done."));
     }
 
     protected override void OnUpdate()
@@ -36,20 +36,20 @@ public class HotfixProcedure : ProcedureBase
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            // resourceComponent.LaunchHotfix();
+            resourceComponent.LaunchHotfix();
 
-            if (cube2 != null)
-            {
-                resourceComponent.ReleaseAsset(cube2);
-            }
+            // if (cube2 != null)
+            // {
+            //     resourceComponent.ReleaseAsset(cube2);
+            // }
 
-            if (tex1 != null)
-            {
-                resourceComponent.ReleaseAsset(tex1);
-            }
+            // if (tex1 != null)
+            // {
+            //     resourceComponent.ReleaseAsset(tex1);
+            // }
 
-            resourceComponent.LoadAsset<Texture2D>("Assets/GameAssets/Public/Textures/skybox22.jpg", OnLoadTexComplete, null);
-            resourceComponent.LoadAsset<GameObject>(2987955044, OnLoadAssetComplete, OnLoadAssetError);
+            // resourceComponent.LoadAsset<Texture2D>("Assets/GameAssets/Public/Textures/skybox22.jpg", OnLoadTexComplete, null);
+            // resourceComponent.LoadAsset<GameObject>(2987955044, OnLoadAssetComplete, OnLoadAssetError);
             // resourceComponent.LoadAsset<GameObject>(1937126282, OnLoadAssetComplete, OnLoadAssetError);
             // resourceComponent.LoadAsset<GameObject>(2529943260, OnLoadAssetComplete, OnLoadAssetError);
         }
@@ -60,17 +60,17 @@ public class HotfixProcedure : ProcedureBase
         //     cube1 = null;
         // }
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            resourceComponent.ReleaseAsset(cube2);
-            cube2 = null;
-        }
+        // if (Input.GetKeyDown(KeyCode.C))
+        // {
+        //     resourceComponent.ReleaseAsset(cube2);
+        //     cube2 = null;
+        // }
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            resourceComponent.ReleaseAsset(tex1);
-            tex1 = null;
-        }
+        // if (Input.GetKeyDown(KeyCode.D))
+        // {
+        //     resourceComponent.ReleaseAsset(tex1);
+        //     tex1 = null;
+        // }
     }
 
     private void OnLoadTexComplete(ResourceLoadCompleteEventArgs<Texture2D> args)

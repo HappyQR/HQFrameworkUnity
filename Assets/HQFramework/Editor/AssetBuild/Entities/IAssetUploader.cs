@@ -1,8 +1,9 @@
+using System;
 using System.Threading.Tasks;
 
 namespace HQFramework.Editor
 {
-    public interface IAssetUploader
+    public interface IAssetUploader : IDisposable
     {
         string UrlRoot
         {
@@ -15,6 +16,14 @@ namespace HQFramework.Editor
             set;
         }
 
-        Task<bool> UploadAssetAsync(string url, string filePath);
+        string HotfixManifestFileName
+        {
+            get;
+            set;
+        }
+
+        Task<bool> UploadAssetAsync(string relatedUrl, string filePath);
+
+        Task<bool> UploadAssetAsync(string relatedUrl, byte[] content);
     }
 }

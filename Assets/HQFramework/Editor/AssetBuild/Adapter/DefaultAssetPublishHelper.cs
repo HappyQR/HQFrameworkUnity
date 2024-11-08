@@ -1,11 +1,9 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Aliyun.OSS;
-using Aliyun.OSS.Common;
 using HQFramework.Resource;
 using UnityEngine;
 
@@ -13,11 +11,12 @@ namespace HQFramework.Editor
 {
     public class DefaultAssetPublishHelper : IAssetPublishHelper
     {
-        private string hotfixRootFolder;
         private IAssetUploader assetUploader;
 
         public string AssetsBuiltinDir => Path.Combine(Application.streamingAssetsPath, HQAssetBuildLauncher.CurrentBuildConfig.assetBuiltinDir);
-        
+
+        public IAssetUploader AssetUploader => assetUploader;
+
         public void SetUploader(IAssetUploader uploader)
         {
             this.assetUploader = uploader;
@@ -39,30 +38,54 @@ namespace HQFramework.Editor
 
         public string GetModuleUrlRoot(HQAssetModuleConfig moduleInfo)
         {
-            return "";
+            return Path.Combine(assetUploader.UrlRoot, assetUploader.HotfixRootFolder, moduleInfo.moduleName);
         }
 
-        public Task<HQAssetManifest> GetRemoteManifestAsync()
+        public async Task<HQAssetManifest> GetRemoteManifestAsync()
         {
-            return GetRemoteManifestInternal();
-        }
-
-        private async Task<HQAssetManifest> GetRemoteManifestInternal()
-        {
-            string manifestFileUrl = "";
+            string manifestFileUrl = Path.Combine(assetUploader.UrlRoot, assetUploader.HotfixRootFolder, assetUploader.HotfixManifestFileName);
             using HttpClient httpClient = new HttpClient();
-            string jsonStr = await httpClient.GetStringAsync(manifestFileUrl);
-            return JsonUtilityEditor.ToObject<HQAssetManifest>(jsonStr);
+            try
+            {
+                using HttpResponseMessage response = await httpClient.GetAsync(manifestFileUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonStr = await response.Content.ReadAsStringAsync();
+                    return JsonUtilityEditor.ToObject<HQAssetManifest>(jsonStr);
+                }
+                else
+                {
+                    if (response.StatusCode == HttpStatusCode.NotFound || 
+                        response.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        HQAssetManifest newManifest = new HQAssetManifest();
+                        newManifest.moduleDic = new System.Collections.Generic.Dictionary<int, HQAssetModuleConfig>();
+                        return newManifest;
+                    }
+                    else
+                    {
+                        throw new Exception(response.StatusCode.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public Task<bool> UploadBundleAsync(AssetBundleUploadItem item)
         {
-            return null;
+            string relatedUrl = Path.Combine(item.moduleInfo.moduleName, item.bundleInfo.bundleName);
+            return assetUploader.UploadAssetAsync(relatedUrl, item.bundleFilePath);
         }
 
         public Task<bool> UploadManifestAsync(HQAssetManifest manifest)
         {
-            return null;
+            string jsonStr = JsonUtilityEditor.ToJson(manifest);
+            byte[] content = Encoding.UTF8.GetBytes(jsonStr);
+            string relatedUrl = assetUploader.HotfixManifestFileName;
+            return assetUploader.UploadAssetAsync(relatedUrl, content);
         }
 
         public void PackBuiltinModule(AssetModuleCompileInfo moduleCompileInfo)

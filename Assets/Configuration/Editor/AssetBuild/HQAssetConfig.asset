@@ -23,14 +23,15 @@ MonoBehaviour:
     enableEncryption: 0
     assetBuiltinDir: Assets
     publishHelperName: HQFramework.Editor.DefaultAssetPublishHelper
-    assetUploaderName: 
-    hotfixRootFolder: 
+    assetUploaderName: HQFramework.Sample.AmazonAssetUploader
+    hotfixRootFolder: dev/hotfix-framework
+    hotfixManifestFileName: HQAssetManifest.json
   moduleConfigList:
   - id: 0
     moduleName: Public
     createTime: 2024-10-14 16:44:38
     isBuiltin: 1
-    buildVersionCode: 26
+    buildVersionCode: 30
     devNotes: 'absbna
 
 
@@ -44,7 +45,7 @@ MonoBehaviour:
     moduleName: Portal
     createTime: 2024-10-14 16:44:54
     isBuiltin: 0
-    buildVersionCode: 29
+    buildVersionCode: 33
     devNotes: 'xx
 
 
@@ -58,7 +59,7 @@ MonoBehaviour:
     moduleName: CustomHome
     createTime: 2024-10-26 11:19:02
     isBuiltin: 0
-    buildVersionCode: 13
+    buildVersionCode: 17
     devNotes: 'xxxxx
 
       xxx

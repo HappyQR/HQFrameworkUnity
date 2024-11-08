@@ -35,7 +35,7 @@ namespace HQFramework.Runtime
 
         private void InitializeResourceHelper()
         {
-            Type helperType = Type.GetType(resourceHelperTypeName);
+            Type helperType = Utility.Assembly.GetType(resourceHelperTypeName);
             IResourceHelper resourceHelper = Activator.CreateInstance(helperType) as IResourceHelper;
             resourceHelper.HotfixMode = hotfixMode;
             resourceHelper.LauncherHotfixID = launcherHotfixID;

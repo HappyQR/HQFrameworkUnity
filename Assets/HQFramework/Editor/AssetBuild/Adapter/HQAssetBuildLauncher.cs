@@ -46,9 +46,9 @@ namespace HQFramework.Editor
 
             AssetBuildConfig buildConfig = CurrentBuildConfig;
             string outputDir = Path.Combine(Application.dataPath, buildConfig.assetOutputDir);
-            Type preprocessorType = Type.GetType(buildConfig.preprocessorName);
-            Type compilerType = Type.GetType(buildConfig.compilerName);
-            Type postprocessorType = Type.GetType(buildConfig.postprocessorName);
+            Type preprocessorType = Utility.Assembly.GetType(buildConfig.preprocessorName);
+            Type compilerType = Utility.Assembly.GetType(buildConfig.compilerName);
+            Type postprocessorType = Utility.Assembly.GetType(buildConfig.postprocessorName);
             IAssetBuildPreprocessor preprocessor = Activator.CreateInstance(preprocessorType) as IAssetBuildPreprocessor;
             IAssetBuildCompiler compiler = Activator.CreateInstance(compilerType) as IAssetBuildCompiler;
             IAssetBuildPostprocessor postprocessor = Activator.CreateInstance(postprocessorType) as IAssetBuildPostprocessor;
@@ -98,11 +98,12 @@ namespace HQFramework.Editor
 
         public static async void PublishAssetArchive(AssetArchiveData archiveData, string releaseNote, string resourceVersion, int versionCode, int minimalSupportedVersionCode, Dictionary<int, string> moduleReleaseNotesDic, Dictionary<int, int> moduleMinimalSupportedVersionDic, Action<int, int, string> uploadCallback, Action endCallback)
         {
-            Type publishHelperType = Type.GetType(CurrentBuildConfig.publishHelperName);
-            Type uploaderType = Type.GetType(CurrentBuildConfig.assetUploaderName);
+            Type publishHelperType = Utility.Assembly.GetType(CurrentBuildConfig.publishHelperName);
+            Type uploaderType = Utility.Assembly.GetType(CurrentBuildConfig.assetUploaderName);
             IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
             IAssetUploader assetUploader = Activator.CreateInstance(uploaderType) as IAssetUploader;
             assetUploader.HotfixRootFolder = CurrentBuildConfig.hotfixRootFolder;
+            assetUploader.HotfixManifestFileName = CurrentBuildConfig.hotfixManifestFileName;
             publishHelper.SetUploader(assetUploader);
             AssetPublishController.SetHelper(publishHelper);
             HQAssetManifest result = await AssetPublishController.PublishAssets(archiveData, releaseNote, resourceVersion, versionCode, minimalSupportedVersionCode, moduleReleaseNotesDic, moduleMinimalSupportedVersionDic, uploadCallback, endCallback);
@@ -162,7 +163,7 @@ namespace HQFramework.Editor
 
         public static void GenerateBuiltinArchive(List<AssetModuleCompileInfo> moduleCompileInfoList)
         {
-            Type publishHelperType = Type.GetType(CurrentBuildConfig.publishHelperName);
+            Type publishHelperType = Utility.Assembly.GetType(CurrentBuildConfig.publishHelperName);
             IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
             AssetPublishController.SetHelper(publishHelper);
 

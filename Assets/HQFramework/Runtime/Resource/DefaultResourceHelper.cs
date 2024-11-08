@@ -10,7 +10,7 @@ namespace HQFramework.Runtime
 {
     internal class DefaultResourceHelper : IResourceHelper
     {
-        private static readonly string manifestFileName = "AssetModuleManifest.json";
+        private static readonly string manifestFileName = "HQAssetManifest.json";
 
         private string localManifestFilePath;
 

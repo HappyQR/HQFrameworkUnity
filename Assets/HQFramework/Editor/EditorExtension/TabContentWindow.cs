@@ -58,6 +58,10 @@ namespace HQFramework.Editor
                         isResizing = true;
                         currentEvent.Use();
                     }
+                    if (Event.current.button == 0)
+                    {
+                        GUI.FocusControl(null);
+                    }
                     break;
 
                 case EventType.MouseUp:

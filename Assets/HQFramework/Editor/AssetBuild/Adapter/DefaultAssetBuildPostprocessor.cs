@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using HQFramework.Resource;
+using UnityEditor;
 
 namespace HQFramework.Editor
 {
     public class DefaultAssetBuildPostprocessor : IAssetBuildPostprocessor
     {
-        private List<AssetModuleConfig> moduleList;
+        private Dictionary<string, AssetModuleConfig> bundleModuleMap;
 
         public AssetPostprocessData PostprocessAssetModules(AssetCompileData compileData)
         {
-            moduleList = new List<AssetModuleConfig>();
-            foreach (AssetModuleConfig item in compileData.dataDic.Keys)
+            bundleModuleMap = new Dictionary<string, AssetModuleConfig>();
+            foreach (KeyValuePair<AssetModuleConfig, List<AssetBundleCompileInfo>> pair in compileData.dataDic)
             {
-                moduleList.Add(item);
+                for (int i = 0; i < pair.Value.Count; i++)
+                {
+                    bundleModuleMap.Add(pair.Value[i].bundleName, pair.Key);
+                }
             }
             AssetPostprocessData postprocessData = new AssetPostprocessData();
             foreach (KeyValuePair<AssetModuleConfig, List<AssetBundleCompileInfo>> item in compileData.dataDic)
@@ -41,6 +45,19 @@ namespace HQFramework.Editor
                         assetItem.assetName = Path.GetFileName(assetPath);
                         assetItem.bundleName = bundleConfig.bundleName;
                         assetItem.moduleID = item.Key.id;
+                        List<uint> dependencyCrcList = new List<uint>();
+                        string[] assetDependencies = AssetDatabase.GetDependencies(assetPath);
+                        for (int k = 0; k < assetDependencies.Length; k++)
+                        {
+                            if (assetDependencies[k] == assetPath)
+                                continue;
+                            string dependenceBundleName = AssetDatabase.GetImplicitAssetBundleName(assetDependencies[k]);
+                            if (!string.IsNullOrEmpty(dependenceBundleName) && bundleModuleMap.ContainsKey(dependenceBundleName))
+                            {
+                                dependencyCrcList.Add(Utility.CRC32.ComputeCrc32(assetDependencies[k]));
+                            }
+                        }
+                        assetItem.dependencies = dependencyCrcList.ToArray();
                         moduleCompileInfo.assetsDic.Add(assetItem.crc, assetItem);
                     }
                 }
@@ -67,15 +84,7 @@ namespace HQFramework.Editor
 
         protected AssetModuleConfig GetBundleModule(string bundleName)
         {
-            string modulePrefix = bundleName.Substring(0, bundleName.LastIndexOf('_'));
-            for (int i = 0; i < moduleList.Count; i++)
-            {
-                if (moduleList[i].moduleName.ToLower() == modulePrefix)
-                {
-                    return moduleList[i];
-                }
-            }
-            return null;
+            return bundleModuleMap[bundleName];
         }
     }
 }

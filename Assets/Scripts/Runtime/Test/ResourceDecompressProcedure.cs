@@ -10,7 +10,7 @@ public class ResourceDecompressProcedure : ProcedureBase
 {
     private ResourceComponent resourceManager;
     private CoroutineComponent coroutineManager;
-    private string assetManifestFileName = "AssetModuleManifest.json";
+    private string assetManifestFileName = "HQAssetManifest.json";
 
     protected override void OnEnter()
     {

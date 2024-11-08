@@ -44,7 +44,7 @@ namespace HQFramework.Runtime
 
         private void InitializeFrameworkHelper()
         {
-            Type logHelperType = Type.GetType(logHelperTypeName);
+            Type logHelperType = Utility.Assembly.GetType(logHelperTypeName);
             if (logHelperType == null)
             {
                 throw new Exception($"{logHelperTypeName} is not found.");
@@ -52,7 +52,7 @@ namespace HQFramework.Runtime
             ILogHelper logHelper = Activator.CreateInstance(logHelperType) as ILogHelper;
             HQDebugger.SetHelper(logHelper);
 
-            Type jsonHelperType = Type.GetType(jsonHelperTypeName);
+            Type jsonHelperType = Utility.Assembly.GetType(jsonHelperTypeName);
             if (jsonHelperType == null)
             {
                 throw new Exception($"{jsonHelperTypeName} is not found.");

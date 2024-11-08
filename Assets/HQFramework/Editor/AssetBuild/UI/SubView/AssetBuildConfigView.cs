@@ -171,6 +171,11 @@ namespace HQFramework.Editor
             currentBuildConfig.hotfixRootFolder = EditorGUILayout.TextField(currentBuildConfig.hotfixRootFolder);
             GUILayout.Space(10);
 
+            GUILayout.Label("Assets Hotfix Manifest File Name:", headerStyle);
+            GUILayout.Space(5);
+            currentBuildConfig.hotfixManifestFileName = EditorGUILayout.TextField(currentBuildConfig.hotfixManifestFileName);
+            GUILayout.Space(10);
+
             // GUILayout.BeginHorizontal();
             // GUILayout.Label("Enable Bundle Encryption:", headerStyle);
             // GUILayout.Space(5);

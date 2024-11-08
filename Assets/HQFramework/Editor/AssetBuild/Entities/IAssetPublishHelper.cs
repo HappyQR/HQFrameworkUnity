@@ -10,6 +10,11 @@ namespace HQFramework.Editor
             get;
         }
 
+        IAssetUploader AssetUploader
+        {
+            get;
+        }
+
         void SetUploader(IAssetUploader uploader);
 
         HQAssetManifest GetBasicManifest();
