@@ -112,6 +112,16 @@ namespace HQFramework.Runtime
             };
         }
 
+        public void LoadAsset(object bundle, string assetPath, Action<object> callback)
+        {
+            AssetBundle assetBundle = (AssetBundle)bundle;
+            AssetBundleRequest request = assetBundle.LoadAssetAsync(assetPath);
+            request.completed += (asyncOperation) =>
+            {
+                callback?.Invoke(request.asset);
+            };
+        }
+
         public void LoadAssetBundle(string bundlePath, Action<object> callback)
         {
             AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(bundlePath);

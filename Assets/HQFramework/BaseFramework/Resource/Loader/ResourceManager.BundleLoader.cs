@@ -13,14 +13,11 @@ namespace HQFramework.Resource
                 this.bundleLoadTaskDispatcher = new BundleLoadTaskDispatcher(maxConcurrentLoadCount);
             }
 
-            public void LoadBundle(HQAssetBundleConfig bundleInfo, int priority, int groupID)
+            public void LoadBundle(string bundleName, int priority, int groupID)
             {
-                // BundleItem targetBundle = new BundleItem(bundleInfo);
-                // resourceManager.loadingBundleSet.Add(targetBundle);
-                // resourceManager.loadedBundleMap.Add(bundleInfo.bundleName, targetBundle);
-                // BundleLoadTask task = BundleLoadTask.Create(resourceManager, bundleInfo, priority, groupID);
-                // int taskID = bundleLoadTaskDispatcher.AddTask(task);
-                // bundleLoadTaskDispatcher.AddBundleLoadCompleteCallback(taskID, OnLoadBundleComplete);
+                BundleLoadTask task = BundleLoadTask.Create(resourceManager, bundleName, priority, groupID);
+                int taskID = bundleLoadTaskDispatcher.AddTask(task);
+                bundleLoadTaskDispatcher.AddBundleLoadCompleteCallback(taskID, OnLoadBundleComplete);
             }
 
             public void OnUpdate()

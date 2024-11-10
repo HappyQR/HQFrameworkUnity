@@ -25,6 +25,8 @@ namespace HQFramework.Resource
 
         // object map
         private Dictionary<string, string> bundleFilePathMap;
+        private Dictionary<string, BundleItem> loadedBundleMap;
+        private Dictionary<uint, AssetItem> loadedAssetMap;
 
         private bool isAssetsDecompressed = false;
         private Queue<ResourceLoadCommand> waitingQueue;
@@ -41,6 +43,8 @@ namespace HQFramework.Resource
             assetTable = new Dictionary<uint, HQAssetItemConfig>();
 
             bundleFilePathMap = new Dictionary<string, string>();
+            loadedBundleMap = new Dictionary<string, BundleItem>();
+            loadedAssetMap = new Dictionary<uint, AssetItem>();
 
             waitingQueue = new Queue<ResourceLoadCommand>();
         }
@@ -217,6 +221,11 @@ namespace HQFramework.Resource
             }
         }
 
+        public void LoadAsset(uint crc, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
+        {
+            LoadAsset(crc, null, onComplete, onError, priority, groupID);
+        }
+
         public void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
         {
             void OnLoadComplete(ResourceLoadCompleteEventArgs originalArgs)
@@ -233,7 +242,13 @@ namespace HQFramework.Resource
         public void LoadAsset(string path, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
         {
             uint crc = Utility.CRC32.ComputeCrc32(path);
-            resourceLoader.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
+            LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void LoadAsset(string path, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
+        {
+            uint crc = Utility.CRC32.ComputeCrc32(path);
+            LoadAsset(crc, null, onComplete, onError, priority, groupID);
         }
 
         public void LoadAsset<T>(string path, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
@@ -286,7 +301,6 @@ namespace HQFramework.Resource
         {
             bundleTable.Clear();
             assetTable.Clear();
-            bundleFilePathMap.Clear();
 
             foreach (HQAssetModuleConfig module in localManifest.moduleDic.Values)
             {

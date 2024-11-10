@@ -46,7 +46,7 @@ namespace HQFramework.Editor
                         assetItem.bundleName = bundleConfig.bundleName;
                         assetItem.moduleID = item.Key.id;
                         List<uint> dependencyCrcList = new List<uint>();
-                        string[] assetDependencies = AssetDatabase.GetDependencies(assetPath);
+                        string[] assetDependencies = AssetDatabase.GetDependencies(assetPath, true);
                         for (int k = 0; k < assetDependencies.Length; k++)
                         {
                             if (assetDependencies[k] == assetPath)

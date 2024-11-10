@@ -19,6 +19,14 @@ namespace HQFramework.Resource
                         taskDic[taskID].OnComplete += onComplete;
                     }
                 }
+
+                public void AddResourceLoadErrorEvent(int taskID, Action<ResourceLoadErrorEventArgs> onError)
+                {
+                    if (taskDic.ContainsKey(taskID))
+                    {
+                        taskDic[taskID].OnError += onError;
+                    }
+                }
             }
         }
     }

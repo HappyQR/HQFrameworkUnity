@@ -12,10 +12,11 @@ namespace HQFramework.Resource
                 private static int serialID = 0;
 
                 private ResourceManager resourceManager;
-                private HQAssetBundleConfig bundleInfo;
+                private string bundleName;
                 private Queue<string> dependencyQueue = new Queue<string>();
 
                 private Action<BundleLoadCompleteEventArgs> onComplete;
+                private Action<BundleLoadErrorEventArgs> onError;
 
                 public event Action<BundleLoadCompleteEventArgs> OnComplete
                 {
@@ -29,17 +30,29 @@ namespace HQFramework.Resource
                     }
                 }
 
-                public static BundleLoadTask Create(ResourceManager resourceManager, HQAssetBundleConfig bundleInfo, int priority, int groupID)
+                public event Action<BundleLoadErrorEventArgs> OnError
+                {
+                    add
+                    {
+                        onError += value;
+                    }
+                    remove
+                    {
+                        onError -= value;
+                    }
+                }
+
+                public static BundleLoadTask Create(ResourceManager resourceManager, string bundleName, int priority, int groupID)
                 {
                     BundleLoadTask task = ReferencePool.Spawn<BundleLoadTask>();
                     task.id = serialID++;
                     task.priority = priority;
                     task.groupID = groupID;
                     task.resourceManager = resourceManager;
-                    task.bundleInfo = bundleInfo;
-                    for (int i = 0; i < task.bundleInfo.dependencies.Length; i++)
+                    task.bundleName = bundleName;
+                    for (int i = 0; i < resourceManager.bundleTable[bundleName].dependencies.Length; i++)
                     {
-                        task.dependencyQueue.Enqueue(task.bundleInfo.dependencies[i]);
+                        task.dependencyQueue.Enqueue(resourceManager.bundleTable[bundleName].dependencies[i]);
                     }
                     return task;
                 }
@@ -104,7 +117,7 @@ namespace HQFramework.Resource
 
                 private void OnLoadBundleComplete(object bundleObject)
                 {
-                    BundleLoadCompleteEventArgs args = BundleLoadCompleteEventArgs.Create(bundleInfo.bundleName, bundleObject);
+                    BundleLoadCompleteEventArgs args = BundleLoadCompleteEventArgs.Create(bundleName, bundleObject);
                     onComplete?.Invoke(args);
                     ReferencePool.Recyle(args);
 
@@ -115,8 +128,9 @@ namespace HQFramework.Resource
                 {
                     base.OnRecyle();
                     resourceManager = null;
-                    bundleInfo = null;
+                    bundleName = null;
                     onComplete = null;
+                    onError = null;
                     dependencyQueue.Clear();
                 }
             }

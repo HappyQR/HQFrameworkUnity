@@ -17,18 +17,10 @@ namespace HQFramework.Resource
 
             public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
             {
-                if (!resourceManager.assetTable.ContainsKey(crc))
-                {
-                    ResourceLoadErrorEventArgs errorArgs = ResourceLoadErrorEventArgs.Create(crc, null, null, null, $"id : {crc} assets doesn't exist.");
-                    onError?.Invoke(errorArgs);
-                    ReferencePool.Recyle(errorArgs);
-                    return;
-                }
-
-                HQAssetItemConfig assetInfo = resourceManager.assetTable[crc];
-                ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, assetInfo, assetType, priority, groupID);
+                ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, crc, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);
                 resourceLoadTaskDispatcher.AddResourceLoadCompleteEvent(taskID, onComplete);
+                resourceLoadTaskDispatcher.AddResourceLoadErrorEvent(taskID, onError);
             }
 
             public void OnUpdate()

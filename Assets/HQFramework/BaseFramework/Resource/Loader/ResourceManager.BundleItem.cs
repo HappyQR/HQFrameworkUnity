@@ -13,15 +13,15 @@ namespace HQFramework.Resource
 
             public bool Ready => bundleObject != null;
 
-            public BundleItem(HQAssetBundleConfig targetBundleInfo)
+            public BundleItem(HQAssetBundleConfig bundleConfig, object bundleObject)
             {
-                refCount = 0;
-                bundleObject = null;
-                bundleName = targetBundleInfo.bundleName;
-                dependencySet = new HashSet<string>();
-                for (int i = 0; i < targetBundleInfo.dependencies.Length; i++)
+                this.bundleName = bundleConfig.bundleName;
+                this.refCount = 0;
+                this.bundleObject = bundleObject;
+                this.dependencySet = new HashSet<string>();
+                for (int i = 0; i < bundleConfig.dependencies.Length; i++)
                 {
-                    dependencySet.Add(targetBundleInfo.dependencies[i]);
+                    dependencySet.Add(bundleConfig.dependencies[i]);
                 }
             }
         }

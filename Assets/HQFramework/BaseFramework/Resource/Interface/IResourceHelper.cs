@@ -48,6 +48,8 @@ namespace HQFramework.Resource
 
         void DeleteAssetModule(HQAssetModuleConfig module);
 
+        void LoadAsset(object bundle, string assetPath, Action<object> callback);
+
         void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> callback);
 
         void LoadAssetBundle(string bundlePath, Action<object> callback);
