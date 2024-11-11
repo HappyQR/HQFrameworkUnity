@@ -20,12 +20,12 @@ namespace HQFramework.Resource
         private Dictionary<HQAssetModuleConfig, List<HQAssetBundleConfig>> separateHotfixContent;
 
         // data table
-        private Dictionary<string, HQAssetBundleConfig> bundleTable;
+        private Dictionary<uint, HQAssetBundleConfig> bundleTable;
         private Dictionary<uint, HQAssetItemConfig> assetTable;
 
         // object map
-        private Dictionary<string, string> bundleFilePathMap;
-        private Dictionary<string, BundleItem> loadedBundleMap;
+        private Dictionary<uint, string> bundleFilePathMap;
+        private Dictionary<uint, BundleItem> loadedBundleMap;
         private Dictionary<uint, AssetItem> loadedAssetMap;
 
         private bool isAssetsDecompressed = false;
@@ -39,11 +39,11 @@ namespace HQFramework.Resource
 
         protected override void OnInitialize()
         {
-            bundleTable = new Dictionary<string, HQAssetBundleConfig>();
+            bundleTable = new Dictionary<uint, HQAssetBundleConfig>();
             assetTable = new Dictionary<uint, HQAssetItemConfig>();
 
-            bundleFilePathMap = new Dictionary<string, string>();
-            loadedBundleMap = new Dictionary<string, BundleItem>();
+            bundleFilePathMap = new Dictionary<uint, string>();
+            loadedBundleMap = new Dictionary<uint, BundleItem>();
             loadedAssetMap = new Dictionary<uint, AssetItem>();
 
             loadTaskWaitingQueue = new Queue<ResourceLoadTaskInfo>();
@@ -285,15 +285,15 @@ namespace HQFramework.Resource
 
         private string GetBundleFilePath(HQAssetBundleConfig bundleInfo)
         {
-            if (bundleFilePathMap.ContainsKey(bundleInfo.bundleName))
+            if (bundleFilePathMap.ContainsKey(bundleInfo.crc))
             {
-                return bundleFilePathMap[bundleInfo.bundleName];
+                return bundleFilePathMap[bundleInfo.crc];
             }
             else
             {
                 string bundleRootDir = isAssetsDecompressed ? PersistentDir : BuiltinDir;
                 string bundlePath = Path.Combine(bundleRootDir, resourceHelper.GetBundleRelatedPath(bundleInfo));
-                bundleFilePathMap.Add(bundleInfo.bundleName, bundlePath);
+                bundleFilePathMap.Add(bundleInfo.crc, bundlePath);
                 return bundlePath;
             }
         }
@@ -307,7 +307,7 @@ namespace HQFramework.Resource
             {
                 foreach (HQAssetBundleConfig bundle in module.bundleDic.Values)
                 {
-                    bundleTable.Add(bundle.bundleName, bundle);
+                    bundleTable.Add(bundle.crc, bundle);
                 }
 
                 foreach (HQAssetItemConfig asset in module.assetsDic.Values)

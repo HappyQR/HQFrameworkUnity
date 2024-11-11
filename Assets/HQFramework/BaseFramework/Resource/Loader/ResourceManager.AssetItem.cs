@@ -6,7 +6,7 @@ namespace HQFramework.Resource
     {
         private class AssetItem
         {
-            private uint crc;
+            public uint crc;
             public int refCount;
             public object assetObject;
             public bool error;

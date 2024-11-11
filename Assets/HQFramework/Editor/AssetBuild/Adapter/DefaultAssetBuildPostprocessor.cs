@@ -44,6 +44,7 @@ namespace HQFramework.Editor
                         assetItem.assetPath = assetPath;
                         assetItem.assetName = Path.GetFileName(assetPath);
                         assetItem.bundleName = bundleConfig.bundleName;
+                        assetItem.bundleID = Utility.CRC32.ComputeCrc32(bundleConfig.bundleName);
                         assetItem.moduleID = item.Key.id;
                         List<uint> dependencyCrcList = new List<uint>();
                         string[] assetDependencies = AssetDatabase.GetDependencies(assetPath, false);

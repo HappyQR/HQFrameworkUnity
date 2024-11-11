@@ -186,8 +186,8 @@ namespace HQFramework.Resource
                 List<HQAssetBundleConfig> bundleList = new List<HQAssetBundleConfig>();
                 foreach (HQAssetBundleConfig remoteBundle in remoteModule.bundleDic.Values)
                 {
-                    if (!localModule.bundleDic.ContainsKey(remoteBundle.bundleName) ||
-                        localModule.bundleDic[remoteBundle.bundleName].md5 != remoteBundle.md5)
+                    if (!localModule.bundleDic.ContainsKey(remoteBundle.crc) ||
+                        localModule.bundleDic[remoteBundle.crc].md5 != remoteBundle.md5)
                     {
                         bundleList.Add(remoteBundle);
                     }

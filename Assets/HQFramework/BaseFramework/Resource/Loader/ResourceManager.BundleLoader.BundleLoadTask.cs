@@ -11,7 +11,7 @@ namespace HQFramework.Resource
                 private static int serialID = 0;
 
                 private ResourceManager resourceManager;
-                private string bundleName;
+                private uint bundleID;
 
                 private Action<BundleLoadCompleteEventArgs> onComplete;
 
@@ -27,20 +27,20 @@ namespace HQFramework.Resource
                     }
                 }
 
-                public static BundleLoadTask Create(ResourceManager resourceManager, string bundleName, int priority, int groupID)
+                public static BundleLoadTask Create(ResourceManager resourceManager, uint bundleID, int priority, int groupID)
                 {
                     BundleLoadTask task = ReferencePool.Spawn<BundleLoadTask>();
                     task.id = serialID++;
                     task.priority = priority;
                     task.groupID = groupID;
                     task.resourceManager = resourceManager;
-                    task.bundleName = bundleName;
+                    task.bundleID = bundleID;
                     return task;
                 }
 
                 public override TaskStartStatus Start()
                 {
-                    resourceManager.resourceHelper.LoadAssetBundle(resourceManager.GetBundleFilePath(resourceManager.bundleTable[bundleName]), OnLoadBundleComplete);
+                    resourceManager.resourceHelper.LoadAssetBundle(resourceManager.GetBundleFilePath(resourceManager.bundleTable[bundleID]), OnLoadBundleComplete);
                     return TaskStartStatus.InProgress;
                 }
 
@@ -51,7 +51,7 @@ namespace HQFramework.Resource
 
                 private void OnLoadBundleComplete(object bundleObject)
                 {
-                    BundleLoadCompleteEventArgs args = BundleLoadCompleteEventArgs.Create(bundleName, bundleObject);
+                    BundleLoadCompleteEventArgs args = BundleLoadCompleteEventArgs.Create(bundleID, resourceManager.bundleTable[bundleID].bundleName, bundleObject);
                     onComplete?.Invoke(args);
                     ReferencePool.Recyle(args);
 
@@ -62,7 +62,7 @@ namespace HQFramework.Resource
                 {
                     base.OnRecyle();
                     resourceManager = null;
-                    bundleName = null;
+                    bundleID = 0;
                     onComplete = null;
                 }
             }

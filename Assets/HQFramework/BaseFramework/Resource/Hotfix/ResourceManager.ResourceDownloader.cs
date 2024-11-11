@@ -353,7 +353,7 @@ namespace HQFramework.Resource
                     // delete obsolete bundles
                     foreach (var bundle in localModule.bundleDic.Values)
                     {
-                        if (!remoteModule.bundleDic.ContainsKey(bundle.bundleName))
+                        if (!remoteModule.bundleDic.ContainsKey(bundle.crc))
                         {
                             string bundlePath = GetBundleDestPath(bundle);
                             if (File.Exists(bundlePath))

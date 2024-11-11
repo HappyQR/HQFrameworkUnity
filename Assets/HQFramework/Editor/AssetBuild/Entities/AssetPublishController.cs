@@ -42,7 +42,7 @@ namespace HQFramework.Editor
                 module.currentPatchVersion = compileInfo.buildVersionCode;
                 module.dependencies = compileInfo.dependencies;
                 module.assetsDic = compileInfo.assetsDic;
-                module.bundleDic = new Dictionary<string, HQAssetBundleConfig>();
+                module.bundleDic = new Dictionary<uint, HQAssetBundleConfig>();
                 for (int j = 0; j < compileInfo.bundleList.Count; j++)
                 {
                     AssetBundleCompileInfo bundleCompileInfo = compileInfo.bundleList[j];
@@ -52,9 +52,14 @@ namespace HQFramework.Editor
                     bundleInfo.bundleName = bundleCompileInfo.bundleName;
                     bundleInfo.md5 = bundleCompileInfo.md5;
                     bundleInfo.size = bundleCompileInfo.size;
-                    bundleInfo.dependencies = bundleCompileInfo.dependencies;
                     bundleInfo.bundleUrlRelatedToModule = publishHelper.GetBundleRelatedUrl(bundleInfo, module);
-                    module.bundleDic.Add(bundleInfo.bundleName, bundleInfo);
+                    bundleInfo.crc = Utility.CRC32.ComputeCrc32(bundleInfo.bundleName);
+                    bundleInfo.dependencies = new uint[bundleCompileInfo.dependencies.Length];
+                    for (int k = 0; k < bundleInfo.dependencies.Length; k++)
+                    {
+                        bundleInfo.dependencies[k] = Utility.CRC32.ComputeCrc32(bundleCompileInfo.dependencies[k]);
+                    }
+                    module.bundleDic.Add(bundleInfo.crc, bundleInfo);
                 }
                 module.moduleUrlRoot = publishHelper.GetModuleUrlRoot(module);
                 manifest.moduleDic.Add(module.id, module);
@@ -96,8 +101,8 @@ namespace HQFramework.Editor
                 HQAssetModuleConfig remoteModule = remoteManifest.moduleDic[localModule.id];
                 foreach (HQAssetBundleConfig localBundle in localModule.bundleDic.Values)
                 {
-                    if (!remoteModule.bundleDic.ContainsKey(localBundle.bundleName) || 
-                        remoteModule.bundleDic[localBundle.bundleName].md5 != localBundle.md5)
+                    if (!remoteModule.bundleDic.ContainsKey(localBundle.crc) || 
+                        remoteModule.bundleDic[localBundle.crc].md5 != localBundle.md5)
                     {
                         AssetBundleUploadItem item = new AssetBundleUploadItem();
                         item.moduleInfo = localModule;
@@ -156,7 +161,7 @@ namespace HQFramework.Editor
                 module.currentPatchVersion = compileInfo.buildVersionCode;
                 module.dependencies = compileInfo.dependencies;
                 module.assetsDic = compileInfo.assetsDic;
-                module.bundleDic = new Dictionary<string, HQAssetBundleConfig>();
+                module.bundleDic = new Dictionary<uint, HQAssetBundleConfig>();
                 for (int j = 0; j < compileInfo.bundleList.Count; j++)
                 {
                     AssetBundleCompileInfo bundleCompileInfo = compileInfo.bundleList[j];
@@ -167,9 +172,14 @@ namespace HQFramework.Editor
                     bundleInfo.bundleName = bundleCompileInfo.bundleName;
                     bundleInfo.md5 = bundleCompileInfo.md5;
                     bundleInfo.size = bundleCompileInfo.size;
-                    bundleInfo.dependencies = bundleCompileInfo.dependencies;
+                    bundleInfo.crc = Utility.CRC32.ComputeCrc32(bundleInfo.bundleName);
                     bundleInfo.bundleUrlRelatedToModule = publishHelper.GetBundleRelatedUrl(bundleInfo, module);
-                    module.bundleDic.Add(bundleInfo.bundleName, bundleInfo);
+                    bundleInfo.dependencies = new uint[bundleCompileInfo.dependencies.Length];
+                    for (int k = 0; k < bundleInfo.dependencies.Length; k++)
+                    {
+                        bundleInfo.dependencies[k] = Utility.CRC32.ComputeCrc32(bundleCompileInfo.dependencies[k]);
+                    }
+                    module.bundleDic.Add(bundleInfo.crc, bundleInfo);
                 }
                 module.moduleUrlRoot = publishHelper.GetModuleUrlRoot(module);
                 if (moduleMinimalSupportedVersionDic != null && moduleMinimalSupportedVersionDic.ContainsKey(compileInfo.moduleID))

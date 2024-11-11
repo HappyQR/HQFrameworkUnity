@@ -15,8 +15,7 @@ namespace HQFramework.Resource
         public string moduleUrlRoot;
         public string releaseNote;
         public int[] dependencies;
-        public Dictionary<string, HQAssetBundleConfig> bundleDic;
-        //模块全量资源信息
+        public Dictionary<uint, HQAssetBundleConfig> bundleDic;
         public Dictionary<uint, HQAssetItemConfig> assetsDic;
     }
 }

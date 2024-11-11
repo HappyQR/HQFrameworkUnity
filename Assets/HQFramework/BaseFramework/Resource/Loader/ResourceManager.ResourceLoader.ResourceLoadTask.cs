@@ -57,27 +57,27 @@ namespace HQFramework.Resource
                         }
                     }
 
-                    if (!resourceManager.loadedBundleMap.ContainsKey(assetConfig.bundleName))
+                    if (!resourceManager.loadedBundleMap.ContainsKey(assetConfig.crc))
                     {
-                        resourceManager.bundleLoader.LoadBundle(assetConfig.bundleName, OnLoadBundleError, priority, groupID);
+                        resourceManager.bundleLoader.LoadBundle(assetConfig.bundleID, OnLoadBundleError, priority, groupID);
                     }
-                    else if (resourceManager.loadedBundleMap[assetConfig.bundleName].error)
+                    else if (resourceManager.loadedBundleMap[assetConfig.bundleID].error)
                     {
                         return TaskStartStatus.Error;
                     }
 
-                    if (dependenceQueue.Count > 0 || !resourceManager.loadedBundleMap.TryGetValue(assetConfig.bundleName, out BundleItem bundle) || !bundle.Ready)
+                    if (dependenceQueue.Count > 0 || !resourceManager.loadedBundleMap[assetConfig.bundleID].Ready)
                     {
                         return TaskStartStatus.HasToWait;
                     }
 
                     if (info.assetType == null)
                     {
-                        resourceManager.resourceHelper.LoadAsset(resourceManager.loadedBundleMap[assetConfig.bundleName].bundleObject, assetConfig.assetPath, OnLoadAssetCompleteCallback);                        
+                        resourceManager.resourceHelper.LoadAsset(resourceManager.loadedBundleMap[assetConfig.bundleID].bundleObject, assetConfig.assetPath, OnLoadAssetCompleteCallback);                        
                     }
                     else
                     {
-                        resourceManager.resourceHelper.LoadAsset(resourceManager.loadedBundleMap[assetConfig.bundleName].bundleObject, assetConfig.assetPath, info.assetType, OnLoadAssetCompleteCallback);
+                        resourceManager.resourceHelper.LoadAsset(resourceManager.loadedBundleMap[assetConfig.bundleID].bundleObject, assetConfig.assetPath, info.assetType, OnLoadAssetCompleteCallback);
                     }
                     return TaskStartStatus.InProgress;
                 }

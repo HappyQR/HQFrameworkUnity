@@ -11,7 +11,7 @@
             "id": 0,
             "moduleName": "Public",
             "description": null,
-            "currentPatchVersion": 32,
+            "currentPatchVersion": 34,
             "minimalSupportedPatchVersion": 0,
             "isBuiltin": true,
             "moduleUrlRoot": "https://assets.moonvrhome.com/dev/hotfix-framework/Public",
@@ -20,65 +20,71 @@
                 1
             ],
             "bundleDic": {
-                "public_audios.bundle": {
+                "3424294331": {
+                    "crc": 3424294331,
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_audios.bundle",
                     "md5": "6b0f759b0313fb4d99ee01e4ff72cbf3",
                     "size": 3411750,
+                    "bundleUrlRelatedToModule": "public_audios.bundle",
                     "dependencies": [
-                    ],
-                    "bundleUrlRelatedToModule": "public_audios.bundle"
+                    ]
                 },
-                "public_materials.bundle": {
+                "2117413642": {
+                    "crc": 2117413642,
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_materials.bundle",
                     "md5": "d83ee1a81f73d900f820181636bac820",
                     "size": 105358,
+                    "bundleUrlRelatedToModule": "public_materials.bundle",
                     "dependencies": [
-                        "public_textures.bundle"
-                    ],
-                    "bundleUrlRelatedToModule": "public_materials.bundle"
+                        1884728092
+                    ]
                 },
-                "public_prefabs.bundle": {
+                "1816357022": {
+                    "crc": 1816357022,
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_prefabs.bundle",
                     "md5": "a37341830ff67d1d28da08a728a9bf4b",
                     "size": 102596,
+                    "bundleUrlRelatedToModule": "public_prefabs.bundle",
                     "dependencies": [
-                        "public_audios.bundle",
-                        "public_materials.bundle"
-                    ],
-                    "bundleUrlRelatedToModule": "public_prefabs.bundle"
+                        3424294331,
+                        2117413642
+                    ]
                 },
-                "public_textures.bundle": {
+                "1884728092": {
+                    "crc": 1884728092,
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_textures.bundle",
-                    "md5": "3f43988a55b187c3473258f497c7be6a",
-                    "size": 1875600,
+                    "md5": "69f8be2e9d5293e340a84e4220121857",
+                    "size": 2056806,
+                    "bundleUrlRelatedToModule": "public_textures.bundle",
                     "dependencies": [
-                    ],
-                    "bundleUrlRelatedToModule": "public_textures.bundle"
+                    ]
                 },
-                "public_ui.bundle": {
+                "897917882": {
+                    "crc": 897917882,
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_ui.bundle",
                     "md5": "e7e58ce6d88f02e1f6f9fca81f3a55e6",
                     "size": 625749,
+                    "bundleUrlRelatedToModule": "public_ui.bundle",
                     "dependencies": [
-                        "portal_atlas.bundle"
-                    ],
-                    "bundleUrlRelatedToModule": "public_ui.bundle"
+                        2945577187
+                    ]
                 }
             },
             "assetsDic": {
                 "1302820860": {
                     "crc": 1302820860,
                     "moduleID": 0,
+                    "bundleID": 3424294331,
                     "bundleName": "public_audios.bundle",
                     "assetPath": "Assets/GameAssets/Public/Audios/ocean_waves.mp3",
                     "assetName": "ocean_waves.mp3",
@@ -88,6 +94,7 @@
                 "486730043": {
                     "crc": 486730043,
                     "moduleID": 0,
+                    "bundleID": 2117413642,
                     "bundleName": "public_materials.bundle",
                     "assetPath": "Assets/GameAssets/Public/Materials/BaseTex.mat",
                     "assetName": "BaseTex.mat",
@@ -97,6 +104,7 @@
                 "3847567185": {
                     "crc": 3847567185,
                     "moduleID": 0,
+                    "bundleID": 2117413642,
                     "bundleName": "public_materials.bundle",
                     "assetPath": "Assets/GameAssets/Public/Materials/CubeMat.mat",
                     "assetName": "CubeMat.mat",
@@ -107,6 +115,7 @@
                 "105775552": {
                     "crc": 105775552,
                     "moduleID": 0,
+                    "bundleID": 2117413642,
                     "bundleName": "public_materials.bundle",
                     "assetPath": "Assets/GameAssets/Public/Materials/New Material.mat",
                     "assetName": "New Material.mat",
@@ -116,6 +125,7 @@
                 "1174429789": {
                     "crc": 1174429789,
                     "moduleID": 0,
+                    "bundleID": 2117413642,
                     "bundleName": "public_materials.bundle",
                     "assetPath": "Assets/GameAssets/Public/Materials/TransparentTex.mat",
                     "assetName": "TransparentTex.mat",
@@ -126,6 +136,7 @@
                 "1937126282": {
                     "crc": 1937126282,
                     "moduleID": 0,
+                    "bundleID": 1816357022,
                     "bundleName": "public_prefabs.bundle",
                     "assetPath": "Assets/GameAssets/Public/Prefabs/ColorCube.prefab",
                     "assetName": "ColorCube.prefab",
@@ -136,6 +147,7 @@
                 "2987955044": {
                     "crc": 2987955044,
                     "moduleID": 0,
+                    "bundleID": 1816357022,
                     "bundleName": "public_prefabs.bundle",
                     "assetPath": "Assets/GameAssets/Public/Prefabs/Cube.prefab",
                     "assetName": "Cube.prefab",
@@ -146,6 +158,7 @@
                 "2529943260": {
                     "crc": 2529943260,
                     "moduleID": 0,
+                    "bundleID": 1816357022,
                     "bundleName": "public_prefabs.bundle",
                     "assetPath": "Assets/GameAssets/Public/Prefabs/Knot.prefab",
                     "assetName": "Knot.prefab",
@@ -157,15 +170,27 @@
                 "843549801": {
                     "crc": 843549801,
                     "moduleID": 0,
+                    "bundleID": 1816357022,
                     "bundleName": "public_prefabs.bundle",
                     "assetPath": "Assets/GameAssets/Public/Prefabs/Sphere.prefab",
                     "assetName": "Sphere.prefab",
                     "dependencies": [
                     ]
                 },
+                "460166648": {
+                    "crc": 460166648,
+                    "moduleID": 0,
+                    "bundleID": 1884728092,
+                    "bundleName": "public_textures.bundle",
+                    "assetPath": "Assets/GameAssets/Public/Textures/hotfix_use_case.png",
+                    "assetName": "hotfix_use_case.png",
+                    "dependencies": [
+                    ]
+                },
                 "893393118": {
                     "crc": 893393118,
                     "moduleID": 0,
+                    "bundleID": 1884728092,
                     "bundleName": "public_textures.bundle",
                     "assetPath": "Assets/GameAssets/Public/Textures/skybox22.jpg",
                     "assetName": "skybox22.jpg",
@@ -175,6 +200,7 @@
                 "1593003641": {
                     "crc": 1593003641,
                     "moduleID": 0,
+                    "bundleID": 1884728092,
                     "bundleName": "public_textures.bundle",
                     "assetPath": "Assets/GameAssets/Public/Textures/transparent_texture.png",
                     "assetName": "transparent_texture.png",
@@ -184,6 +210,7 @@
                 "2679595024": {
                     "crc": 2679595024,
                     "moduleID": 0,
+                    "bundleID": 897917882,
                     "bundleName": "public_ui.bundle",
                     "assetPath": "Assets/GameAssets/Public/UI/Image.prefab",
                     "assetName": "Image.prefab",

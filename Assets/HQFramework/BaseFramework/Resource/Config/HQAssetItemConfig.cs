@@ -7,6 +7,7 @@ namespace HQFramework.Resource
     {
         public uint crc;
         public int moduleID;
+        public uint bundleID;
         public string bundleName;
         public string assetPath;
         public string assetName;
