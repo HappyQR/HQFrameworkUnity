@@ -34,6 +34,8 @@ namespace HQFramework.Resource
                 resourceManager.bundleLoader.LoadBundle(assetConfig.bundleID, priority, groupID);
                 ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, crc, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);
+                resourceLoadTaskDispatcher.AddResourceLoadCompleteEvent(taskID, onComplete);
+                resourceLoadTaskDispatcher.AddResourceLoadErrorEvent(taskID, onError);
                 
             }
 

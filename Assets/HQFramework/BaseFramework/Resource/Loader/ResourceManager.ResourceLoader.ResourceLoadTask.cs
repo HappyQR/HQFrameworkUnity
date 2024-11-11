@@ -72,7 +72,7 @@ namespace HQFramework.Resource
                     bool ready = true;
                     for (int i = 0; i < assetConfig.dependencies.Length; i++)
                     {
-                        ready = ready && resourceManager[]
+                        // ready = ready && resourceManager[]
                     }
                 }
 
