@@ -2,15 +2,17 @@ namespace HQFramework.Resource
 {
     public readonly struct AssetBundleInfo
     {
+        public readonly uint bundleID;
         public readonly string bundleName;
         public readonly int refCount;
-        public readonly bool ready;
+        public readonly ResourceStatus status;
 
-        public AssetBundleInfo(string bundleName, int refCount, bool ready)
+        public AssetBundleInfo(uint bundleID, string bundleName, int refCount, ResourceStatus status)
         {
+            this.bundleID = bundleID;
             this.bundleName = bundleName;
             this.refCount = refCount;
-            this.ready = ready;
+            this.status = status;
         }
     }
 }

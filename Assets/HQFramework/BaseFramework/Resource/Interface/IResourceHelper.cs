@@ -48,18 +48,10 @@ namespace HQFramework.Resource
 
         void DeleteAssetModule(HQAssetModuleConfig module);
 
-        void LoadAsset(object bundle, string assetPath, Action<object> callback);
+        void LoadAsset(object bundle, string assetPath, Action<object> onComplete, Action<string> onError);
 
-        void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> callback);
+        void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> onComplete, Action<string> onError);
 
-        void LoadAssetBundle(string bundlePath, Action<object> callback);
-
-        bool IsIndividualAsset(object asset);
-
-        object InstantiateAsset(object asset);
-
-        void UnloadAsset(object asset);
-
-        void UnloadBundle(object bundle);
+        void LoadAssetBundle(string bundlePath, Action<object> onComplete, Action<string> onError);
     }
 }

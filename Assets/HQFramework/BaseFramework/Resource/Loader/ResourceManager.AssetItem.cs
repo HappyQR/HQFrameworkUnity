@@ -9,17 +9,15 @@ namespace HQFramework.Resource
             public uint crc;
             public int refCount;
             public object assetObject;
-            public bool error;
+            public ResourceStatus status;
             public HashSet<uint> dependencies;
 
-            public bool Ready => assetObject != null;
-
-            public AssetItem(HQAssetItemConfig itemConfig, object assetObject)
+            public AssetItem(HQAssetItemConfig itemConfig)
             {
                 this.crc = itemConfig.crc;
+                this.status = ResourceStatus.Pending;
                 this.refCount = 0;
-                this.assetObject = assetObject;
-                this.error = false;
+                this.assetObject = null;
                 this.dependencies = new HashSet<uint>();
                 for (int i = 0; i < itemConfig.dependencies.Length; i++)
                 {

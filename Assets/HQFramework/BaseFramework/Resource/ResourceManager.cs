@@ -28,6 +28,8 @@ namespace HQFramework.Resource
         private Dictionary<uint, BundleItem> loadedBundleMap;
         private Dictionary<uint, AssetItem> loadedAssetMap;
 
+
+        // status
         private bool isAssetsDecompressed = false;
         private Queue<ResourceLoadTaskInfo> loadTaskWaitingQueue;
 
@@ -35,7 +37,7 @@ namespace HQFramework.Resource
         public string PersistentDir => resourceHelper.AssetsPersistentDir;
         public string BuiltinDir => resourceHelper.AssetsBuiltinDir;
 
-        private static readonly ushort maxConcurrentLoadCount = 1024;
+        private static readonly ushort maxConcurrentLoadCount = ushort.MaxValue;
 
         protected override void OnInitialize()
         {
@@ -69,8 +71,8 @@ namespace HQFramework.Resource
                 ReloadAssetTable();
                 while (loadTaskWaitingQueue.Count > 0)
                 {
-                    ResourceLoadTaskInfo taskInfo = loadTaskWaitingQueue.Dequeue();
-                    resourceLoader.LoadAsset(taskInfo);
+                    ResourceLoadTaskInfo info = loadTaskWaitingQueue.Dequeue();
+                    resourceLoader.LoadAsset(info.crc, info.assetType, info.onComplete, info.onError, info.priority, info.groupID);
                 }
             }
 
@@ -211,14 +213,14 @@ namespace HQFramework.Resource
 
         public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
         {
-            ResourceLoadTaskInfo taskInfo = ResourceLoadTaskInfo.Create(crc, assetType, onComplete, onError, priority, groupID);
             if (localManifest == null)
             {
+                ResourceLoadTaskInfo taskInfo = new ResourceLoadTaskInfo(crc, assetType, onComplete, onError, priority, groupID);
                 loadTaskWaitingQueue.Enqueue(taskInfo);
             }
             else
             {
-                resourceLoader.LoadAsset(taskInfo);
+                resourceLoader.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
             }
         }
 
@@ -273,14 +275,30 @@ namespace HQFramework.Resource
             throw new NotImplementedException();
         }
 
-        public AssetBundleInfo[] GetLoadedBundleData()
+        public AssetBundleInfo[] GetLoadedBundleInfo()
         {
-            throw new NotImplementedException();
+            AssetBundleInfo[] bundleInfoArr = new AssetBundleInfo[loadedBundleMap.Count];
+            int index = 0;
+            foreach (BundleItem item in loadedBundleMap.Values)
+            {
+                HQAssetBundleConfig bundleConfig = bundleTable[item.crc];
+                bundleInfoArr[index] = new AssetBundleInfo(item.crc, bundleConfig.bundleName, item.refCount, item.status);
+                index++;
+            }
+            return bundleInfoArr;
         }
 
-        public AssetItemInfo[] GetLoadedAssetData()
+        public AssetItemInfo[] GetLoadedAssetInfo()
         {
-            throw new NotImplementedException();
+            AssetItemInfo[] assetItemInfoArr = new AssetItemInfo[loadedAssetMap.Count];
+            int index = 0;
+            foreach (AssetItem item in loadedAssetMap.Values)
+            {
+                HQAssetItemConfig config = assetTable[item.crc];
+                assetItemInfoArr[index] = new AssetItemInfo(item.crc, config.assetPath, item.refCount, item.status);
+                index++;
+            }
+            return assetItemInfoArr;
         }
 
         private string GetBundleFilePath(HQAssetBundleConfig bundleInfo)

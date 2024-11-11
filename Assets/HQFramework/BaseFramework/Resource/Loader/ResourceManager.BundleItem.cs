@@ -9,16 +9,15 @@ namespace HQFramework.Resource
             public uint crc;
             public int refCount;
             public object bundleObject;
-            public bool error;
             public HashSet<uint> dependencySet;
+            public ResourceStatus status;
 
-            public bool Ready => bundleObject != null;
-
-            public BundleItem(HQAssetBundleConfig bundleConfig, object bundleObject)
+            public BundleItem(HQAssetBundleConfig bundleConfig)
             {
                 this.crc = bundleConfig.crc;
+                this.status = ResourceStatus.Pending;
                 this.refCount = 0;
-                this.bundleObject = bundleObject;
+                this.bundleObject = null;
                 this.dependencySet = new HashSet<uint>();
                 for (int i = 0; i < bundleConfig.dependencies.Length; i++)
                 {

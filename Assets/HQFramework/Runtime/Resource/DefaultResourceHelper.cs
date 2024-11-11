@@ -102,65 +102,63 @@ namespace HQFramework.Runtime
             }
         }
 
-        public void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> callback)
+        public void LoadAsset(object bundle, string assetPath, Action<object> onComplete, Action<string> onError)
         {
-            AssetBundle assetBundle = (AssetBundle)bundle;
-            AssetBundleRequest request = assetBundle.LoadAssetAsync(assetPath, assetType);
-            request.completed += (asyncOperation) =>
+            AssetBundleRequest request = null;
+            try
             {
-                callback?.Invoke(request.asset);
-            };
-        }
-
-        public void LoadAsset(object bundle, string assetPath, Action<object> callback)
-        {
-            AssetBundle assetBundle = (AssetBundle)bundle;
-            AssetBundleRequest request = assetBundle.LoadAssetAsync(assetPath);
-            request.completed += (asyncOperation) =>
-            {
-                callback?.Invoke(request.asset);
-            };
-        }
-
-        public void LoadAssetBundle(string bundlePath, Action<object> callback)
-        {
-            AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(bundlePath);
-            request.completed += (asyncOperation) =>
-            {
-                callback?.Invoke(request.assetBundle);
-            };
-        }
-
-        public bool IsIndividualAsset(object asset)
-        {
-            return asset is not GameObject;
-        }
-
-        public object InstantiateAsset(object asset)
-        {
-            UnityObject instance = UnityObject.Instantiate(asset as UnityObject);
-            instantiateDic.Add(instance.GetInstanceID(), instance);
-            return instance;
-        }
-
-        public void UnloadAsset(object asset)
-        {
-            UnityObject target = asset as UnityObject;
-            int instanceID = target.GetInstanceID();
-            if (instantiateDic.ContainsKey(instanceID))
-            {
-                UnityObject.Destroy(target);
-                instantiateDic.Remove(instanceID);
+                AssetBundle assetBundle = (AssetBundle)bundle;
+                request = assetBundle.LoadAssetAsync(assetPath);
             }
-            else if (target is not GameObject)
+            catch (Exception ex)
             {
-                Resources.UnloadAsset(target);
+                onError?.Invoke(ex.Message);
+                return;
             }
+            
+            request.completed += (asyncOperation) =>
+            {
+                onComplete?.Invoke(request.asset);
+            };
         }
 
-        public void UnloadBundle(object bundle)
+        public void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> onComplete, Action<string> onError)
         {
-            (bundle as AssetBundle).Unload(true);
+            AssetBundleRequest request = null;
+            try
+            {
+                AssetBundle assetBundle = (AssetBundle)bundle;
+                request = assetBundle.LoadAssetAsync(assetPath, assetType);
+            }
+            catch (Exception ex)
+            {
+                onError?.Invoke(ex.Message);
+                return;
+            }
+            
+            request.completed += (asyncOperation) =>
+            {
+                onComplete?.Invoke(request.asset);
+            };
+        }
+
+        public void LoadAssetBundle(string bundlePath, Action<object> onComplete, Action<string> onError)
+        {
+            AssetBundleCreateRequest request = null;
+            try
+            {
+                request = AssetBundle.LoadFromFileAsync(bundlePath);
+            }
+            catch (Exception ex)
+            {
+                onError?.Invoke(ex.Message);
+                return;
+            }
+
+            request.completed += (asyncOperation) =>
+            {
+                onComplete?.Invoke(request.assetBundle);
+            };
         }
 
         private IEnumerator DecompressBuiltinAssetsInternal(Action onComplete)

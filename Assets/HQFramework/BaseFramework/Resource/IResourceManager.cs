@@ -65,8 +65,8 @@ namespace HQFramework.Resource
 
         void ReleaseAsset(object asset);
 
-        AssetBundleInfo[] GetLoadedBundleData();
+        AssetBundleInfo[] GetLoadedBundleInfo();
 
-        AssetItemInfo[] GetLoadedAssetData();
+        AssetItemInfo[] GetLoadedAssetInfo();
     }
 }

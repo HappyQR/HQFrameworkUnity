@@ -40,7 +40,6 @@ namespace HQFramework.Resource
 
                 public override TaskStartStatus Start()
                 {
-                    resourceManager.resourceHelper.LoadAssetBundle(resourceManager.GetBundleFilePath(resourceManager.bundleTable[bundleID]), OnLoadBundleComplete);
                     return TaskStartStatus.InProgress;
                 }
 

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 
 namespace HQFramework.Resource
 {
@@ -8,76 +8,38 @@ namespace HQFramework.Resource
         {
             private ResourceManager resourceManager;
             private ResourceLoadTaskDispatcher resourceLoadTaskDispatcher;
-            private Queue<ResourceLoadTaskInfo> inProgressQueue;
 
             public ResourceLoader(ResourceManager resourceManager)
             {
                 this.resourceManager = resourceManager;
                 this.resourceLoadTaskDispatcher = new ResourceLoadTaskDispatcher(maxConcurrentLoadCount);
-                this.inProgressQueue = new Queue<ResourceLoadTaskInfo>();
             }
 
-            public void LoadAsset(ResourceLoadTaskInfo info)
+            public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
             {
-                if (!resourceManager.assetTable.ContainsKey(info.crc))
+                if (!resourceManager.assetTable.ContainsKey(crc))
                 {
-                    ResourceLoadErrorEventArgs errorArgs = ResourceLoadErrorEventArgs.Create(info.crc, null, null, -1, $"id : {info.crc} assets doesn't exist.");
-                    info.onError?.Invoke(errorArgs);
-                    ReferencePool.Recyle(errorArgs);
-                    ReferencePool.Recyle(info);
+                    ResourceLoadErrorEventArgs args = ResourceLoadErrorEventArgs.Create(crc, null, $"id : {crc} asset doesn't exist.");
+                    onError?.Invoke(args);
+                    ReferencePool.Recyle(args);
                     return;
                 }
 
-                if (resourceManager.loadedAssetMap.ContainsKey(info.crc))
+                HQAssetItemConfig assetConfig = resourceManager.assetTable[crc];
+                for (int i = 0; i < assetConfig.dependencies.Length; i++)
                 {
-                    if (resourceManager.loadedAssetMap[info.crc].Ready)
-                    {
-                        ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(info.crc, resourceManager.loadedAssetMap[info.crc].assetObject);
-                        info.onComplete?.Invoke(args);
-                        ReferencePool.Recyle(args);
-                        ReferencePool.Recyle(info);
-                    }
-                    else
-                    {
-                        inProgressQueue.Enqueue(info);
-                    }
-                    return;
+                    LoadAsset(assetConfig.dependencies[i], null, null, null, priority, groupID);
                 }
 
-                HQAssetItemConfig assetConfig = resourceManager.assetTable[info.crc];
-                resourceManager.loadedAssetMap.Add(info.crc, new AssetItem(assetConfig, null));
-                ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, info);
-                resourceLoadTaskDispatcher.AddTask(task);
+                resourceManager.bundleLoader.LoadBundle(assetConfig.bundleID, priority, groupID);
+                ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, crc, assetType, priority, groupID);
+                int taskID = resourceLoadTaskDispatcher.AddTask(task);
+                
             }
 
             public void OnUpdate()
             {
                 resourceLoadTaskDispatcher.ProcessTasks();
-
-                int loopCount = inProgressQueue.Count;
-                for (int i = 0; i < loopCount; i++)
-                {
-                    ResourceLoadTaskInfo info = inProgressQueue.Dequeue();
-                    if (resourceManager.loadedAssetMap[info.crc].Ready)
-                    {
-                        ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(info.crc, resourceManager.loadedAssetMap[info.crc].assetObject);
-                        info.onComplete?.Invoke(args);
-                        ReferencePool.Recyle(args);
-                        ReferencePool.Recyle(info);
-                    }
-                    else if (resourceManager.loadedAssetMap[info.crc].error)
-                    {
-                        HQAssetItemConfig assetConfig = resourceManager.assetTable[info.crc];
-                        ResourceLoadErrorEventArgs args = ResourceLoadErrorEventArgs.Create(assetConfig.crc, assetConfig.assetPath, assetConfig.bundleName, assetConfig.moduleID, "Asset Load Failed.");
-                        info.onError?.Invoke(args);
-                        ReferencePool.Recyle(args);
-                        ReferencePool.Recyle(info);
-                    }
-                    else
-                    {
-                        inProgressQueue.Enqueue(info);
-                    }
-                }
             }
         }
     }

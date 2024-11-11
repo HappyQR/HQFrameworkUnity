@@ -3,16 +3,16 @@ namespace HQFramework.Resource
     public readonly struct AssetItemInfo
     {
         public readonly uint crc;
-        public readonly int moduleID;
-        public readonly string bundleName;
-        public readonly string path;
+        public readonly string assetPath;
+        public readonly int refCount;
+        public readonly ResourceStatus status;
 
-        public AssetItemInfo(uint crc, int moduleID, string bundleName, string path)
+        public AssetItemInfo(uint crc, string assetPath, int refCount, ResourceStatus status)
         {
             this.crc = crc;
-            this.moduleID = moduleID;
-            this.bundleName = bundleName;
-            this.path = path;
+            this.assetPath = assetPath;
+            this.refCount = refCount;
+            this.status = status;
         }
     }
 }

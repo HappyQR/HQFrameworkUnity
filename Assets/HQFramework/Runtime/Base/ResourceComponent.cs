@@ -154,7 +154,7 @@ namespace HQFramework.Runtime
 
         public AssetBundleInfo[] GetLoadedBundleData()
         {
-            return resourceManager.GetLoadedBundleData();
+            return resourceManager.GetLoadedBundleInfo();
         }
 
         public void ReleaseAsset(object asset)
@@ -174,7 +174,7 @@ namespace HQFramework.Runtime
 
         public AssetItemInfo[] GetLoadedAssetData()
         {
-            return resourceManager.GetLoadedAssetData();
+            return resourceManager.GetLoadedAssetInfo();
         }
     }
 }
