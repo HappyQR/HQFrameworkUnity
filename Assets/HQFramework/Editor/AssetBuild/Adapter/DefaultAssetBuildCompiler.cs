@@ -56,7 +56,7 @@ namespace HQFramework.Editor
                     compileInfo.filePath = bundleDestFilePath;
                     compileInfo.md5 = md5;
                     compileInfo.size = fileSize;
-                    compileInfo.dependencies = buildManifest.GetAllDependencies(bundles[i]);
+                    compileInfo.dependencies = buildManifest.GetDirectDependencies(bundles[i]);
                     bundleArr[i] = compileInfo;
                 }
                 compileData.dataDic[moduleConfig].AddRange(bundleArr);
