@@ -29,7 +29,7 @@ namespace HQFramework.Resource
         private Dictionary<uint, AssetItem> loadedAssetMap;
 
         private bool isAssetsDecompressed = false;
-        private Queue<ResourceLoadCommand> waitingQueue;
+        private Queue<ResourceLoadTaskInfo> loadTaskWaitingQueue;
 
         public override byte Priority => byte.MaxValue;
         public string PersistentDir => resourceHelper.AssetsPersistentDir;
@@ -46,7 +46,7 @@ namespace HQFramework.Resource
             loadedBundleMap = new Dictionary<string, BundleItem>();
             loadedAssetMap = new Dictionary<uint, AssetItem>();
 
-            waitingQueue = new Queue<ResourceLoadCommand>();
+            loadTaskWaitingQueue = new Queue<ResourceLoadTaskInfo>();
         }
 
         protected override void OnUpdate()
@@ -67,10 +67,10 @@ namespace HQFramework.Resource
             {
                 localManifest = args.manifest;
                 ReloadAssetTable();
-                while (waitingQueue.Count > 0)
+                while (loadTaskWaitingQueue.Count > 0)
                 {
-                    ResourceLoadCommand command = waitingQueue.Dequeue();
-                    resourceLoader.LoadAsset(command.crc, command.assetType, command.onComplete, command.onError, command.priority, command.groupID);
+                    ResourceLoadTaskInfo taskInfo = loadTaskWaitingQueue.Dequeue();
+                    resourceLoader.LoadAsset(taskInfo);
                 }
             }
 
@@ -211,13 +211,14 @@ namespace HQFramework.Resource
 
         public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
         {
+            ResourceLoadTaskInfo taskInfo = ResourceLoadTaskInfo.Create(crc, assetType, onComplete, onError, priority, groupID);
             if (localManifest == null)
             {
-                waitingQueue.Enqueue(new ResourceLoadCommand(crc, assetType, onComplete, onError, priority, groupID));
+                loadTaskWaitingQueue.Enqueue(taskInfo);
             }
             else
             {
-                resourceLoader.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
+                resourceLoader.LoadAsset(taskInfo);
             }
         }
 

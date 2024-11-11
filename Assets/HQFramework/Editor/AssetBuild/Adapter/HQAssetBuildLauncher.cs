@@ -164,13 +164,18 @@ namespace HQFramework.Editor
         public static void GenerateBuiltinArchive(List<AssetModuleCompileInfo> moduleCompileInfoList)
         {
             Type publishHelperType = Utility.Assembly.GetType(CurrentBuildConfig.publishHelperName);
+            Type uploaderType = Utility.Assembly.GetType(CurrentBuildConfig.assetUploaderName);
             IAssetPublishHelper publishHelper = Activator.CreateInstance(publishHelperType) as IAssetPublishHelper;
+            IAssetUploader assetUploader = Activator.CreateInstance(uploaderType) as IAssetUploader;
+            assetUploader.HotfixRootFolder = CurrentBuildConfig.hotfixRootFolder;
+            assetUploader.HotfixManifestFileName = CurrentBuildConfig.hotfixManifestFileName;
+            publishHelper.SetUploader(assetUploader);
             AssetPublishController.SetHelper(publishHelper);
 
             HQAssetManifest builtinManifest = AssetPublishController.PackBuiltinAssets(moduleCompileInfoList);
             if (builtinManifest != null)
             {
-                string manifestFilePath = Path.Combine(Application.streamingAssetsPath, CurrentBuildConfig.assetBuiltinDir, "AssetModuleManifest.json");
+                string manifestFilePath = Path.Combine(Application.streamingAssetsPath, CurrentBuildConfig.assetBuiltinDir, CurrentBuildConfig.hotfixManifestFileName);
                 string jsonStr = JsonUtilityEditor.ToJson(builtinManifest);
                 File.WriteAllText(manifestFilePath, jsonStr);
                 Debug.Log($"Built-in Archive Succeeded.\n{jsonStr}");

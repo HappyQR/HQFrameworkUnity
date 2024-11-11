@@ -169,9 +169,11 @@ MonoBehaviour:
   procedureScripts:
   - {fileID: 11500000, guid: 113b1067e697a4faf979ce7aba8b60d6, type: 3}
   - {fileID: 11500000, guid: 7825904e619024d0090c3d7c38bc8726, type: 3}
+  - {fileID: 11500000, guid: a02d1a12f0e184bdfb62dd9ec3e2637b, type: 3}
   gameProcedures:
   - ResourceDecompressProcedure
   - HotfixProcedure
+  - ResourceLoadProcedure
   entryProcedure: ResourceDecompressProcedure
 --- !u!1 &265683422
 GameObject:

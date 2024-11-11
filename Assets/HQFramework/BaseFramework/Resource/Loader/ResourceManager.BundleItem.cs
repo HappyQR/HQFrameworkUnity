@@ -6,9 +6,10 @@ namespace HQFramework.Resource
     {
         private class BundleItem
         {
-            public string bundleName;
+            private string bundleName;
             public int refCount;
             public object bundleObject;
+            public bool error;
             public HashSet<string> dependencySet;
 
             public bool Ready => bundleObject != null;

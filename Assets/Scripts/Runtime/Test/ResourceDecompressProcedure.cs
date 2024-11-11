@@ -4,6 +4,7 @@ using HQFramework;
 using HQFramework.Procedure;
 using HQFramework.Resource;
 using HQFramework.Runtime;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public class ResourceDecompressProcedure : ProcedureBase
@@ -15,6 +16,7 @@ public class ResourceDecompressProcedure : ProcedureBase
         HQDebugger.Log("ResourceDecompressProcedure Enter");
 
         resourceManager = GameEntry.GetModule<ResourceComponent>();
+        resourceManager.LoadAsset<GameObject>(2987955044, OnLoadAssetComplete, null);
         resourceManager.DecompressBuiltinAssets(OnDecompressComplete);
     }
 
@@ -27,5 +29,15 @@ public class ResourceDecompressProcedure : ProcedureBase
     {
         resourceManager = null;
         HQDebugger.Log("ResourceDecompressProcedure Exit");
+    }
+
+    private void OnLoadAssetComplete(ResourceLoadCompleteEventArgs<GameObject> args)
+    {
+        // if (args.crc == 2987955044)
+        // {
+        //     // cube1 = args.asset;
+        //     cube2 = resourceComponent.InstantiateAsset(args.asset);
+        // }
+        Object.Instantiate(args.asset);
     }
 }

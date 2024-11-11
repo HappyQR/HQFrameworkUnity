@@ -90,7 +90,7 @@ namespace HQFramework.Runtime
 
         public string GetBundleRelatedPath(HQAssetBundleConfig bundleInfo)
         {
-            return Path.Combine(AssetsPersistentDir, bundleInfo.moduleID.ToString(), bundleInfo.bundleName);
+            return Path.Combine(bundleInfo.moduleID.ToString(), bundleInfo.bundleName);
         }
 
         public void DeleteAssetModule(HQAssetModuleConfig module)
