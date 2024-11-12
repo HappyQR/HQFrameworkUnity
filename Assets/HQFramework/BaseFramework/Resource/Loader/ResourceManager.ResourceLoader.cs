@@ -22,6 +22,15 @@ namespace HQFramework.Resource
                     AssetItem assetItem = new AssetItem(crc);
                     resourceManager.loadedAssetMap.Add(crc, assetItem);
                 }
+
+                if (resourceManager.assetTable.TryGetValue(crc, out HQAssetItemConfig assetConfig))
+                {
+                    if (!resourceManager.pendingAssetDic.ContainsKey(crc))
+                    {
+                        resourceManager.pendingAssetDic.Add(crc, AssetPendingItem.Create(assetConfig));
+                    }
+                    resourceManager.pendingAssetDic[crc].count++;
+                }
                 
                 ResourceLoadTask task = ResourceLoadTask.Create(resourceManager, crc, assetType, priority, groupID);
                 int taskID = resourceLoadTaskDispatcher.AddTask(task);

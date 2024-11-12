@@ -29,8 +29,10 @@ namespace HQFramework.Sample
 
         private static readonly string bucketName = "assets.moonvrhome.com";
 
-        public AmazonAssetUploader()
+        private void Initialize()
         {
+            if (client != null)
+                return;
             string[] key_id = File.ReadAllText(Path.Combine(Application.dataPath, "../Build/Amazon.txt")).Split('|');
             string accessId = key_id[0];
             string accessKey = key_id[1];
@@ -42,12 +44,14 @@ namespace HQFramework.Sample
 
         public async Task<bool> UploadAssetAsync(string relatedUrl, string filePath)
         {
+            Initialize();
             byte[] data = await File.ReadAllBytesAsync(filePath);
             return await UploadAssetAsync(relatedUrl, data);
         }
 
         public async Task<bool> UploadAssetAsync(string relatedUrl, byte[] content)
         {
+            Initialize();
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bucketName;
             request.Key = Path.Combine(HotfixRootFolder, relatedUrl);

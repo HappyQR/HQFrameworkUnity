@@ -11,7 +11,7 @@
             "id": 0,
             "moduleName": "Public",
             "description": null,
-            "currentPatchVersion": 34,
+            "currentPatchVersion": 36,
             "minimalSupportedPatchVersion": 0,
             "isBuiltin": true,
             "moduleUrlRoot": "https://assets.moonvrhome.com/dev/hotfix-framework/Public",
@@ -36,8 +36,8 @@
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_materials.bundle",
-                    "md5": "d83ee1a81f73d900f820181636bac820",
-                    "size": 105358,
+                    "md5": "a79e98c9b217d7f08bc52a060466a384",
+                    "size": 225679,
                     "bundleUrlRelatedToModule": "public_materials.bundle",
                     "dependencies": [
                         1884728092
@@ -48,7 +48,7 @@
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_prefabs.bundle",
-                    "md5": "a37341830ff67d1d28da08a728a9bf4b",
+                    "md5": "fc522ab941bfb642e93c53ddaab6f4c7",
                     "size": 102596,
                     "bundleUrlRelatedToModule": "public_prefabs.bundle",
                     "dependencies": [
@@ -61,8 +61,8 @@
                     "moduleID": 0,
                     "moduleName": "Public",
                     "bundleName": "public_textures.bundle",
-                    "md5": "69f8be2e9d5293e340a84e4220121857",
-                    "size": 2056806,
+                    "md5": "35491526cdb559eacba04a1e7d706fa9",
+                    "size": 2056786,
                     "bundleUrlRelatedToModule": "public_textures.bundle",
                     "dependencies": [
                     ]

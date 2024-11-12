@@ -34,7 +34,8 @@ namespace HQFramework.Resource
 
         // status
         private bool isAssetsDecompressed = false;
-        private Queue<ResourceLoadTaskInfo> loadTaskWaitingQueue;
+        private Queue<ResourceLoadTaskInfo> pendingTaskQueue;
+        private Dictionary<uint, AssetPendingItem> pendingAssetDic;
 
         public override byte Priority => byte.MaxValue;
         public string PersistentDir => resourceHelper.AssetsPersistentDir;
@@ -53,7 +54,8 @@ namespace HQFramework.Resource
             loadedObjectMap = new Dictionary<object, uint>();
             instantiatedObjectMap = new Dictionary<object, uint>();
 
-            loadTaskWaitingQueue = new Queue<ResourceLoadTaskInfo>();
+            pendingTaskQueue = new Queue<ResourceLoadTaskInfo>();
+            pendingAssetDic = new Dictionary<uint, AssetPendingItem>();
         }
 
         protected override void OnUpdate()
@@ -74,9 +76,9 @@ namespace HQFramework.Resource
             {
                 localManifest = args.manifest;
                 ReloadAssetTable();
-                while (loadTaskWaitingQueue.Count > 0)
+                while (pendingTaskQueue.Count > 0)
                 {
-                    ResourceLoadTaskInfo info = loadTaskWaitingQueue.Dequeue();
+                    ResourceLoadTaskInfo info = pendingTaskQueue.Dequeue();
                     resourceLoader.LoadAsset(info.crc, info.assetType, info.onComplete, info.onError, info.priority, info.groupID);
                 }
             }
@@ -231,7 +233,7 @@ namespace HQFramework.Resource
             if (localManifest == null)
             {
                 ResourceLoadTaskInfo taskInfo = new ResourceLoadTaskInfo(crc, assetType, OnLoadComplete, onError, priority, groupID);
-                loadTaskWaitingQueue.Enqueue(taskInfo);
+                pendingTaskQueue.Enqueue(taskInfo);
             }
             else
             {
@@ -356,7 +358,6 @@ namespace HQFramework.Resource
             {
                 uint crc = loadedObjectMap[asset];
                 DecreaseAssetReference(crc);
-                resourceHelper.UnloadAsset(asset);
                 loadedObjectMap.Remove(asset);
                 UnloadUnusedAssets(crc);
             }
@@ -392,7 +393,13 @@ namespace HQFramework.Resource
         {
             if (loadedAssetMap[crc].refCount == 0)
             {
-                // TODO: resolve the loading asset.
+                foreach (AssetPendingItem item in pendingAssetDic.Values)
+                {
+                    if (item.dependenceSet.Contains(crc))
+                    {
+                        return;
+                    }
+                }   
                 resourceHelper.UnloadAsset(loadedAssetMap[crc].assetObject);
                 loadedAssetMap.Remove(crc);
                 HQAssetItemConfig assetConfig = assetTable[crc];
