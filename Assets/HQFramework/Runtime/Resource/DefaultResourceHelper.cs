@@ -161,6 +161,42 @@ namespace HQFramework.Runtime
             };
         }
 
+        public void InstantiateAsset(object asset, Action<object> onComplete, Action<string> onError)
+        {
+            object target = null;
+            try
+            {
+                target = UnityObject.Instantiate((UnityObject)asset);
+            }
+            catch (Exception ex)
+            {
+                onError?.Invoke(ex.Message);
+                return;
+            }
+            
+            onComplete?.Invoke(target);
+        }
+
+        public void UnloadAssetBundle(object bundle)
+        {
+            (bundle as AssetBundle).Unload(true);
+        }
+
+        public void UnloadAsset(object asset)
+        {
+            if (asset is GameObject)
+            {
+                HQDebugger.LogWarning($"{(asset as GameObject).name} unload failed. You can only destroy individual assets.");
+                return;
+            }
+            Resources.UnloadAsset((UnityObject)asset);
+        }
+
+        public void UnloadInstantiatedObject(object @object)
+        {
+            UnityObject.Destroy((UnityObject)@object);
+        }
+
         private IEnumerator DecompressBuiltinAssetsInternal(Action onComplete)
         {
             string localManifestFilePath = Path.Combine(AssetsPersistentDir, manifestFileName);

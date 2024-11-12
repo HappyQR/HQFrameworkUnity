@@ -1,5 +1,3 @@
-using System;
-
 namespace HQFramework.Resource
 {
     internal partial class ResourceManager

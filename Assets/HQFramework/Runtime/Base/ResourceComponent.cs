@@ -132,6 +132,11 @@ namespace HQFramework.Runtime
             return resourceManager.HasModule(moduleID);
         }
 
+        public void LoadAsset(uint crc, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
+        {
+            resourceManager.LoadAsset(crc, onComplete, onError, priority, groupID);
+        }
+
         public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
         {
             resourceManager.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
@@ -140,6 +145,11 @@ namespace HQFramework.Runtime
         public void LoadAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0) where T : class
         {
             resourceManager.LoadAsset<T>(crc, onComplete, onError, priority, groupID);
+        }
+
+        public void LoadAsset(string path, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
+        {
+            resourceManager.LoadAsset(path, onComplete, onError, priority, groupID);
         }
 
         public void LoadAsset(string path, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
@@ -152,9 +162,34 @@ namespace HQFramework.Runtime
             resourceManager.LoadAsset(path, onComplete, onError, priority, groupID);
         }
 
-        public AssetBundleInfo[] GetLoadedBundleData()
+        public void InstantiateAsset(uint crc, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
         {
-            return resourceManager.GetLoadedBundleInfo();
+            resourceManager.InstantiateAsset(crc, onComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
+        {
+            resourceManager.InstantiateAsset(crc, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0) where T : class
+        {
+            resourceManager.InstantiateAsset<T>(crc, onComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset(string path, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
+        {
+            resourceManager.InstantiateAsset(path, onComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset(string path, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0)
+        {
+            resourceManager.InstantiateAsset(path, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset<T>(string path, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority = 0, int groupID = 0) where T : class
+        {
+            resourceManager.InstantiateAsset<T>(path, onComplete, onError, priority, groupID);
         }
 
         public void ReleaseAsset(object asset)
@@ -162,17 +197,12 @@ namespace HQFramework.Runtime
             resourceManager.ReleaseAsset(asset);
         }
 
-        public object InstantiateAsset(object asset)
+        public AssetBundleInfo[] GetLoadedBundleInfo()
         {
-            return resourceManager.InstantiateAsset(asset);
+            return resourceManager.GetLoadedBundleInfo();
         }
 
-        public T InstantiateAsset<T>(T asset) where T : class
-        {
-            return resourceManager.InstantiateAsset<T>(asset);
-        }
-
-        public AssetItemInfo[] GetLoadedAssetData()
+        public AssetItemInfo[] GetLoadedAssetInfo()
         {
             return resourceManager.GetLoadedAssetInfo();
         }

@@ -23,11 +23,14 @@ namespace HQFramework.Resource
         private Dictionary<uint, HQAssetBundleConfig> bundleTable;
         private Dictionary<uint, HQAssetItemConfig> assetTable;
 
-        // object map
+        // memory mirror object map
         private Dictionary<uint, string> bundleFilePathMap;
         private Dictionary<uint, BundleItem> loadedBundleMap;
         private Dictionary<uint, AssetItem> loadedAssetMap;
+        private Dictionary<object, uint> loadedObjectMap;
 
+        // memory instantiated object map
+        public Dictionary<object, uint> instantiatedObjectMap;
 
         // status
         private bool isAssetsDecompressed = false;
@@ -47,6 +50,8 @@ namespace HQFramework.Resource
             bundleFilePathMap = new Dictionary<uint, string>();
             loadedBundleMap = new Dictionary<uint, BundleItem>();
             loadedAssetMap = new Dictionary<uint, AssetItem>();
+            loadedObjectMap = new Dictionary<object, uint>();
+            instantiatedObjectMap = new Dictionary<object, uint>();
 
             loadTaskWaitingQueue = new Queue<ResourceLoadTaskInfo>();
         }
@@ -213,14 +218,24 @@ namespace HQFramework.Resource
 
         public void LoadAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
         {
+            void OnLoadComplete(ResourceLoadCompleteEventArgs args)
+            {
+                if (!loadedObjectMap.ContainsKey(args))
+                {
+                    loadedObjectMap.Add(args.asset, crc);
+                }
+                IncreaseAssetReference(crc);
+                onComplete.Invoke(args);
+            }
+
             if (localManifest == null)
             {
-                ResourceLoadTaskInfo taskInfo = new ResourceLoadTaskInfo(crc, assetType, onComplete, onError, priority, groupID);
+                ResourceLoadTaskInfo taskInfo = new ResourceLoadTaskInfo(crc, assetType, OnLoadComplete, onError, priority, groupID);
                 loadTaskWaitingQueue.Enqueue(taskInfo);
             }
             else
             {
-                resourceLoader.LoadAsset(crc, assetType, onComplete, onError, priority, groupID);
+                resourceLoader.LoadAsset(crc, assetType, OnLoadComplete, onError, priority, groupID);
             }
         }
 
@@ -260,19 +275,91 @@ namespace HQFramework.Resource
             LoadAsset<T>(crc, onComplete, onError, priority, groupID);
         }
 
-        public object InstantiateAsset(object asset)
+        public void InstantiateAsset(uint crc, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
         {
-            throw new NotImplementedException();
+            InstantiateAsset(crc, null, onComplete, onError, priority, groupID);
         }
 
-        public T InstantiateAsset<T>(T asset) where T : class
+        public void InstantiateAsset(uint crc, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
         {
-            throw new NotImplementedException();
+            void OnInstantiateComplete(object @object)
+            {
+                instantiatedObjectMap.Add(@object, crc);
+                ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(crc, @object);
+                onComplete?.Invoke(args);
+                ReferencePool.Recyle(args);
+            }
+
+            void OnInstantiateError(string errorMessage)
+            {
+                HQAssetItemConfig assetConfig = assetTable[crc];
+                ResourceLoadErrorEventArgs args = ResourceLoadErrorEventArgs.Create(crc, assetConfig.assetPath, errorMessage);
+                onError?.Invoke(args);
+                ReferencePool.Recyle(args);
+            }
+
+            void OnLoadComplete(ResourceLoadCompleteEventArgs args)
+            {
+                resourceHelper.InstantiateAsset(args.asset, OnInstantiateComplete, OnInstantiateError);
+            }
+
+            LoadAsset(crc, assetType, OnLoadComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset<T>(uint crc, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
+        {
+            void OnLoadComplete(ResourceLoadCompleteEventArgs originalArgs)
+            {
+                ResourceLoadCompleteEventArgs<T> args = ResourceLoadCompleteEventArgs<T>.Create(originalArgs.crc, (T)originalArgs.asset);
+                onComplete?.Invoke(args);
+                ReferencePool.Recyle(args);
+            }
+
+            Type assetType = typeof(T);
+            InstantiateAsset(crc, assetType, OnLoadComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset(string path, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
+        {
+            uint crc = Utility.CRC32.ComputeCrc32(path);
+            InstantiateAsset(crc, onComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset(string path, Type assetType, Action<ResourceLoadCompleteEventArgs> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID)
+        {
+            uint crc = Utility.CRC32.ComputeCrc32(path);
+            InstantiateAsset(crc, assetType, onComplete, onError, priority, groupID);
+        }
+
+        public void InstantiateAsset<T>(string path, Action<ResourceLoadCompleteEventArgs<T>> onComplete, Action<ResourceLoadErrorEventArgs> onError, int priority, int groupID) where T : class
+        {
+            uint crc = Utility.CRC32.ComputeCrc32(path);
+            InstantiateAsset<T>(crc, onComplete, onError, priority, groupID);
         }
 
         public void ReleaseAsset(object asset)
         {
-            throw new NotImplementedException();
+            if (asset == null || asset.Equals(null))
+            {
+                HQDebugger.LogWarning("The object you want to release is null.");
+                return;
+            }
+            if (instantiatedObjectMap.ContainsKey(asset))
+            {
+                uint crc = instantiatedObjectMap[asset];
+                DecreaseAssetReference(crc);
+                resourceHelper.UnloadInstantiatedObject(asset);
+                instantiatedObjectMap.Remove(asset);
+                UnloadUnusedAssets(crc);
+            }
+            else if (loadedObjectMap.ContainsKey(asset))
+            {
+                uint crc = loadedObjectMap[asset];
+                DecreaseAssetReference(crc);
+                resourceHelper.UnloadAsset(asset);
+                loadedObjectMap.Remove(asset);
+                UnloadUnusedAssets(crc);
+            }
         }
 
         public AssetBundleInfo[] GetLoadedBundleInfo()
@@ -299,6 +386,48 @@ namespace HQFramework.Resource
                 index++;
             }
             return assetItemInfoArr;
+        }
+
+        private void UnloadUnusedAssets(uint crc)
+        {
+            if (loadedAssetMap[crc].refCount == 0)
+            {
+                // TODO: resolve the loading asset.
+                resourceHelper.UnloadAsset(loadedAssetMap[crc].assetObject);
+                loadedAssetMap.Remove(crc);
+                HQAssetItemConfig assetConfig = assetTable[crc];
+                for (int i = 0; i < assetConfig.dependencies.Length; i++)
+                {
+                    UnloadUnusedAssets(assetConfig.dependencies[i]);
+                }
+                if (loadedBundleMap.TryGetValue(assetConfig.bundleID, out BundleItem bundleItem) && bundleItem.refCount == 0)
+                {
+                    resourceHelper.UnloadAssetBundle(bundleItem.bundleObject);
+                    loadedBundleMap.Remove(assetConfig.bundleID);
+                }
+            }
+        }
+
+        private void IncreaseAssetReference(uint crc)
+        {
+            loadedAssetMap[crc].refCount++;
+            HQAssetItemConfig assetConfig = assetTable[crc];
+            for (int i = 0; i < assetConfig.dependencies.Length; i++)
+            {
+                IncreaseAssetReference(assetConfig.dependencies[i]);
+            }
+            loadedBundleMap[assetConfig.bundleID].refCount++;
+        }
+
+        private void DecreaseAssetReference(uint crc)
+        {
+            loadedAssetMap[crc].refCount--;
+            HQAssetItemConfig assetConfig = assetTable[crc];
+            for (int i = 0; i < assetConfig.dependencies.Length; i++)
+            {
+                DecreaseAssetReference(assetConfig.dependencies[i]);
+            }
+            loadedBundleMap[assetConfig.bundleID].refCount--;
         }
 
         private string GetBundleFilePath(HQAssetBundleConfig bundleInfo)

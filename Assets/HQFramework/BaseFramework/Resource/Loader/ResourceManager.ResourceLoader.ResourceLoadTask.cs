@@ -85,7 +85,7 @@ namespace HQFramework.Resource
                         default:
                             for (int i = 0; i < assetConfig.dependencies.Length; i++)
                             {
-                                resourceManager.LoadAsset(assetConfig.dependencies[i], null, null, null, priority, groupID);
+                                resourceManager.resourceLoader.LoadAsset(assetConfig.dependencies[i], null, null, null, priority, groupID);
                             }
                             resourceManager.bundleLoader.LoadBundle(assetConfig.bundleID, priority, groupID);
                             assetItem.status = ResourceStatus.InProgress;
@@ -146,6 +146,7 @@ namespace HQFramework.Resource
 
                 private void OnLoadAssetCompleteCallback(object asset)
                 {
+                    HQAssetItemConfig assetConfig = resourceManager.assetTable[crc];
                     ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(crc, asset);
                     resourceManager.loadedAssetMap[crc].assetObject = args.asset;
                     resourceManager.loadedAssetMap[crc].status = ResourceStatus.Ready;

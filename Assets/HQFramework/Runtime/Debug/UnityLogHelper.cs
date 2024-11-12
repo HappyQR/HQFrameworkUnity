@@ -49,7 +49,7 @@ namespace HQFramework.Runtime
             {
                 case LogLevel.Debug:
                 case LogLevel.Info:
-                    UnityEngine.Debug.Log(GetColorLog(message.ToString(), color));
+                    UnityEngine.Debug.Log(GetColorLog(message?.ToString(), color));
                     break;
                 case LogLevel.Warning:
                     UnityEngine.Debug.LogWarning(message);

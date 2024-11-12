@@ -44,8 +44,6 @@ namespace HQFramework.Resource
 
         void OverrideLocalManifest(HQAssetManifest localManifest);
 
-        string GetBundleRelatedPath(HQAssetBundleConfig bundleInfo);
-
         void DeleteAssetModule(HQAssetModuleConfig module);
 
         void LoadAsset(object bundle, string assetPath, Action<object> onComplete, Action<string> onError);
@@ -53,5 +51,15 @@ namespace HQFramework.Resource
         void LoadAsset(object bundle, string assetPath, Type assetType, Action<object> onComplete, Action<string> onError);
 
         void LoadAssetBundle(string bundlePath, Action<object> onComplete, Action<string> onError);
+
+        void InstantiateAsset(object asset, Action<object> onComplete, Action<string> onError);
+
+        void UnloadAssetBundle(object bundle);
+
+        void UnloadAsset(object asset);
+
+        void UnloadInstantiatedObject(object @object);
+
+        string GetBundleRelatedPath(HQAssetBundleConfig bundleInfo);
     }
 }
