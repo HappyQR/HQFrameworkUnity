@@ -16,7 +16,7 @@ public class ResourceDecompressProcedure : ProcedureBase
         HQDebugger.Log("ResourceDecompressProcedure Enter");
 
         resourceManager = GameEntry.GetModule<ResourceComponent>();
-        resourceManager.LoadAsset<GameObject>(2987955044, OnLoadAssetComplete, null);
+        resourceManager.LoadAsset<GameObject>(2987955044, OnLoadAssetComplete, OnLoadAssetError);
         resourceManager.DecompressBuiltinAssets(OnDecompressComplete);
     }
 
@@ -39,5 +39,10 @@ public class ResourceDecompressProcedure : ProcedureBase
         //     cube2 = resourceComponent.InstantiateAsset(args.asset);
         // }
         Object.Instantiate(args.asset);
+    }
+
+    private void OnLoadAssetError(ResourceLoadErrorEventArgs args)
+    {
+        HQDebugger.LogError($"{args.assetPath}, {args.errorMessage}");
     }
 }

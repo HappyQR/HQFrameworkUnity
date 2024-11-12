@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace HQFramework.Resource
 {
     internal partial class ResourceManager
@@ -10,19 +8,13 @@ namespace HQFramework.Resource
             public int refCount;
             public object assetObject;
             public ResourceStatus status;
-            public HashSet<uint> dependencies;
 
-            public AssetItem(HQAssetItemConfig itemConfig)
+            public AssetItem(uint crc)
             {
-                this.crc = itemConfig.crc;
+                this.crc = crc;
                 this.status = ResourceStatus.Pending;
                 this.refCount = 0;
                 this.assetObject = null;
-                this.dependencies = new HashSet<uint>();
-                for (int i = 0; i < itemConfig.dependencies.Length; i++)
-                {
-                    dependencies.Add(itemConfig.dependencies[i]);
-                }
             }
         }
     }

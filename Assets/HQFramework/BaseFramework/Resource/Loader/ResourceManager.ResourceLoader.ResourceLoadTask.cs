@@ -54,25 +54,82 @@ namespace HQFramework.Resource
 
                 public override TaskStartStatus Start()
                 {
-                    if (resourceManager.loadedAssetMap.ContainsKey(crc))
+                    if (!resourceManager.assetTable.ContainsKey(crc))
                     {
-                        return TaskStartStatus.HasToWait;
+                        ResourceLoadErrorEventArgs args = ResourceLoadErrorEventArgs.Create(crc, null, $"id : {crc} asset doesn't exist.");
+                        onError?.Invoke(args);
+                        ReferencePool.Recyle(args);
+                        resourceManager.loadedAssetMap[crc].status = ResourceStatus.Error;
+                        return TaskStartStatus.Error;
                     }
 
-                    return TaskStartStatus.InProgress;
+                    HQAssetItemConfig assetConfig = resourceManager.assetTable[crc];
+                    AssetItem assetItem = resourceManager.loadedAssetMap[crc];
+                    switch (assetItem.status)
+                    {
+                        case ResourceStatus.Ready:
+                            ResourceLoadCompleteEventArgs completeEventArgs = ResourceLoadCompleteEventArgs.Create(crc, assetItem.assetObject);
+                            onComplete?.Invoke(completeEventArgs);
+                            ReferencePool.Recyle(completeEventArgs);
+                            return TaskStartStatus.Done;
+                            
+                        case ResourceStatus.Error:
+                            ResourceLoadErrorEventArgs errorEventArgs = ResourceLoadErrorEventArgs.Create(crc, assetConfig.assetPath, $"id : {crc} asset load failed.");
+                            onError?.Invoke(errorEventArgs);
+                            ReferencePool.Recyle(errorEventArgs);
+                            return TaskStartStatus.Error;
+                            
+                        case ResourceStatus.InProgress:
+                            return TaskStartStatus.HasToWait;
+                            
+                        default:
+                            for (int i = 0; i < assetConfig.dependencies.Length; i++)
+                            {
+                                resourceManager.LoadAsset(assetConfig.dependencies[i], null, null, null, priority, groupID);
+                            }
+                            resourceManager.bundleLoader.LoadBundle(assetConfig.bundleID, priority, groupID);
+                            assetItem.status = ResourceStatus.InProgress;
+                            status = TaskStatus.InProgress;
+                            return TaskStartStatus.InProgress;
+                    }
                 }
 
                 public override void OnUpdate()
                 {
                     if (inLoadingProgress)
-                    {
                         return;
-                    }
+
                     HQAssetItemConfig assetConfig = resourceManager.assetTable[crc];
-                    bool ready = true;
+                    bool ready = true, error = false;
                     for (int i = 0; i < assetConfig.dependencies.Length; i++)
                     {
-                        // ready = ready && resourceManager[]
+                        ResourceStatus dependenceStatus = resourceManager.loadedAssetMap[assetConfig.dependencies[i]].status;
+                        ready = ready && dependenceStatus == ResourceStatus.Ready;
+                        error = error || dependenceStatus == ResourceStatus.Error;
+                    }
+                    ResourceStatus bundleStatus = resourceManager.loadedBundleMap[assetConfig.bundleID].status;
+                    ready = ready && bundleStatus == ResourceStatus.Ready;
+                    error = error || bundleStatus == ResourceStatus.Error;
+
+                    if (ready)
+                    {
+                        if (assetType != null)
+                        {
+                            resourceManager.resourceHelper.LoadAsset(resourceManager.loadedBundleMap[assetConfig.bundleID].bundleObject, assetConfig.assetPath, assetType, OnLoadAssetCompleteCallback, OnLoadAssetErrorCallback);
+                        }
+                        else
+                        {
+                            resourceManager.resourceHelper.LoadAsset(resourceManager.loadedBundleMap[assetConfig.bundleID].bundleObject, assetConfig.assetPath, OnLoadAssetCompleteCallback, OnLoadAssetErrorCallback);
+                        }
+                        inLoadingProgress = true;
+                    }
+                    else if (error)
+                    {
+                        ResourceLoadErrorEventArgs errorEventArgs = ResourceLoadErrorEventArgs.Create(crc, assetConfig.assetPath, $"id : {crc} asset load failed.");
+                        onError?.Invoke(errorEventArgs);
+                        ReferencePool.Recyle(errorEventArgs);
+                        resourceManager.loadedAssetMap[crc].status = ResourceStatus.Error;
+                        status = TaskStatus.Error;
                     }
                 }
 

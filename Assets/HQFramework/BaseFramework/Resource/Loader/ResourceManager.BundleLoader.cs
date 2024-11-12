@@ -17,7 +17,14 @@ namespace HQFramework.Resource
 
             public void LoadBundle(uint bundleID, int priority, int groupID)
             {
+                if (!resourceManager.loadedBundleMap.ContainsKey(bundleID))
+                {
+                    BundleItem bundleItem = new BundleItem(bundleID);
+                    resourceManager.loadedBundleMap.Add(bundleID, bundleItem);
+                }
                 
+                BundleLoadTask task = BundleLoadTask.Create(resourceManager, bundleID, priority, groupID);
+                int taskID = bundleLoadTaskDispatcher.AddTask(task);
             }
 
             public void OnUpdate()

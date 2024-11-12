@@ -13,20 +13,6 @@ namespace HQFramework.Resource
                 private ResourceManager resourceManager;
                 private uint bundleID;
 
-                private Action<BundleLoadCompleteEventArgs> onComplete;
-
-                public event Action<BundleLoadCompleteEventArgs> OnComplete
-                {
-                    add
-                    {
-                        onComplete += value;
-                    }
-                    remove
-                    {
-                        onComplete -= value;
-                    }
-                }
-
                 public static BundleLoadTask Create(ResourceManager resourceManager, uint bundleID, int priority, int groupID)
                 {
                     BundleLoadTask task = ReferencePool.Spawn<BundleLoadTask>();
@@ -40,7 +26,32 @@ namespace HQFramework.Resource
 
                 public override TaskStartStatus Start()
                 {
-                    return TaskStartStatus.InProgress;
+                    if (!resourceManager.bundleTable.ContainsKey(bundleID))
+                    {
+                        resourceManager.loadedBundleMap[bundleID].status = ResourceStatus.Error;
+                        return TaskStartStatus.Error;
+                    }
+
+                    HQAssetBundleConfig bundleConfig = resourceManager.bundleTable[bundleID];
+                    BundleItem bundleItem = resourceManager.loadedBundleMap[bundleID];
+                    switch (bundleItem.status)
+                    {
+                        case ResourceStatus.Ready:
+                            return TaskStartStatus.Done;
+
+                        case ResourceStatus.Error:
+                            return TaskStartStatus.Error;
+
+                        case ResourceStatus.InProgress:
+                            return TaskStartStatus.HasToWait;
+
+                        default:
+                            string bundlePath = resourceManager.GetBundleFilePath(bundleConfig);
+                            resourceManager.resourceHelper.LoadAssetBundle(bundlePath, OnLoadBundleCompleteCallback, OnLoadBundleErrorCallback);
+                            bundleItem.status = ResourceStatus.InProgress;
+                            status = TaskStatus.InProgress;
+                            return TaskStartStatus.InProgress;
+                    }
                 }
 
                 public override void OnUpdate()
@@ -48,13 +59,17 @@ namespace HQFramework.Resource
                     
                 }
 
-                private void OnLoadBundleComplete(object bundleObject)
+                private void OnLoadBundleCompleteCallback(object bundleObject)
                 {
-                    BundleLoadCompleteEventArgs args = BundleLoadCompleteEventArgs.Create(bundleID, resourceManager.bundleTable[bundleID].bundleName, bundleObject);
-                    onComplete?.Invoke(args);
-                    ReferencePool.Recyle(args);
-
+                    resourceManager.loadedBundleMap[bundleID].bundleObject = bundleObject;
+                    resourceManager.loadedBundleMap[bundleID].status = ResourceStatus.Ready;
                     status = TaskStatus.Done;
+                }
+
+                private void OnLoadBundleErrorCallback(string errorMessage)
+                {
+                    resourceManager.loadedBundleMap[bundleID].status = ResourceStatus.Error;
+                    status = TaskStatus.Error;
                 }
 
                 protected override void OnRecyle()
@@ -62,7 +77,6 @@ namespace HQFramework.Resource
                     base.OnRecyle();
                     resourceManager = null;
                     bundleID = 0;
-                    onComplete = null;
                 }
             }
         }

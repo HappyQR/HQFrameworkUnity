@@ -22,11 +22,17 @@ public class ResourceLoadProcedure : ProcedureBase
     protected override void OnUpdate()
     {
         base.OnUpdate();
-        // BundleData[] data = resourceComponent.GetLoadedBundleData();
-        // for (int i = 0; i < data.Length; i++)
-        // {
-        //     HQDebugger.LogInfo($"Bundle Name: {data[i].bundleName}, Bundle Ref Count: {data[i].refCount}, Ready: {data[i].ready}");
-        // }
+        AssetBundleInfo[] bundleData = resourceComponent.GetLoadedBundleData();
+        AssetItemInfo[] assetData = resourceComponent.GetLoadedAssetData();
+        for (int i = 0; i < bundleData.Length; i++)
+        {
+            HQDebugger.LogInfo($"Bundle Name: {bundleData[i].bundleName}, Bundle Ref Count: {bundleData[i].refCount}, Status: {bundleData[i].status}");
+        }
+
+        for (int i = 0; i < assetData.Length; i++)
+        {
+            HQDebugger.LogInfo($"Asset Name: {assetData[i].assetPath}, Asset Ref Count: {assetData[i].refCount}, Status: {assetData[i].status}");
+        }
 
         if (Input.GetKeyDown(KeyCode.A))
         {
