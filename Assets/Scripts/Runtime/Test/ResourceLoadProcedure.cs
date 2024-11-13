@@ -9,7 +9,7 @@ public class ResourceLoadProcedure : ProcedureBase
     private ResourceComponent resourceComponent;
 
     private GameObject cube1;
-    private Texture2D tex1;
+    private GameObject sphere1;
 
     protected override void OnEnter()
     {
@@ -25,8 +25,8 @@ public class ResourceLoadProcedure : ProcedureBase
             // resourceComponent.LoadAsset<GameObject>(1937126282, OnLoadAssetComplete, OnLoadAssetError);
             // resourceComponent.LoadAsset<GameObject>(2529943260, OnLoadAssetComplete, OnLoadAssetError);
 
-            resourceComponent.InstantiateAsset<GameObject>(2987955044, OnInstantiateComplete, OnInstantiateError);
-            resourceComponent.LoadAsset<Texture2D>("Assets/GameAssets/Public/Textures/skybox22.jpg", OnInstantiateTexComplete, OnInstantiateError);
+            resourceComponent.InstantiateAsset<GameObject>(2987955044, (args) => cube1 = args.asset, OnInstantiateError);
+            resourceComponent.InstantiateAsset<GameObject>("Assets/GameAssets/Public/Prefabs/Sphere.prefab", (args) => sphere1 = args.asset, OnInstantiateError);
         }
 
         if (Input.GetKeyDown(KeyCode.B))
@@ -36,7 +36,7 @@ public class ResourceLoadProcedure : ProcedureBase
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            resourceComponent.ReleaseAsset(tex1);
+            resourceComponent.ReleaseAsset(sphere1);
         }
 
         if (Input.GetKeyDown(KeyCode.P))
@@ -61,31 +61,6 @@ public class ResourceLoadProcedure : ProcedureBase
     protected override void OnExit()
     {
         resourceComponent = null;
-    }
-
-    // private void OnLoadTexComplete(ResourceLoadCompleteEventArgs<Texture2D> args)
-    // {
-    //     tex1 = args.asset;
-    // }
-
-    // private void OnLoadAssetComplete(ResourceLoadCompleteEventArgs<GameObject> args)
-    // {
-    //     Object.Instantiate(args.asset);
-    // }
-
-    // private void OnLoadAssetError(ResourceLoadErrorEventArgs args)
-    // {
-    //     HQDebugger.LogError(args.errorMessage);
-    // }
-
-    private void OnInstantiateTexComplete(ResourceLoadCompleteEventArgs<Texture2D> args)
-    {
-        tex1 = args.asset;
-    }
-
-    private void OnInstantiateComplete(ResourceLoadCompleteEventArgs<GameObject> args)
-    {
-        cube1 = args.asset;
     }
 
     private void OnInstantiateError(ResourceLoadErrorEventArgs args)

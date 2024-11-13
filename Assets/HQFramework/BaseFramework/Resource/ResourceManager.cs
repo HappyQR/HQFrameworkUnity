@@ -222,7 +222,7 @@ namespace HQFramework.Resource
         {
             void OnLoadComplete(ResourceLoadCompleteEventArgs args)
             {
-                if (!loadedObjectMap.ContainsKey(args))
+                if (!loadedObjectMap.ContainsKey(args.asset))
                 {
                     loadedObjectMap.Add(args.asset, crc);
                 }
