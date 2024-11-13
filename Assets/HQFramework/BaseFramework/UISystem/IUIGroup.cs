@@ -1,7 +1,15 @@
-namespace HQFramework
+namespace HQFramework.UI
 {
-    public class IUIGroup
+    public interface IUIGroup
     {
-    
+        int GroupID
+        {
+            get;
+        }
+
+        object GroupHandle
+        {
+            get;
+        }
     }
 }

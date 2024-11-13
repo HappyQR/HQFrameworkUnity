@@ -1,15 +1,32 @@
 using System;
+using HQFramework.Resource;
 
 namespace HQFramework.UI
 {
     public interface IUIManager
     {
-        void ShowForm(Type formType, Action<IUIForm> callback);
+        void SetResourceManager(IResourceManager resourceManager);
 
-        void HideForm(Type formType, Action callback);
+        void SetHelper(IUIHelper helper);
 
-        void HideForm(IUIForm form);
+        void AddUIGroup(IUIGroup group);
 
-        IUIForm GetForm(Type formType);
+        void OpenUIForm(Type formType, Action<IUIForm> onComplete, Action<string> onError);
+
+        void OpenUIForm<T>(Action<IUIForm> onComplete, Action<string> onError) where T : class, IUIForm, new();
+
+        void CloseUIForm(Type formType);
+
+        void CloseUIForm(IUIForm form);
+
+        void CloseUIForm<T>() where T : class, IUIForm, new();
+
+        IUIForm GetUIForm(Type formType);
+
+        T GetUIForm<T>() where T : class, IUIForm, new();
+
+        bool HasUIForm(Type formType);
+
+        bool HasUIForm<T>() where T : class, IUIForm, new();
     }
 }
