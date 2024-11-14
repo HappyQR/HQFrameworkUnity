@@ -12,17 +12,27 @@ namespace HQFramework.UI
             get;
         }
 
-        object FormHandle
-        {
-            get;
-        }
-
         int GroupID
         {
             get;
         }
 
-        int SortLayer
+        bool Visible
+        {
+            get;
+        }
+
+        bool Alive
+        {
+            get;
+        }
+
+        bool Covered
+        {
+            get;
+        }
+
+        object FormObject
         {
             get;
         }
@@ -37,23 +47,17 @@ namespace HQFramework.UI
             get;
         }
 
-        bool Visible
-        {
-            get;
-        }
+        protected internal void SetVisible(bool visible);
 
-        bool Covered
-        {
-            get;
-        }
+        protected internal void OnCreate(IUIFormLinker linker);
 
-        protected internal void OnCreate(object formObject);
-
-        protected internal void OnOpen();
+        protected internal void OnOpen(object userData);
 
         protected internal void OnUpdate();
 
         protected internal void OnCovered();
+
+        protected internal void OnRevealed();
 
         protected internal void OnClose();
 

@@ -7,9 +7,18 @@ namespace HQFramework.UI
             get;
         }
 
-        object GroupHandle
+        object GroupRoot
         {
             get;
         }
+
+        int Depth
+        {
+            get;
+        }
+
+        void OnFormOpened(IUIForm form);
+
+        void OnFormClosed(IUIForm form);
     }
 }

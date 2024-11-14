@@ -11,9 +11,13 @@ namespace HQFramework.UI
 
         void AddUIGroup(IUIGroup group);
 
-        void OpenUIForm(Type formType, Action<IUIForm> onComplete, Action<string> onError);
+        void DeleteUIGroup(IUIGroup group);
 
-        void OpenUIForm<T>(Action<IUIForm> onComplete, Action<string> onError) where T : class, IUIForm, new();
+        void DeleteUIGroup(int groupID);
+
+        void OpenUIForm(Type formType, object userData, Action<IUIForm> onComplete, Action<string> onError);
+
+        void OpenUIForm<T>(object userData, Action<IUIForm> onComplete, Action<string> onError) where T : class, IUIForm, new();
 
         void CloseUIForm(Type formType);
 
