@@ -2,7 +2,6 @@ using HQFramework;
 using HQFramework.Procedure;
 using HQFramework.Runtime;
 using UnityEngine;
-using HQFramework.Resource;
 
 public class HotfixProcedure : ProcedureBase
 {

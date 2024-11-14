@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace HQFramework.Runtime
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public sealed class UIFormLinker : MonoBehaviour, IUIFormLinker
     {
         [SerializeField]

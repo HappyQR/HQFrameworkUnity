@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using HQFramework.Coroutine;
 using HQFramework.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,8 +11,9 @@ namespace HQFramework.Runtime
     public abstract class UIFormBase : IUIForm
     {
         protected UIFormLinker formLinker;
-        protected bool visible;
+        protected CanvasGroup canvasGroup;
         protected bool alive;
+        private bool visible;
         private bool covered;
 
         public abstract string AssetPath { get; }
@@ -31,20 +34,6 @@ namespace HQFramework.Runtime
 
         public bool PauseOnCovered => formLinker.PauseOnCovered;
 
-        protected virtual void OnCreate(){}
-
-        protected virtual void OnOpen(object userData){}
-
-        protected virtual void OnUpdate(){}
-
-        protected virtual void OnCovered(){}
-
-        protected virtual void OnRevealed(){}
-
-        protected virtual void OnClose(){}
-
-        protected virtual void OnDestroy(){}
-
         protected RectTransform GetUIElement(int index)
         {
             return formLinker.linkedElements[index];
@@ -62,14 +51,75 @@ namespace HQFramework.Runtime
             return (UIBehaviour)item.GetComponent(type);
         }
 
-        protected virtual void OnButtonClick(string buttonName)
-        {
+        protected virtual void OnCreate(){}
 
+        protected virtual void OnOpen(object userData){}
+
+        protected virtual void OnUpdate(){}
+
+        protected virtual void OnCovered(){}
+
+        protected virtual void OnRevealed(){}
+
+        protected virtual void OnClose(){}
+
+        protected virtual void OnDestroy(){}
+
+        protected virtual void OnButtonClick(string buttonName){}
+
+        protected virtual void OnToggleValueChanged(string toggleName, bool value){}
+
+        protected virtual void OnSliderValueChanged(string sliderName, float value){}
+
+        protected virtual void SetVisible(bool visible)
+        {
+            if (visible)
+            {
+                HQFrameworkEngine.GetModule<ICoroutineManager>().StartCoroutine(FadeIn());
+            }
+            else
+            {
+                HQFrameworkEngine.GetModule<ICoroutineManager>().StartCoroutine(FadeOut());
+            }
+        }
+
+        private IEnumerator FadeIn()
+        {
+            WaitForSecondsRealtime waiter = new WaitForSecondsRealtime(0.02f);
+            while (canvasGroup.alpha < 1)
+            {
+                if (visible)
+                {
+                    yield break;
+                }
+                canvasGroup.alpha += 0.02f;
+                yield return waiter;
+            }
+        }
+
+        private IEnumerator FadeOut()
+        {
+            WaitForSecondsRealtime waiter = new WaitForSecondsRealtime(0.02f);
+            while (canvasGroup.alpha > 0)
+            {
+                if (!visible)
+                {
+                    yield break;
+                }
+                canvasGroup.alpha -= 0.02f;
+                yield return waiter;
+            }
+
+            if (DestroyOnClose)
+            {
+                alive = false;
+            }
         }
 
         void IUIForm.OnCreate(IUIFormLinker linker)
         {
             formLinker = linker as UIFormLinker;
+            canvasGroup = formLinker.GetComponent<CanvasGroup>();
             for (int i = 0; i < formLinker.linkedElements.Length; i++)
             {
                 RectTransform item = formLinker.linkedElements[i];
@@ -79,7 +129,15 @@ namespace HQFramework.Runtime
                     button.onClick.AddListener(() => OnButtonClick(button.name));
                 }
 
+                if (item.TryGetComponent<Toggle>(out Toggle toggle))
+                {
+                    toggle.onValueChanged.AddListener((value) => OnToggleValueChanged(toggle.name, value));
+                }
 
+                if (item.TryGetComponent<Slider>(out Slider slider))
+                {
+                    toggle.onValueChanged.AddListener((value) => OnToggleValueChanged(toggle.name, value));
+                }
             }
             OnCreate();
         }
@@ -119,6 +177,8 @@ namespace HQFramework.Runtime
         void IUIForm.SetVisible(bool visible)
         {
             this.visible = visible;
+            canvasGroup.blocksRaycasts = visible;
+            SetVisible(visible);
         }
     }
 }
