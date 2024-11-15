@@ -41,7 +41,7 @@ public class UIFormTest3 : UIFormBase
     protected override void OnUpdate()
     {
         base.OnUpdate();
-        HQDebugger.LogInfo($"{name} OnUpdate");
+        // HQDebugger.LogInfo($"{name} OnUpdate");
     }
 
     protected override void OnClose()

@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using HQFramework;
+using HQFramework.EventSystem;
 using HQFramework.Runtime;
 using UnityEngine;
 
@@ -20,10 +22,16 @@ public class UIFormTest1 : UIFormBase
         HQDebugger.LogInfo($"{name} OnCreate");
     }
 
+    private void OnTestEvent(object sender, EventArgsBase e)
+    {
+        HQDebugger.LogInfo($"{sender}, {(e as TestEventArgs).Message}");
+    }
+
     protected override void OnOpen(object userData)
     {
         base.OnOpen(userData);
         HQDebugger.LogInfo($"{name} OnOpen, user data : {userData}");
+        GameEntry.GetModule<EventComponent>().RegisterEventListener(TestEventArgs.ID, OnTestEvent);
     }
 
     protected override void OnCovered()
@@ -41,13 +49,14 @@ public class UIFormTest1 : UIFormBase
     protected override void OnUpdate()
     {
         base.OnUpdate();
-        HQDebugger.LogInfo($"{name} OnUpdate");
+        // HQDebugger.LogInfo($"{name} OnUpdate");
     }
 
     protected override void OnClose()
     {
         base.OnClose();
         HQDebugger.LogInfo($"{name} OnClose");
+        GameEntry.GetModule<EventComponent>().UnregisterEventListener(TestEventArgs.ID, OnTestEvent);
     }
 
     protected override void OnDestroy()

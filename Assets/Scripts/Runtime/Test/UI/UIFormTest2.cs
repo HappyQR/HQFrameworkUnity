@@ -41,7 +41,7 @@ public class UIFormTest2 : UIFormBase
     protected override void OnUpdate()
     {
         base.OnUpdate();
-        HQDebugger.LogInfo($"{name} OnUpdate");
+        // HQDebugger.LogInfo($"{name} OnUpdate");
     }
 
     protected override void OnClose()
@@ -60,12 +60,16 @@ public class UIFormTest2 : UIFormBase
     {
         base.OnToggleValueChanged(toggleName, value);
         HQDebugger.LogInfo($"{name} OnToggleValueChanged, {toggleName} {value}");
+
+        GameEntry.GetModule<EventComponent>().InvokeEventImmediately(this, TestEventArgs.Create("Invoke Test Event Immediately"));
     }
 
     protected override void OnSliderValueChanged(string sliderName, float value)
     {
         base.OnSliderValueChanged(sliderName, value);
         HQDebugger.LogInfo($"{name} OnSliderValueChanged, {sliderName} {value}");
+
+        GameEntry.GetModule<EventComponent>().InvokeEvent(this, TestEventArgs.Create("Invoke Test Event"));
     }
 
     protected override void OnButtonClick(string buttonName)
