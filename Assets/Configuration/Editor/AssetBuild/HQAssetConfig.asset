@@ -31,7 +31,7 @@ MonoBehaviour:
     moduleName: Public
     createTime: 2024-10-14 16:44:38
     isBuiltin: 1
-    buildVersionCode: 38
+    buildVersionCode: 40
     devNotes: 'absbna
 
 
@@ -45,7 +45,7 @@ MonoBehaviour:
     moduleName: Portal
     createTime: 2024-10-14 16:44:54
     isBuiltin: 0
-    buildVersionCode: 41
+    buildVersionCode: 43
     devNotes: 'xx
 
 
@@ -59,7 +59,7 @@ MonoBehaviour:
     moduleName: CustomHome
     createTime: 2024-10-26 11:19:02
     isBuiltin: 0
-    buildVersionCode: 25
+    buildVersionCode: 27
     devNotes: 'xxxxx
 
       xxx

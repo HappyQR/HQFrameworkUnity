@@ -22,7 +22,8 @@ public class HotfixProcedure : ProcedureBase
             if (args.isLatest)
             {
                 HQDebugger.LogInfo("Hotfix Check Clean.");
-                SwitchProcedure<ResourceLoadProcedure>();
+                // SwitchProcedure<ResourceLoadProcedure>();
+                SwitchProcedure<UITestProcedure>();
             }
         });
         resourceComponent.AddHotfixDownloadUpdateEvent(hotfixID, (args) => HQDebugger.LogInfo((float)args.DownloadedSize / args.TotalSize));
@@ -30,7 +31,8 @@ public class HotfixProcedure : ProcedureBase
         resourceComponent.AddHotfixDownloadCompleteEvent(hotfixID, (args) => 
         {
             HQDebugger.LogInfo("Hotfix Done.");
-            SwitchProcedure<ResourceLoadProcedure>();
+            // SwitchProcedure<ResourceLoadProcedure>();
+            SwitchProcedure<UITestProcedure>();
         });
     }
 

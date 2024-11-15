@@ -25,11 +25,22 @@ namespace HQFramework.Runtime
             (form.FormObject as GameObject).transform.SetAsLastSibling();
             LinkedListNode<IUIForm> formNode = new LinkedListNode<IUIForm>(form);
             formList.AddLast(formNode);
+            LinkedListNode<IUIForm> coveredFormNode = formNode.Previous;
+            if (coveredFormNode != null)
+            {
+                coveredFormNode.Value.OnCovered();
+            }
         }
 
         public void OnFormClosed(IUIForm form)
         {
-            formList.Remove(form);
+            LinkedListNode<IUIForm> formNode = formList.Find(form);
+            LinkedListNode<IUIForm> revealedFormNode = formNode.Previous;
+            if (revealedFormNode != null)
+            {
+                revealedFormNode.Value.OnRevealed();
+            }
+            formList.Remove(formNode);
         }
     }
 }

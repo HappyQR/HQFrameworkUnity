@@ -19,6 +19,11 @@ namespace HQFramework.Runtime
             Transform formTransform = (form.FormObject as GameObject).transform;
             Transform groupTransform = (group.GroupRoot as GameObject).transform;
             formTransform.SetParent(groupTransform);
+
+            formTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            formTransform.localScale = Vector3.one;
+            (formTransform as RectTransform).offsetMax = Vector2.zero;
+            (formTransform as RectTransform).offsetMin = Vector2.zero;
         }
 
         public void InstantiateForm(IUIForm form, Action<IUIFormLinker> onComplete, Action<string> onError)

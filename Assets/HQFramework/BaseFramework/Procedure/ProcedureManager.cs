@@ -30,7 +30,7 @@ namespace HQFramework.Procedure
         {
             foreach (var item in procedureDic.Values)
             {
-                item.OnShutdown();
+                item.OnUnregistered();
             }
             procedureDic.Clear();
             launched = false;
@@ -70,7 +70,7 @@ namespace HQFramework.Procedure
 
             ProcedureBase procedure = Activator.CreateInstance(procedureType) as ProcedureBase;
             procedureDic.Add(procedureType, procedure);
-            procedure.OnInit();
+            procedure.OnRegistered();
         }
 
         public void RegisterProcedure<T>() where T : ProcedureBase
@@ -107,7 +107,7 @@ namespace HQFramework.Procedure
                 throw new Exception($"Unable to unregister procedure type: {procedureType}, because it hasn't been registered.");
             }
 
-            procedureDic[procedureType].OnShutdown();
+            procedureDic[procedureType].OnUnregistered();
             procedureDic.Remove(procedureType);
         }
 

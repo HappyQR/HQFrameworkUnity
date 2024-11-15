@@ -4,7 +4,7 @@ namespace HQFramework.Procedure
 {
     public abstract class ProcedureBase
     {
-        protected internal virtual void OnInit()
+        protected internal virtual void OnRegistered()
         {
 
         }
@@ -24,7 +24,7 @@ namespace HQFramework.Procedure
 
         }
 
-        protected internal virtual void OnShutdown()
+        protected internal virtual void OnUnregistered()
         {
 
         }

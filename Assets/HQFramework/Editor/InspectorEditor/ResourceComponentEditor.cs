@@ -34,7 +34,7 @@ namespace HQFramework.Editor
 
             hotfixModeProxy = (HQHotfixMode)hotfixMode.enumValueIndex;
 
-            helperTypeList = CollectLogHelperTypes();
+            helperTypeList = CollectResourceHelperTypes();
         }
 
         public override void OnInspectorGUI()
@@ -77,7 +77,7 @@ namespace HQFramework.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private string[] CollectLogHelperTypes()
+        private string[] CollectResourceHelperTypes()
         {
             List<string> typeList = new List<string>();
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();

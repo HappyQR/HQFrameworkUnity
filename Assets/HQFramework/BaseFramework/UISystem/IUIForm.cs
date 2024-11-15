@@ -47,20 +47,20 @@ namespace HQFramework.UI
             get;
         }
 
-        protected internal void SetVisible(bool visible);
+        void SetVisible(bool visible);
 
-        protected internal void OnCreate(IUIFormLinker linker);
+        void OnCreate(IUIFormLinker linker);
 
-        protected internal void OnOpen(object userData);
+        void OnOpen(object userData);
 
-        protected internal void OnUpdate();
+        void OnUpdate();
 
-        protected internal void OnCovered();
+        void OnCovered();
 
-        protected internal void OnRevealed();
+        void OnRevealed();
 
-        protected internal void OnClose();
+        void OnClose();
 
-        protected internal void OnDestroy();
+        void OnDestroy();
     }
 }

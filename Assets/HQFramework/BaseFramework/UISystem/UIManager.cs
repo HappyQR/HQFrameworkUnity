@@ -89,6 +89,7 @@ namespace HQFramework.UI
                 }
                 else
                 {
+                    groupDic[form.GroupID].OnFormOpened(form);
                     form.SetVisible(true);
                     form.OnOpen(userData);
                     visibleFormList.AddLast(form);
@@ -105,11 +106,11 @@ namespace HQFramework.UI
 
                 void OnInstantiateFormComplete(IUIFormLinker linker)
                 {
-                    helper.AttachFormToGroup(form, groupDic[form.GroupID]);
-                    groupDic[form.GroupID].OnFormOpened(form);
                     formDic.Add(formType, form);
                     visibleFormList.AddLast(form);
                     form.OnCreate(linker);
+                    helper.AttachFormToGroup(form, groupDic[form.GroupID]);
+                    groupDic[form.GroupID].OnFormOpened(form);
                     form.SetVisible(true);
                     form.OnOpen(userData);
                     onComplete?.Invoke(form);

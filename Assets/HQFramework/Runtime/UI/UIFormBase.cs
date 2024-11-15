@@ -73,6 +73,8 @@ namespace HQFramework.Runtime
 
         protected virtual void SetVisible(bool visible)
         {
+            canvasGroup.alpha = visible ? 0 : 1;
+            canvasGroup.interactable = !visible;
             if (visible)
             {
                 HQFrameworkEngine.GetModule<ICoroutineManager>().StartCoroutine(FadeIn());
@@ -88,13 +90,15 @@ namespace HQFramework.Runtime
             WaitForSecondsRealtime waiter = new WaitForSecondsRealtime(0.02f);
             while (canvasGroup.alpha < 1)
             {
-                if (visible)
+                if (!visible)
                 {
                     yield break;
                 }
                 canvasGroup.alpha += 0.02f;
                 yield return waiter;
             }
+
+            canvasGroup.interactable = true;
         }
 
         private IEnumerator FadeOut()
@@ -102,7 +106,7 @@ namespace HQFramework.Runtime
             WaitForSecondsRealtime waiter = new WaitForSecondsRealtime(0.02f);
             while (canvasGroup.alpha > 0)
             {
-                if (!visible)
+                if (visible)
                 {
                     yield break;
                 }
@@ -110,6 +114,7 @@ namespace HQFramework.Runtime
                 yield return waiter;
             }
 
+            canvasGroup.interactable = false;
             if (DestroyOnClose)
             {
                 alive = false;
@@ -118,6 +123,7 @@ namespace HQFramework.Runtime
 
         void IUIForm.OnCreate(IUIFormLinker linker)
         {
+            alive = true;
             formLinker = linker as UIFormLinker;
             canvasGroup = formLinker.GetComponent<CanvasGroup>();
             for (int i = 0; i < formLinker.linkedElements.Length; i++)
@@ -136,7 +142,7 @@ namespace HQFramework.Runtime
 
                 if (item.TryGetComponent<Slider>(out Slider slider))
                 {
-                    toggle.onValueChanged.AddListener((value) => OnToggleValueChanged(toggle.name, value));
+                    slider.onValueChanged.AddListener((value) => OnSliderValueChanged(slider.name, value));
                 }
             }
             OnCreate();

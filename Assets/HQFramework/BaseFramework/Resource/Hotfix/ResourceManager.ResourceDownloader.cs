@@ -304,7 +304,6 @@ namespace HQFramework.Resource
                     File.Delete(downloadItem.filePath);
                 }
                 downloadGroupDic.Remove(item.hotfixID);
-                resourceManager.ReloadAssetTable();
 
                 // override local manifest
                 if (item.hotfixID == resourceManager.resourceHelper.LauncherHotfixID) // launcher hotfix complete.
@@ -330,6 +329,7 @@ namespace HQFramework.Resource
                     MergeRemoteModuleToLocalManifest(remoteModule);
                     resourceManager.separateHotfixContent.Remove(remoteModule);
                 }
+                resourceManager.ReloadAssetTable();
 
                 if (completeEventDic.ContainsKey(item.hotfixID))
                 {
