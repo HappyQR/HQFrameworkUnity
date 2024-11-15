@@ -94,7 +94,7 @@ namespace HQFramework.Runtime
                 {
                     yield break;
                 }
-                canvasGroup.alpha += 0.02f;
+                canvasGroup.alpha += 0.01f;
                 yield return waiter;
             }
 
@@ -110,7 +110,7 @@ namespace HQFramework.Runtime
                 {
                     yield break;
                 }
-                canvasGroup.alpha -= 0.02f;
+                canvasGroup.alpha -= 0.01f;
                 yield return waiter;
             }
 
