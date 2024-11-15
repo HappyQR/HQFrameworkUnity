@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using HQFramework.Coroutine;
 using HQFramework.Resource;
@@ -15,8 +14,6 @@ namespace HQFramework.Runtime
         private static readonly string manifestFileName = "HQAssetManifest.json";
 
         private string localManifestFilePath;
-
-        private Dictionary<int, UnityObject> instantiateDic = new Dictionary<int, UnityObject>();
 
         public int LauncherHotfixID
         {
