@@ -4,18 +4,16 @@ using UnityEngine;
 
 namespace HQFramework.Runtime
 {
-    public class HQList : MonoBehaviour
+    public class HQList : HQListBase
     {
-        // Start is called before the first frame update
-        void Start()
+        public override void ScrollTo(int index)
         {
-        
+            throw new System.NotImplementedException();
         }
 
-        // Update is called once per frame
-        void Update()
+        public override void SetItemCount(int count)
         {
-        
+            throw new System.NotImplementedException();
         }
     }
 }

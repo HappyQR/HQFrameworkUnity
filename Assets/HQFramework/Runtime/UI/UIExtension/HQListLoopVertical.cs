@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace HQFramework.Runtime
 {
-    public class HQListLoop : MonoBehaviour
+    public class HQListLoopVertical : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()
         {
-            
+        
         }
 
         // Update is called once per frame
