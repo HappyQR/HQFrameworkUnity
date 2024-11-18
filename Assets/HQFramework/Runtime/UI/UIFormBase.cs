@@ -71,6 +71,18 @@ namespace HQFramework.Runtime
 
         protected virtual void OnSliderValueChanged(string sliderName, float value){}
 
+        protected virtual void OnListItemInit(string listName, HQListItem item, int index){}
+
+        protected virtual void OnListItemSelected(string listName, HQListItem item, int index){}
+
+        protected virtual void OnListItemUnselected(string listName, HQListItem item, int index){}
+
+        protected virtual void OnListItemHoverEnter(string listName, HQListItem item, int index){}
+
+        protected virtual void OnListItemHoverExit(string listName, HQListItem item, int index){}
+
+        protected virtual void OnListItemButtonClick(string listName, HQListItem item, string buttonName, GameObject buttonObject, int index){}
+
         protected virtual void SetVisible(bool visible)
         {
             canvasGroup.alpha = visible ? 0 : 1;
@@ -143,6 +155,16 @@ namespace HQFramework.Runtime
                 if (item.TryGetComponent<Slider>(out Slider slider))
                 {
                     slider.onValueChanged.AddListener((value) => OnSliderValueChanged(slider.name, value));
+                }
+
+                if (item.TryGetComponent<HQListBase>(out HQListBase list))
+                {
+                    list.onInitItem += OnListItemInit;
+                    list.onSelectItem += OnListItemSelected;
+                    list.onUnselectItem += OnListItemUnselected;
+                    list.onHoverEnterItem += OnListItemHoverEnter;
+                    list.onHoverExitItem += OnListItemHoverExit;
+                    list.onItemButtonClick += OnListItemButtonClick;
                 }
             }
             OnCreate();

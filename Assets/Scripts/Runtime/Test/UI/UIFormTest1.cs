@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using HQFramework;
 using HQFramework.EventSystem;
 using HQFramework.Runtime;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIFormTest1 : UIFormBase
 {
@@ -16,10 +18,14 @@ public class UIFormTest1 : UIFormBase
 
     private string name = nameof(UIFormTest1);
 
+    private HQListBase listTest;
+
     protected override void OnCreate()
     {
         base.OnCreate();
         HQDebugger.LogInfo($"{name} OnCreate");
+
+        listTest = GetUIControl<HQListBase>(4);
     }
 
     private void OnTestEvent(object sender, EventArgsBase e)
@@ -32,6 +38,8 @@ public class UIFormTest1 : UIFormBase
         base.OnOpen(userData);
         HQDebugger.LogInfo($"{name} OnOpen, user data : {userData}");
         GameEntry.GetModule<EventComponent>().RegisterEventListener(TestEventArgs.ID, OnTestEvent);
+
+        listTest.SetItemCount(32);
     }
 
     protected override void OnCovered()
@@ -50,6 +58,31 @@ public class UIFormTest1 : UIFormBase
     {
         base.OnUpdate();
         // HQDebugger.LogInfo($"{name} OnUpdate");
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            listTest.SetItemCount(12);
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            listTest.AppendItemCount(28);
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            listTest.InsertItem(0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            listTest.RemoveItem(0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            
+        }
     }
 
     protected override void OnClose()
@@ -86,6 +119,58 @@ public class UIFormTest1 : UIFormBase
                 GameEntry.GetModule<UIComponent>().OpenUIForm<UIFormTest2>(666, null, (errMsg) => HQDebugger.LogError(errMsg));
                 GameEntry.GetModule<UIComponent>().CloseUIForm(this);
                 break;
+        }
+    }
+
+    protected override void OnListItemInit(string listName, HQListItem item, int index)
+    {
+        if (listName == "ListTest")
+        {
+            TextMeshProUGUI txt = item.GetUIControl<TextMeshProUGUI>(0);
+            txt.text = $"Item-{index}";
+        }
+    }
+
+    protected override void OnListItemSelected(string listName, HQListItem item, int index)
+    {
+        if (listName == "ListTest")
+        {
+            HQDebugger.Log($"selected : {listName}, {item.name}, {index}");
+        }
+    }
+
+    protected override void OnListItemUnselected(string listName, HQListItem item, int index)
+    {
+        if (listName == "ListTest")
+        {
+            HQDebugger.Log($"unselected : {listName}, {item.name}, {index}");
+        }
+    }
+
+    protected override void OnListItemHoverEnter(string listName, HQListItem item, int index)
+    {
+        if (listName == "ListTest")
+        {
+            HQDebugger.Log($"hover enter : {listName}, {item.name}, {index}");
+        }
+    }
+
+    protected override void OnListItemHoverExit(string listName, HQListItem item, int index)
+    {
+        if (listName == "ListTest")
+        {
+            HQDebugger.Log($"hover exit : {listName}, {item.name}, {index}");
+        }
+    }
+
+    protected override void OnListItemButtonClick(string listName, HQListItem item, string buttonName, GameObject buttonObject, int index)
+    {
+        if (listName == "ListTest")
+        {
+            if (buttonName == "BtnTest")
+            {
+                HQDebugger.Log($"button click : {listName}, {item.name}, {buttonName}, {index}");
+            }
         }
     }
 }

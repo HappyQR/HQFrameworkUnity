@@ -192,7 +192,7 @@ namespace HQFramework.UI
         {
             groupDic.Remove(groupID);
             Queue<IUIForm> closeQueue = new Queue<IUIForm>();
-            foreach (IUIForm form in groupDic.Values)
+            foreach (IUIForm form in formDic.Values)
             {
                 if (form.GroupID == groupID)
                 {

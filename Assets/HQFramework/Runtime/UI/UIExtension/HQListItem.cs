@@ -1,38 +1,65 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace HQFramework.Runtime
 {
-    public class ListItem : UIBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+    public class HQListItem : UIBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         [SerializeField]
         private RectTransform[] linkedElements;
 
         [SerializeField]
-        private UnityEvent _onInit;
+        private UnityEvent<HQListItem, int> _onInit;
 
         [SerializeField]
-        private UnityEvent _onSelect;
+        private UnityEvent<HQListItem, int> _onSelect;
 
         [SerializeField]
-        private UnityEvent _onUnselect;
+        private UnityEvent<HQListItem, int> _onUnselect;
 
         [SerializeField]
-        private UnityEvent _onHoverEnter;
+        private UnityEvent<HQListItem, int> _onHoverEnter;
 
         [SerializeField]
-        private UnityEvent _onHoverExit;
+        private UnityEvent<HQListItem, int> _onHoverExit;
+
+        [SerializeField]
+        private UnityEvent<HQListItem, string, GameObject, int> _onButtonClick;
 
         private RectTransform rectTransform;
+        private List<Button> buttonList;
+        private int index;
         private bool isSelected;
 
         public float Width => rectTransform.rect.width;
         public float Height => rectTransform.rect.height;
+        public UnityEvent<HQListItem, int> onInit => _onInit;
+        public UnityEvent<HQListItem, int> onSelect => _onSelect;
+        public UnityEvent<HQListItem, int> onUnselect => _onUnselect;
+        public UnityEvent<HQListItem, int> onHoverEnter => _onHoverEnter;
+        public UnityEvent<HQListItem, int> onHoverExit => _onHoverExit;
+        public UnityEvent<HQListItem, string, GameObject, int> onButtonClick => _onButtonClick;
 
         protected override void Awake()
         {
             rectTransform = transform as RectTransform;
+            buttonList = new List<Button>();
+            for (int i = 0; i < linkedElements.Length; i++)
+            {
+                if (linkedElements[i].TryGetComponent<Button>(out Button button))
+                {
+                    buttonList.Add(button);
+                }
+            }
+            for (int i = 0; i < buttonList.Count; i++)
+            {
+                Button button = buttonList[i];
+                // button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() => _onButtonClick.Invoke(this, button.name, button.gameObject, index));
+            }
         }
 
         public RectTransform GetElement(int index)
@@ -45,14 +72,15 @@ namespace HQFramework.Runtime
             return linkedElements[index].GetComponent<T>();
         }
 
-        public void Init()
+        internal void Init(int index)
         {
-            
+            this.index = index;
+            _onInit.Invoke(this, index);
         }
 
         public void Refresh()
         {
-            _onInit.Invoke();
+            _onInit.Invoke(this, index);
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -60,22 +88,22 @@ namespace HQFramework.Runtime
             isSelected = !isSelected;
             if (isSelected)
             {
-                _onSelect.Invoke();
+                _onSelect.Invoke(this, index);
             }
             else
             {
-                _onUnselect.Invoke();
+                _onUnselect.Invoke(this, index);
             }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            _onHoverEnter.Invoke();
+            _onHoverEnter.Invoke(this, index);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            _onHoverExit.Invoke();
+            _onHoverExit.Invoke(this, index);
         }
     }
 }

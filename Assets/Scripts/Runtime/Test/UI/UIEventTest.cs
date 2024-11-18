@@ -6,10 +6,16 @@ using UnityEngine.UI;
 
 public class UIEventTest : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+
+    private void Awake()
+    {
+        Debug.Log(GetComponent<Button>().name);
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         Debug.Log($"Pointer Click {name}");
-        RaycastThrough(eventData, ExecuteEvents.pointerClickHandler);
+        // RaycastThrough(eventData, ExecuteEvents.pointerClickHandler);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

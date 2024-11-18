@@ -7,6 +7,7 @@ namespace HQFramework.Runtime
 {
     public class HQScrollRect : ScrollRect
     {
+        [SerializeField]
         private UnityEvent<Vector2> onScroll;
 
         public UnityEvent<Vector2> ScrollEvent => onScroll;
