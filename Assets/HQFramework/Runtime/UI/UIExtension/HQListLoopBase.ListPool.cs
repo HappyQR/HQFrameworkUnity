@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,12 +19,19 @@ namespace HQFramework.Runtime
 
             public HQListItem Spawn()
             {
-                return null;
+                if (itemStack.Count > 0)
+                {
+                    return itemStack.Pop();
+                }
+                GameObject itemObject = Instantiate(list.itemTemplate.gameObject, list.transform);
+                HQListItem item = itemObject.GetComponent<HQListItem>();
+                list.BindItemEvents(item);
+                return item;
             }
 
             public void Recyle(HQListItem item)
             {
-                
+                itemStack.Push(item);
             }
         }
     }

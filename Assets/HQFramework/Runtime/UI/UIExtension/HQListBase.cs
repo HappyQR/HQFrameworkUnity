@@ -10,12 +10,6 @@ namespace HQFramework.Runtime
         [SerializeField]
         protected HQListItem itemTemplate;
 
-        [SerializeField]
-        protected UnityEvent _onOverHead;
-
-        [SerializeField]
-        protected UnityEvent _onOverTail;
-
         protected string itemName;
         protected string listName;
         protected Action<string, HQListItem, int> _onInitItem;
@@ -25,9 +19,6 @@ namespace HQFramework.Runtime
         protected Action<string, HQListItem, int> _onHoverExitItem;
         protected Action<string, HQListItem, string, GameObject, int> _onItemButtonClick;
 
-
-        public UnityEvent onOverHead => _onOverHead;
-        public UnityEvent onOverTail => _onOverTail;
         public event Action<string, HQListItem, int> onInitItem { add => _onInitItem += value; remove => _onInitItem -= value; }
         public event Action<string, HQListItem, int> onSelectItem { add => _onSelectItem += value; remove => _onSelectItem -= value; }
         public event Action<string, HQListItem, int> onUnselectItem { add => _onUnselectItem += value; remove => _onUnselectItem -= value; }

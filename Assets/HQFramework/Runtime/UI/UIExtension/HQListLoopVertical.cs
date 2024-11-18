@@ -1,21 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HQFramework.Runtime
 {
-    public class HQListLoopVertical : MonoBehaviour
+    public class HQListLoopVertical
     {
-        // Start is called before the first frame update
-        void Start()
+        public enum LayoutMode : byte
         {
-        
+            TopToBottom,
+            BottomToTop
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
+        [SerializeField]
+        public uint numPerRow;
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HQFramework.Runtime
@@ -9,20 +7,36 @@ namespace HQFramework.Runtime
         [SerializeField]
         protected HQScrollRect scrollRect;
 
+        [SerializeField]
+        protected float verticalSpacing;
+
+        [SerializeField]
+        protected float horizontalSpacing;
+
+        [SerializeField]
+        protected RectOffset padding;
+
+        protected RectTransform rectTransform;
         protected ListPool listPool;
+        protected int count;
 
         protected override void Awake()
         {
             base.Awake();
+            rectTransform = transform as RectTransform;
             listPool = new ListPool(this);
-            scrollRect.ScrollEvent.AddListener(CalculateListPosition);
+            listPool.Recyle(itemTemplate);
+            scrollRect.ScrollEvent.AddListener(CalculateVisibleRange);
         }
 
         public override void SetItemCount(int count)
         {
-            
+            this.count = count;
+            rectTransform.sizeDelta = CalculateListRect(count);
         }
 
-        protected abstract void CalculateListPosition(Vector2 delta);
+        protected abstract Vector2 CalculateListRect(int count);
+
+        protected abstract void CalculateVisibleRange(Vector2 delta);
     }
 }

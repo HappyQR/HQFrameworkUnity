@@ -8,20 +8,6 @@ namespace HQFramework.Runtime
 {
     public class ResourceComponent : BaseComponent
     {
-#if UNITY_EDITOR
-        public enum ResourceLoadMode
-        {
-            Runtime,
-            Editor
-        }
-
-        [SerializeField]
-        private ResourceLoadMode resourceLoadMode;
-
-        [SerializeField]
-        private UnityEngine.Object assetRootFolder;
-#endif
-
         [SerializeField]
         private string resourceHelperTypeName;
         [SerializeField]
@@ -42,14 +28,6 @@ namespace HQFramework.Runtime
 
         private void Start()
         {
-#if UNITY_EDITOR
-            if (resourceLoadMode == ResourceLoadMode.Editor)
-            {
-                string rootDir = UnityEditor.AssetDatabase.GetAssetPath(assetRootFolder);
-                resourceManager = new EditorResourceManager(rootDir);
-                return;
-            }
-#endif
             InitializeResourceHelper();
             IDownloadManager downloadManager = HQFrameworkEngine.GetModule<IDownloadManager>();
             resourceManager.SetDownloadManager(downloadManager);
