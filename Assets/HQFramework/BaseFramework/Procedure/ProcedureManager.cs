@@ -56,9 +56,8 @@ namespace HQFramework.Procedure
             {
                 throw new Exception("You need to set entry procedure before launch. call SetEntryProcedure(Type entryProcedureType)");
             }
-
-            currentProcedure.OnEnter();
             launched = true;
+            currentProcedure.OnEnter();
         }
 
         public void RegisterProcedure(Type procedureType)

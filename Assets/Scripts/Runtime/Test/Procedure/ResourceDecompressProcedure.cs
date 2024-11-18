@@ -22,7 +22,8 @@ public class ResourceDecompressProcedure : ProcedureBase
 
     private void OnDecompressComplete()
     {
-        SwitchProcedure<HotfixProcedure>();
+        // SwitchProcedure<HotfixProcedure>();
+        SwitchProcedure<UITestProcedure>();
     }
 
     protected override void OnExit()

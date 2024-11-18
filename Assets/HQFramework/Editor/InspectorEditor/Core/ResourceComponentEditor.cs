@@ -11,6 +11,8 @@ namespace HQFramework.Editor
     [CustomEditor(typeof(ResourceComponent))]
     public class ResourceComponentEditor : UnityEditor.Editor
     {
+        private SerializedProperty resourceLoadMode;
+        private SerializedProperty assetRootFolder;
         private SerializedProperty resourceHelperTypeName;
         private SerializedProperty hotfixMode;
         private SerializedProperty launcherHotfixID;
@@ -19,12 +21,15 @@ namespace HQFramework.Editor
         private SerializedProperty hotfixManifestUrl;
 
         private HQHotfixMode hotfixModeProxy;
+        private ResourceComponent.ResourceLoadMode resourceLoadModeProxy;
 
         private string[] helperTypeList;
         private int helperTypeIndex;
 
         private void OnEnable()
         {
+            resourceLoadMode = serializedObject.FindProperty(nameof(resourceLoadMode));
+            assetRootFolder = serializedObject.FindProperty(nameof(assetRootFolder));
             resourceHelperTypeName = serializedObject.FindProperty(nameof(resourceHelperTypeName));
             hotfixMode = serializedObject.FindProperty(nameof(hotfixMode));
             launcherHotfixID = serializedObject.FindProperty(nameof(launcherHotfixID));
@@ -33,6 +38,7 @@ namespace HQFramework.Editor
             hotfixManifestUrl = serializedObject.FindProperty(nameof(hotfixManifestUrl));
 
             hotfixModeProxy = (HQHotfixMode)hotfixMode.enumValueIndex;
+            resourceLoadModeProxy = (ResourceComponent.ResourceLoadMode)resourceLoadMode.enumValueIndex;
 
             helperTypeList = CollectResourceHelperTypes();
         }
@@ -40,39 +46,57 @@ namespace HQFramework.Editor
         public override void OnInspectorGUI()
         {
             GUIStyle headerStyle = "AM HeaderStyle";
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Resource Helper: ", headerStyle);
-            helperTypeIndex = EditorGUILayout.Popup(helperTypeIndex, helperTypeList, GUILayout.ExpandWidth(true));
-            resourceHelperTypeName.stringValue = helperTypeList[helperTypeIndex];
-            GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Resource Load Mode: ", headerStyle);
+            resourceLoadModeProxy = (ResourceComponent.ResourceLoadMode)EditorGUILayout.EnumPopup(resourceLoadModeProxy, GUILayout.ExpandWidth(true));
+            resourceLoadMode.enumValueIndex = (int)resourceLoadModeProxy;
+            GUILayout.EndHorizontal();
             EditorGUILayout.Separator();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Hotfix Mode: ", headerStyle);
-            hotfixModeProxy = (HQHotfixMode)EditorGUILayout.EnumPopup(hotfixModeProxy, GUILayout.ExpandWidth(true));
-            hotfixMode.enumValueIndex = (int)hotfixModeProxy;
-            GUILayout.EndHorizontal();
 
-            if (hotfixModeProxy != HQHotfixMode.NoHotfix)
+            if (resourceLoadModeProxy == ResourceComponent.ResourceLoadMode.Editor)
             {
-                EditorGUILayout.Separator();
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Launcher Hotfix ID: ", headerStyle);
-                launcherHotfixID.intValue = EditorGUILayout.IntField(launcherHotfixID.intValue, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Asset Root Folder: ", headerStyle);
+                assetRootFolder.objectReferenceValue = EditorGUILayout.ObjectField(assetRootFolder.objectReferenceValue, typeof(DefaultAsset), false, GUILayout.ExpandWidth(true));
                 GUILayout.EndHorizontal();
             }
+            else
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Resource Helper: ", headerStyle);
+                helperTypeIndex = EditorGUILayout.Popup(helperTypeIndex, helperTypeList, GUILayout.ExpandWidth(true));
+                resourceHelperTypeName.stringValue = helperTypeList[helperTypeIndex];
+                GUILayout.EndHorizontal();
 
-            EditorGUILayout.Separator();
-            GUILayout.Label("Assets Persistent Dir:(related to Application.persistentDataPath)", headerStyle);
-            assetsPersistentDir.stringValue = EditorGUILayout.TextField(assetsPersistentDir.stringValue);
+                EditorGUILayout.Separator();
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Hotfix Mode: ", headerStyle);
+                hotfixModeProxy = (HQHotfixMode)EditorGUILayout.EnumPopup(hotfixModeProxy, GUILayout.ExpandWidth(true));
+                hotfixMode.enumValueIndex = (int)hotfixModeProxy;
+                GUILayout.EndHorizontal();
 
-            EditorGUILayout.Separator();
-            GUILayout.Label("Assets Built-in Dir:(related to Application.streamingAssetsPath)", headerStyle);
-            assetsBuiltinDir.stringValue = EditorGUILayout.TextField(assetsBuiltinDir.stringValue);
+                if (hotfixModeProxy != HQHotfixMode.NoHotfix)
+                {
+                    EditorGUILayout.Separator();
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Launcher Hotfix ID: ", headerStyle);
+                    launcherHotfixID.intValue = EditorGUILayout.IntField(launcherHotfixID.intValue, GUILayout.ExpandWidth(true));
+                    GUILayout.EndHorizontal();
+                }
 
-            EditorGUILayout.Separator();
-            GUILayout.Label("Hotfix Manifest URL:", headerStyle);
-            hotfixManifestUrl.stringValue = EditorGUILayout.TextField(hotfixManifestUrl.stringValue);
+                EditorGUILayout.Separator();
+                GUILayout.Label("Assets Persistent Dir:(related to Application.persistentDataPath)", headerStyle);
+                assetsPersistentDir.stringValue = EditorGUILayout.TextField(assetsPersistentDir.stringValue);
+
+                EditorGUILayout.Separator();
+                GUILayout.Label("Assets Built-in Dir:(related to Application.streamingAssetsPath)", headerStyle);
+                assetsBuiltinDir.stringValue = EditorGUILayout.TextField(assetsBuiltinDir.stringValue);
+
+                EditorGUILayout.Separator();
+                GUILayout.Label("Hotfix Manifest URL:", headerStyle);
+                hotfixManifestUrl.stringValue = EditorGUILayout.TextField(hotfixManifestUrl.stringValue);
+            }
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -101,7 +125,7 @@ namespace HQFramework.Editor
                     helperTypeIndex = i;
                 }
             }
-            
+
             return typeList.ToArray();
         }
     }

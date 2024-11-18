@@ -615,6 +615,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5f47543a03984e81a05bcab34b78671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resourceLoadMode: 1
+  assetRootFolder: {fileID: 102900000, guid: 83e97991fc6ed4f2698feb9584b0b79c, type: 3}
   resourceHelperTypeName: HQFramework.Runtime.DefaultResourceHelper
   hotfixMode: 1
   launcherHotfixID: 1

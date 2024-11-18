@@ -57,7 +57,6 @@ namespace HQFramework.Runtime
             for (int i = 0; i < buttonList.Count; i++)
             {
                 Button button = buttonList[i];
-                // button.onClick.RemoveAllListeners();
                 button.onClick.AddListener(() => _onButtonClick.Invoke(this, button.name, button.gameObject, index));
             }
         }

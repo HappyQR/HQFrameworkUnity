@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HQFramework.Runtime
 {
-    public class HQList : HQListBase
+    public class HQListCommon : HQListBase
     {
         private LinkedList<HQListItem> itemList;
 
@@ -207,7 +207,7 @@ namespace HQFramework.Runtime
 
         public override void ScrollTo(int index)
         {
-            
+            HQDebugger.LogError("Common List doesn't support scroll to specified index item yet.");
         }
     }
 }
