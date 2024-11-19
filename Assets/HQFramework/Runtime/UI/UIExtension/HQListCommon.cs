@@ -6,6 +6,14 @@ namespace HQFramework.Runtime
 {
     public class HQListCommon : HQListBase
     {
+        public enum LayoutMode : byte
+        {
+            Vertical,
+            Horizontal,
+        }
+
+        [SerializeField]
+        private LayoutMode layoutMode;
         private LinkedList<HQListItem> itemList;
 
         protected override void Awake()
@@ -207,7 +215,21 @@ namespace HQFramework.Runtime
 
         public override void ScrollTo(int index)
         {
-            HQDebugger.LogError("Common List doesn't support scroll to specified index item yet.");
+            if (index < 0 || index > itemList.Count)
+            {
+                throw new ArgumentOutOfRangeException($"index out of range. the list has {itemList.Count} items, but you want to scroll to {index}");
+            }
+            Vector2 rect = rectTransform.rect.size;
+            Vector2 expectPos = rect * ((float)index / itemList.Count);
+            switch (layoutMode)
+            {
+                case LayoutMode.Vertical:
+                    rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, expectPos.y);
+                    break;
+                case LayoutMode.Horizontal:
+                    rectTransform.anchoredPosition = new Vector2(expectPos.x, rectTransform.anchoredPosition.y);
+                    break;
+            }
         }
     }
 }

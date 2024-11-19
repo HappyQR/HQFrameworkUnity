@@ -16,14 +16,12 @@ namespace HQFramework.Runtime
         [SerializeField]
         protected RectOffset padding;
 
-        protected RectTransform rectTransform;
         protected ListPool listPool;
         protected int count;
 
         protected override void Awake()
         {
             base.Awake();
-            rectTransform = transform as RectTransform;
             listPool = new ListPool(this);
             listPool.Recyle(itemTemplate);
             scrollRect.ScrollEvent.AddListener(CalculateVisibleRange);

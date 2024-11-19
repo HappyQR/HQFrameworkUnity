@@ -12,6 +12,7 @@ namespace HQFramework.Runtime
 
         protected string itemName;
         protected string listName;
+        protected RectTransform rectTransform;
         protected Action<string, HQListItem, int> _onInitItem;
         protected Action<string, HQListItem, int> _onSelectItem;
         protected Action<string, HQListItem, int> _onUnselectItem;
@@ -28,6 +29,7 @@ namespace HQFramework.Runtime
 
         protected override void Awake()
         {
+            rectTransform = transform as RectTransform;
             BindItemEvents(itemTemplate);
             itemName = itemTemplate.name;
             listName = this.name;
