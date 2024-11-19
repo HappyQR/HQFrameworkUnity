@@ -11,21 +11,31 @@ namespace HQFramework.Runtime
             BottomToTop
         }
 
+        public enum AlignMode : byte
+        {
+            UpperLeft,
+            UpperCenter,
+            LowerLeft,
+            LowerCenter
+        }
+
         [SerializeField]
-        private int numPerRow;
+        private int numPerRow = 1;
 
         private int rowCount;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            rectTransform.pivot = Vector2.up;
+            (itemTemplate.transform as RectTransform).pivot = Vector2.up;
+        }
 
         protected override Vector2 CalculateListRectSize(int count)
         {
             rowCount = Mathf.CeilToInt((float)count / numPerRow);
             Vector2 size = new Vector2(rectTransform.sizeDelta.x, padding.top + padding.bottom + (itemTemplate.Height + verticalSpacing) * rowCount);
             return size;
-        }
-
-        protected override bool CheckThreshold()
-        {
-            return true;
         }
 
         protected override IndexRange CalculateVisibleRange()

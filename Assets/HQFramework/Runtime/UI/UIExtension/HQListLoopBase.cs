@@ -23,13 +23,13 @@ namespace HQFramework.Runtime
         protected ScrollRect scrollRect;
 
         [SerializeField]
-        private float scrollRecalculateThreshold;
+        private float scrollRecalculateThreshold = 0.1f;
 
         [SerializeField]
-        protected float verticalSpacing;
+        protected float verticalSpacing = 5f;
 
         [SerializeField]
-        protected float horizontalSpacing;
+        protected float horizontalSpacing = 5f;
 
         [SerializeField]
         protected RectOffset padding;
@@ -136,7 +136,7 @@ namespace HQFramework.Runtime
 
         private void LateUpdate()
         {
-            if (!dirty || !CheckThreshold())
+            if (!dirty)
             {
                 return;
             }
@@ -190,8 +190,6 @@ namespace HQFramework.Runtime
         }
 
         protected abstract Vector2 CalculateListRectSize(int count);
-
-        protected abstract bool CheckThreshold();
 
         protected abstract IndexRange CalculateVisibleRange();
 
