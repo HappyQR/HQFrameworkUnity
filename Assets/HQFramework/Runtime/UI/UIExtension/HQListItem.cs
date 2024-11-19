@@ -77,12 +77,17 @@ namespace HQFramework.Runtime
             _onInit.Invoke(this, index);
         }
 
-        public void Refresh()
+        internal void Refresh()
         {
             _onInit.Invoke(this, index);
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        internal void SetVisible(bool visible)
+        {
+            transform.localScale = visible ? Vector3.one : Vector3.zero;
+        }
+
+        void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
             isSelected = !isSelected;
             if (isSelected)
@@ -95,12 +100,12 @@ namespace HQFramework.Runtime
             }
         }
 
-        public void OnPointerEnter(PointerEventData eventData)
+        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
             _onHoverEnter.Invoke(this, index);
         }
 
-        public void OnPointerExit(PointerEventData eventData)
+        void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
         {
             _onHoverExit.Invoke(this, index);
         }

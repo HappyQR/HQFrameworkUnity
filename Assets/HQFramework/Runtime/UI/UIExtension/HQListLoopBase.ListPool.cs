@@ -17,20 +17,27 @@ namespace HQFramework.Runtime
                 itemStack = new Stack<HQListItem>();
             }
 
-            public HQListItem Spawn()
+            public HQListItem Spawn(int index)
             {
+                HQListItem item = null;
                 if (itemStack.Count > 0)
                 {
-                    return itemStack.Pop();
+                    item = itemStack.Pop();
                 }
-                GameObject itemObject = Instantiate(list.itemTemplate.gameObject, list.transform);
-                HQListItem item = itemObject.GetComponent<HQListItem>();
-                list.BindItemEvents(item);
+                else
+                {
+                    GameObject itemObject = Instantiate(list.itemTemplate.gameObject, list.transform);
+                    item = itemObject.GetComponent<HQListItem>();
+                    list.BindItemEvents(item);
+                }
+                item.name = $"{list.itemName}-{index}";
+                item.SetVisible(true);
                 return item;
             }
 
             public void Recyle(HQListItem item)
             {
+                item.SetVisible(false);
                 itemStack.Push(item);
             }
         }

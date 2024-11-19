@@ -64,11 +64,7 @@ namespace HQFramework.Runtime
                     }
                     else
                     {
-                        GameObject templateObject = itemTemplate.gameObject;
-                        GameObject itemObject = Instantiate<GameObject>(templateObject, this.transform);
-                        itemObject.name = $"{itemName}-{index}";
-                        item = itemObject.GetComponent<HQListItem>();
-                        BindItemEvents(item);
+                        item = CreateNewItem(index);
                     }
                     itemList.AddLast(item);
                     index++;
@@ -98,10 +94,7 @@ namespace HQFramework.Runtime
                 return;
             }
 
-            GameObject itemObject = Instantiate<GameObject>(itemTemplate.gameObject, this.transform);
-            itemObject.name = $"{itemName}-{index}";
-            HQListItem newItem = itemObject.GetComponent<HQListItem>();
-            BindItemEvents(newItem);
+            HQListItem newItem = CreateNewItem(index);
             LinkedListNode<HQListItem> node = itemList.First;
             int loopCount = index;
             while (loopCount > 0)
@@ -185,10 +178,7 @@ namespace HQFramework.Runtime
                 }
                 else
                 {
-                    GameObject itemObject = Instantiate<GameObject>(itemTemplate.gameObject, this.transform);
-                    itemObject.name = $"{itemName}-{index}";
-                    newItem = itemObject.GetComponent<HQListItem>();
-                    BindItemEvents(newItem);
+                    newItem = CreateNewItem(index);
                 }
                 itemList.AddLast(newItem);
                 newItem.Init(index);
@@ -230,6 +220,15 @@ namespace HQFramework.Runtime
                     rectTransform.anchoredPosition = new Vector2(expectPos.x, rectTransform.anchoredPosition.y);
                     break;
             }
+        }
+
+        private HQListItem CreateNewItem(int index)
+        {
+            GameObject itemObject = Instantiate<GameObject>(itemTemplate.gameObject, this.transform);
+            itemObject.name = $"{itemName}-{index}";
+            HQListItem newItem = itemObject.GetComponent<HQListItem>();
+            BindItemEvents(newItem);
+            return newItem;
         }
     }
 }

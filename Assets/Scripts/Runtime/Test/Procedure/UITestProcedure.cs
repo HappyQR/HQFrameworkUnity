@@ -30,10 +30,10 @@ public class UITestProcedure : ProcedureBase
 
     protected override void OnUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            uiComponent.DeleteUIGroup(top);
-        }
+        // if (Input.GetKeyDown(KeyCode.A))
+        // {
+        //     uiComponent.DeleteUIGroup(top);
+        // }
     }
 
     protected override void OnExit()
