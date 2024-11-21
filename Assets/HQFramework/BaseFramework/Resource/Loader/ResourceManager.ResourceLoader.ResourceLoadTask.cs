@@ -162,7 +162,6 @@ namespace HQFramework.Resource
                     ResourceLoadCompleteEventArgs args = ResourceLoadCompleteEventArgs.Create(crc, asset);
                     resourceManager.loadedAssetMap[crc].assetObject = args.asset;
                     resourceManager.loadedAssetMap[crc].status = ResourceStatus.Ready;
-                    onComplete?.Invoke(args);
                     AssetPendingItem pendingItem = resourceManager.pendingAssetDic[crc];
                     pendingItem.count--;
                     if (pendingItem.count == 0)
@@ -171,6 +170,7 @@ namespace HQFramework.Resource
                         resourceManager.pendingAssetDic.Remove(crc);
                     }
                     ReferencePool.Recyle(args);
+                    onComplete?.Invoke(args);
                     status = TaskStatus.Done;
                 }
 
@@ -178,13 +178,13 @@ namespace HQFramework.Resource
                 {
                     ResourceLoadErrorEventArgs args = ResourceLoadErrorEventArgs.Create(crc, resourceManager.assetTable[crc].assetPath, errorMessage);
                     resourceManager.loadedAssetMap[crc].status = ResourceStatus.Error;
-                    onError?.Invoke(args);
                     if (resourceManager.pendingAssetDic.TryGetValue(crc, out AssetPendingItem pendingItem))
                     {
                         ReferencePool.Recyle(pendingItem);
                         resourceManager.pendingAssetDic.Remove(crc);
                     }
                     ReferencePool.Recyle(args);
+                    onError?.Invoke(args);
                     status = TaskStatus.Error;
                 }
             }
