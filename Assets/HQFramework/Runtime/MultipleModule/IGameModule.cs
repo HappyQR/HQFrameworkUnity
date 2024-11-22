@@ -4,7 +4,7 @@ namespace HQFramework.Runtime
     {
         void OnModuleLoaded();
 
-        void OnModuleEnter();
+        void OnModuleEnter(object userData);
 
         void OnModuleUpdate();
 
