@@ -123,19 +123,11 @@ public class UIFormTest3 : UIFormBase
         }
     }
 
-    protected override void OnListItemSelected(string listName, HQListItem item, int index)
+    protected override void OnListItemClick(string listName, HQListItem item, int index)
     {
         if (listName == "ListH")
         {
             HQDebugger.Log($"selected : {listName}, {item.name}, {index}");
-        }
-    }
-
-    protected override void OnListItemUnselected(string listName, HQListItem item, int index)
-    {
-        if (listName == "ListH")
-        {
-            HQDebugger.Log($"unselected : {listName}, {item.name}, {index}");
         }
     }
 

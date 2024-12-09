@@ -131,7 +131,7 @@ public class UIFormTest1 : UIFormBase
         }
     }
 
-    protected override void OnListItemSelected(string listName, HQListItem item, int index)
+    protected override void OnListItemClick(string listName, HQListItem item, int index)
     {
         if (listName == "ListTest")
         {
@@ -139,19 +139,11 @@ public class UIFormTest1 : UIFormBase
         }
     }
 
-    protected override void OnListItemUnselected(string listName, HQListItem item, int index)
-    {
-        if (listName == "ListTest")
-        {
-            HQDebugger.Log($"unselected : {listName}, {item.name}, {index}");
-        }
-    }
-
     protected override void OnListItemHoverEnter(string listName, HQListItem item, int index)
     {
         if (listName == "ListTest")
         {
-            HQDebugger.Log($"hover enter : {listName}, {item.name}, {index}");
+            // HQDebugger.Log($"hover enter : {listName}, {item.name}, {index}");
         }
     }
 
@@ -159,7 +151,7 @@ public class UIFormTest1 : UIFormBase
     {
         if (listName == "ListTest")
         {
-            HQDebugger.Log($"hover exit : {listName}, {item.name}, {index}");
+            // HQDebugger.Log($"hover exit : {listName}, {item.name}, {index}");
         }
     }
 

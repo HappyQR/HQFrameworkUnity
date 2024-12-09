@@ -15,10 +15,7 @@ namespace HQFramework.Runtime
         private UnityEvent<HQListItem, int> _onInit;
 
         [SerializeField]
-        private UnityEvent<HQListItem, int> _onSelect;
-
-        [SerializeField]
-        private UnityEvent<HQListItem, int> _onUnselect;
+        private UnityEvent<HQListItem, int> _onClick;
 
         [SerializeField]
         private UnityEvent<HQListItem, int> _onHoverEnter;
@@ -32,13 +29,11 @@ namespace HQFramework.Runtime
         private RectTransform rectTransform;
         private List<Button> buttonList;
         private int index;
-        private bool isSelected;
 
         public float Width => rectTransform.rect.width;
         public float Height => rectTransform.rect.height;
         public UnityEvent<HQListItem, int> onInit => _onInit;
-        public UnityEvent<HQListItem, int> onSelect => _onSelect;
-        public UnityEvent<HQListItem, int> onUnselect => _onUnselect;
+        public UnityEvent<HQListItem, int> onClick => _onClick;
         public UnityEvent<HQListItem, int> onHoverEnter => _onHoverEnter;
         public UnityEvent<HQListItem, int> onHoverExit => _onHoverExit;
         public UnityEvent<HQListItem, string, GameObject, int> onButtonClick => _onButtonClick;
@@ -89,15 +84,7 @@ namespace HQFramework.Runtime
 
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            isSelected = !isSelected;
-            if (isSelected)
-            {
-                _onSelect.Invoke(this, index);
-            }
-            else
-            {
-                _onUnselect.Invoke(this, index);
-            }
+            _onClick.Invoke(this, index);
         }
 
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)

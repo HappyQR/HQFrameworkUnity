@@ -169,8 +169,8 @@ namespace HQFramework.Resource
                         ReferencePool.Recyle(pendingItem);
                         resourceManager.pendingAssetDic.Remove(crc);
                     }
-                    ReferencePool.Recyle(args);
                     onComplete?.Invoke(args);
+                    ReferencePool.Recyle(args);
                     status = TaskStatus.Done;
                 }
 
@@ -183,8 +183,8 @@ namespace HQFramework.Resource
                         ReferencePool.Recyle(pendingItem);
                         resourceManager.pendingAssetDic.Remove(crc);
                     }
-                    ReferencePool.Recyle(args);
                     onError?.Invoke(args);
+                    ReferencePool.Recyle(args);
                     status = TaskStatus.Error;
                 }
             }

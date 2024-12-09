@@ -2,7 +2,7 @@
     "productName": "HQFramework",
     "productVersion": "1.0.0",
     "resourceVersion": "0.0.0",
-    "versionCode": 0,
+    "versionCode": 10,
     "minimalSupportedVersionCode": 0,
     "releaseNote": null,
     "isBuiltinManifest": true,
@@ -26,6 +26,7 @@
                     "moduleName": "Public",
                     "bundleName": "public_audios.bundle",
                     "md5": "6b0f759b0313fb4d99ee01e4ff72cbf3",
+                    "hotfix":"silence",
                     "size": 3411750,
                     "bundleUrlRelatedToModule": "public_audios.bundle",
                     "dependencies": [

@@ -73,9 +73,7 @@ namespace HQFramework.Runtime
 
         protected virtual void OnListItemInit(string listName, HQListItem item, int index){}
 
-        protected virtual void OnListItemSelected(string listName, HQListItem item, int index){}
-
-        protected virtual void OnListItemUnselected(string listName, HQListItem item, int index){}
+        protected virtual void OnListItemClick(string listName, HQListItem item, int index){}
 
         protected virtual void OnListItemHoverEnter(string listName, HQListItem item, int index){}
 
@@ -160,8 +158,7 @@ namespace HQFramework.Runtime
                 if (item.TryGetComponent<HQListBase>(out HQListBase list))
                 {
                     list.onInitItem += OnListItemInit;
-                    list.onSelectItem += OnListItemSelected;
-                    list.onUnselectItem += OnListItemUnselected;
+                    list.onClickItem += OnListItemClick;
                     list.onHoverEnterItem += OnListItemHoverEnter;
                     list.onHoverExitItem += OnListItemHoverExit;
                     list.onItemButtonClick += OnListItemButtonClick;

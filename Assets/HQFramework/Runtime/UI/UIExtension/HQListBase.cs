@@ -14,15 +14,13 @@ namespace HQFramework.Runtime
         protected string listName;
         protected RectTransform rectTransform;
         protected Action<string, HQListItem, int> _onInitItem;
-        protected Action<string, HQListItem, int> _onSelectItem;
-        protected Action<string, HQListItem, int> _onUnselectItem;
+        protected Action<string, HQListItem, int> _onClickItem;
         protected Action<string, HQListItem, int> _onHoverEnterItem;
         protected Action<string, HQListItem, int> _onHoverExitItem;
         protected Action<string, HQListItem, string, GameObject, int> _onItemButtonClick;
 
         public event Action<string, HQListItem, int> onInitItem { add => _onInitItem += value; remove => _onInitItem -= value; }
-        public event Action<string, HQListItem, int> onSelectItem { add => _onSelectItem += value; remove => _onSelectItem -= value; }
-        public event Action<string, HQListItem, int> onUnselectItem { add => _onUnselectItem += value; remove => _onUnselectItem -= value; }
+        public event Action<string, HQListItem, int> onClickItem { add => _onClickItem += value; remove => _onClickItem -= value; }
         public event Action<string, HQListItem, int> onHoverEnterItem { add => _onHoverEnterItem += value; remove => onHoverEnterItem -= value; }
         public event Action<string, HQListItem, int> onHoverExitItem { add => _onHoverExitItem += value; remove => _onHoverExitItem -= value; }
         public event Action<string, HQListItem, string, GameObject, int> onItemButtonClick { add => _onItemButtonClick += value; remove => _onItemButtonClick -= value; }
@@ -38,8 +36,7 @@ namespace HQFramework.Runtime
         protected void BindItemEvents(HQListItem listItem)
         {
             listItem.onInit.AddListener((item, index) => _onInitItem.Invoke(listName, item, index));
-            listItem.onSelect.AddListener((item, index) => _onSelectItem.Invoke(listName, item, index));
-            listItem.onUnselect.AddListener((item, index) => _onUnselectItem.Invoke(listName, item, index));
+            listItem.onClick.AddListener((item, index) => _onClickItem.Invoke(listName, item, index));
             listItem.onHoverEnter.AddListener((item, index) => _onHoverEnterItem.Invoke(listName, item, index));
             listItem.onHoverExit.AddListener((item, index) => _onHoverExitItem.Invoke(listName, item, index));
             listItem.onButtonClick.AddListener((item, btnName, btnObject, index) => _onItemButtonClick.Invoke(listName, item, btnName, btnObject, index));
